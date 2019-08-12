@@ -1,41 +1,9 @@
-<marquee><h1>SCRUMMY 9000</h1></marquee>
 
-<div *ngIf="participant">
-  I AM {{participant.name}}
+<hr>
+Active Sessions
+<hr>
+Create new
+<hr>
 
-  <hr>
-</div>
-
-<div>
-  <div *ngFor="let participant of participants | keyvalue">
-    {{participant.key}} --> {{participant.value.point}}
-  </div>
-</div>
-
-<div class="errors">
-
-</div>
-
-<ng-container *ngIf="lurker(); else leaveSessionTemplate">
-  <label><input type="text" #name placeholder="Your Name"></label>
-  <button (click)="joinSession(name.value)">Join Session</button>
-</ng-container>
-<ng-template #leaveSessionTemplate>
-  <button (click)="leaveSession()">Leave Session</button>
-</ng-template>
-
-<P></P>
-
-<ng-container *ngIf="!lurker()">
-  <label>
-    <input type="text" #point>
-    <button name="smutButton" (click)="submit(point.value)">Submit</button>
-  </label>
-</ng-container>
-<P></P>
-
-<label>
-  <button (click)="resetPoints()">RESET</button>
-</label>
-
-
+<app-session></app-session>
+<hr>
