@@ -8,6 +8,10 @@ import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 export class SocketService {
   private socket: WebSocketSubject<any>;
 
+  // TODO: environment properties
+  // TODO: connection healing on send
+  // TODO: disconnecting
+
   constructor() {
     const config = {
       url: 'ws://localhost:8999',
@@ -19,5 +23,7 @@ export class SocketService {
 
   getSocket = (): WebSocketSubject<any> => this.socket;
 
-  send = (message) => this.socket.next(message);
+  send = (message): void => {
+    this.socket.next(message);
+  };
 }
