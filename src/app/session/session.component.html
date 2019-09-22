@@ -1,7 +1,7 @@
 <marquee><h1>SCRUMMY 9000</h1></marquee>
 
-<div *ngIf="participant">
-  I AM {{participant.name}}
+<div *ngIf="getParticipant()">
+  I AM {{getParticipant().name}}
   <hr>
 </div>
 
@@ -14,7 +14,7 @@
     </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let participant of participants | keyvalue">
+      <tr *ngFor="let participant of getParticipants() | keyvalue">
         <td>{{participant.key}}</td>
         <td>{{participant.value.point}}</td>
       </tr>
@@ -48,4 +48,6 @@
   <button (click)="resetPoints()">RESET</button>
 </label>
 
-
+<label>
+  <button (click)="revealPoints()">REVAL</button>
+</label>
