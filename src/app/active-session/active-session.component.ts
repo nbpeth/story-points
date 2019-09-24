@@ -1,25 +1,27 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { SocketService } from '../services/socket.service';
-import { Session } from '../session/session.component';
-import { Events } from '../enum/events';
-import { ParticipantMetaData, Participant } from '../model/models';
-import { map, filter } from 'rxjs/Operators';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {SocketService} from '../services/socket.service';
+import {Events} from '../enum/events';
+import {Participant, ParticipantMetaData} from '../model/models';
+import {map} from 'rxjs/Operators';
 
 @Component({
   selector: 'app-active-session',
   templateUrl: './active-session.component.html',
   styleUrls: ['./active-session.component.scss']
 })
-export class ActiveSessionComponent implements OnInit {
-  id: string;
-  session: Session;
-  private participants = {};
+export class ActiveSessionComponent implements OnInit, OnDestroy {
   private participant: Participant;
+  id: string;
+  session: ActiveSession = {participants: {}};
 
-  constructor(private route: ActivatedRoute, private socketService: SocketService) { }
+  constructor(private route: ActivatedRoute, private socketService: SocketService) {
+  }
+
+  // need to persist who this person was in case of a refresh
 
   ngOnInit() {
+    // if the session has been deleted route back to dashboard.
     this.route.paramMap.subscribe(this.setId);
     this.socketService
       .getSocket()
@@ -30,47 +32,36 @@ export class ActiveSessionComponent implements OnInit {
   }
 
   private setId = paramMap => {
-    const urlEncodedId = paramMap.get('id')
+    const urlEncodedId = paramMap.get('id');
     const id = decodeURIComponent(urlEncodedId);
     this.id = id;
-    this.socketService.send({ [Events.SESSION_STATE]: id });
-  }
-
-  private handleEvents = (event: MessageEvent) => {
-    console.log('received', event.data)
-    // const json = JSON.parse(event.data);
-    // const eventKey = Object.keys(json)[0];
-    // const data = Object.values(json)[0];
-    // console.log('received!', event)
-
-    // switch (eventKey) {
-    //   case Events.PARTICIPANT_UPDATE:
-    //     this.refreshUsersFrom(data);
-    //     break;
-    //   case Events.VALUE_SUBMITTED:
-    //     this.participants = { ...this.participants, ...data };
-    //     break;
-    //   case Events.COMPLETE_STATE:
-
-    //     console.log('COMPLETE_STATE', data)
-
-    // }
+    this.socketService.send({[Events.SESSION_STATE]: id});
   };
 
-  getParticipants = () => this.participants;
+  private handleEvents = (event: MessageEvent) => {
+    const json = JSON.parse(event.data);
+    const data = Object.values(json)[0] as SessionState;
+
+    const sessionData = data.sessions;
+    this.session = sessionData[this.id];
+
+    console.log('this sesh  ', this.session);
+  };
+
+  getParticipants = () => this.session.participants;
 
   getParticipant = () => this.participant;
 
   submit = (value) => {
-    this.socketService.send({ [Events.VALUE_SUBMITTED]: { [this.participant.name]: new ParticipantMetaData(value) } });
+    this.socketService.send({[Events.VALUE_SUBMITTED]: {[this.participant.name]: new ParticipantMetaData(value)}});
   };
 
   resetPoints = () => {
-    Object.values(this.participants).forEach((participant: ParticipantMetaData) => {
-      participant.point = 0;
-    });
+    // Object.values(this.participants).forEach((participant: ParticipantMetaData) => {
+    //   participant.point = 0;
+    // });
 
-    this.socketService.send({ [Events.PARTICIPANT_UPDATE]: this.participants });
+    // this.socketService.send({[Events.PARTICIPANT_UPDATE]: this.participants});
   };
 
   // revealPoints = () => {
@@ -78,31 +69,42 @@ export class ActiveSessionComponent implements OnInit {
   // }
 
   joinSession = (name: string) => {
-    // if name exists, can't do it -> error
+    const maybeNewParticipant = new Participant(name);
+    if (this.session.participants[maybeNewParticipant.name]) {
+      console.log('user exists!');
+      return;
+    }
 
-    this.addLocalParticipantBy(name);
-    this.socketService.send({ [Events.PARTICIPANT_UPDATE]: this.participants });
+    this.participant = maybeNewParticipant;
+    this.session.participants[this.participant.name] = new ParticipantMetaData();
+
+    this.socketService.send({[Events.PARTICIPANT_UPDATE]: {[this.id]: this.session}});
+    // if name exists, can't do it -> error
   };
 
   leaveSession = () => {
-    this.removeLocalParticipant();
-    this.socketService.send({ [Events.PARTICIPANT_UPDATE]: this.participants });
+    const name = this.participant.name;
+    delete this.session.participants[this.participant.name];
+    this.participant = undefined;
+
+    this.socketService.send({'participant-removed': {[this.id]: name}});
+
+
   };
 
   lurker = (): boolean => !this.participant;
 
-  private addLocalParticipantBy = (name) => {
-    this.participant = new Participant(name);
-    this.participants[this.participant.name] = new ParticipantMetaData();
+  ngOnDestroy(): void {
+    console.log('on destroy!!!');
+    this.leaveSession();
+  }
 
-  };
+}
 
-  private removeLocalParticipant = () => {
-    delete this.participants[this.participant.name];
-    this.participant = undefined;
-  };
+export interface SessionState {
+  sessions: ActiveSession;
+}
 
-  private refreshUsersFrom = (participantsFromServer) => {
-    this.participants = participantsFromServer;
-  };
+export interface ActiveSession {
+  participants: {};
 }
