@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ActiveSessionTileComponent } from './active-session-tiles/active-session-tile/active-session-tile.component';
 import { ActiveSessionTilesComponent } from './active-session-tiles/active-session-tiles.component';
+import { ActiveSessionComponent } from './active-session/active-session.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { ActiveSessionTilesComponent } from './active-session-tiles/active-sessi
     // SessionComponent,
     DashboardComponent,
     ActiveSessionTileComponent,
-    ActiveSessionTilesComponent
+    ActiveSessionTilesComponent,
+    ActiveSessionComponent
   ],
   imports: [
     BrowserModule,

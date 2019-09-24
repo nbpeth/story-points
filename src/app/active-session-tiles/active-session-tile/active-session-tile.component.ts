@@ -8,7 +8,5 @@ import { Component, OnInit, Input } from '@angular/core';
 export class ActiveSessionTileComponent {
   @Input() id: string;
 
-  onChanges(change) {
-    console.log('active sessiont ile!', change)
-  }
+  urlEncode = (id: string) => encodeURIComponent(id);
 }

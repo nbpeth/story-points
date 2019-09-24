@@ -10,51 +10,54 @@ import { Session } from '../session/session.component';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  activeSessions: Session[]
+  activeSessions: Session[] = [];
   error: string;
 
   constructor(private socketService: SocketService) {
   }
 
   ngOnInit() {
+    // need to ask server for state if the component was destroyed
+
     this.socketService
       .getSocket()
       .subscribe(this.handleEvents);
+      this.socketService.send({ [Events.COMPLETE_STATE]: 'undefined' })
   }
 
-  createNewSession = (name) => {
+  createNewSession = (name: string) => {
     const maybeExistsAlready = this.activeSessions.find(session => session.id === name);
 
     if(maybeExistsAlready) {
         this.error = 'Session Name Already Exists';
+        return;
     }
 
-    const defaultName: string = `Session ${Math.floor(Math.random() * 100000)}`
+    const defaultName: string = `Session${Math.floor(Math.random() * 100000)}`
     this.socketService.send({ [Events.SESSION_CREATED]: { sessionName: name ? name : defaultName } })
   }
 
   private handleEvents = (event) => {
+    console.log('received: ', event.data)
     const json = JSON.parse(event.data);
     const eventKey = Object.keys(json)[0];
     const data = Object.values(json)[0];
 
-    console.log('received', event)
-
     switch (eventKey) {
       case Events.SESSION_CREATED:
-        // console.log('CReATED', data)
         this.setSessionsFrom(data);
         break;
       case Events.COMPLETE_STATE:
-        // console.log('new connection', data);
+        console.log('** getting state')
         this.setSessionsFrom(data);
+        break;
       default:
-      // console.log('something else happened....', eventKey);
+          console.log('default!', event)
     }
   }
 
-  private setSessionsFrom = (data) => {
-    const allActiveSessions = data['state'].sessions;
+  private setSessionsFrom = (data: any) => {
+    const allActiveSessions = data.sessions;
 
     return this.activeSessions = Object.entries(allActiveSessions).map(this.mapActiveSessions);
   }

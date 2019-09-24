@@ -1,0 +1,53 @@
+<marquee><h1>{{id}}</h1></marquee>
+
+<div *ngIf="getParticipant()">
+  I AM {{getParticipant().name}}
+  <hr>
+</div>
+
+<div>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>User</th>
+      <th>Score</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let participant of getParticipants() | keyvalue">
+        <td>{{participant.key}}</td>
+        <td>{{participant.value.point}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="errors">
+
+</div>
+
+<ng-container *ngIf="lurker(); else leaveSessionTemplate">
+  <label><input type="text" #name placeholder="Your Name"></label>
+  <button (click)="joinSession(name.value)">Join Session</button>
+</ng-container>
+<ng-template #leaveSessionTemplate>
+  <button (click)="leaveSession()">Leave Session</button>
+</ng-template>
+
+<P></P>
+
+<ng-container *ngIf="!lurker()">
+  <label>
+    <input type="text" #point>
+    <button name="smutButton" (click)="submit(point.value)">Submit</button>
+  </label>
+</ng-container>
+<P></P>
+
+<label>
+  <button (click)="resetPoints()">RESET</button>
+</label>
+
+<label>
+  <button (click)="revealPoints()">REVAL</button>
+</label>
