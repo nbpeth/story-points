@@ -9,6 +9,6 @@
 </div>
 
 <active-session-tiles>
-    <active-session-tile *ngFor="let tile of activeSessions" [id]="tile.id">
+    <active-session-tile *ngFor="let tile of activeSessions | keyvalue" [id]="tile.key">
     </active-session-tile>
 </active-session-tiles>

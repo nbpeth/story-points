@@ -1,7 +1,4 @@
-import {Component, OnInit} from '@angular/core';
-import {Participant, ParticipantMetaData} from '../model/models';
-import {SocketService} from '../services/socket.service';
-import {Events} from '../enum/events';
+
 
 // @Component({
 //   selector: 'app-session',
