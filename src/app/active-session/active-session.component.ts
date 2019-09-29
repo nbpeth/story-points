@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {SocketService} from '../services/socket.service';
-import {map, filter} from 'rxjs/Operators';
-import {Events} from './enum/events';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SocketService } from '../services/socket.service';
+import { map, filter } from 'rxjs/Operators';
+import { Events } from './enum/events';
 import {
   GetStateForSessionMessage,
   GetStateForSessionPayload,
@@ -18,7 +18,8 @@ import {
   RevealPointsForSessionMessage,
   RevealPointsForSessionPayload
 } from './model/events.model';
-import {StoryPointSession, Participant} from './model/session.model';
+import { StoryPointSession, Participant } from './model/session.model';
+import { MatSelectChange } from '@angular/material';
 
 @Component({
   selector: 'app-active-session',
@@ -27,9 +28,12 @@ import {StoryPointSession, Participant} from './model/session.model';
 })
 export class ActiveSessionComponent implements OnInit {
   private participant: Participant;
+  private selectedVote: number | string;
+  availableOptions = [0, 1, 2, 3, 5, 8, 13, 21, 34, 'Abstain'];
+  
   pointsAreHidden = true;
   id: string;
-  session: StoryPointSession = {participants: {}};
+  session: StoryPointSession = { participants: {} };
 
   constructor(private route: ActivatedRoute, private router: Router, private socketService: SocketService) {
   }
@@ -40,6 +44,11 @@ export class ActiveSessionComponent implements OnInit {
   //       attempt to restore from local, if can't, then request
 
   // need to persist who this person was in case of a refresh
+
+
+  voteHasChanged = (vote: MatSelectChange) => {
+    this.selectedVote = vote.value;
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe(this.setId);
@@ -81,7 +90,7 @@ export class ActiveSessionComponent implements OnInit {
     switch (eventType) {
       case Events.SESSION_STATE:
         if (!payload) {
-          this.router.navigate(['/'], {queryParams: {error: 1}});
+          this.router.navigate(['/'], { queryParams: { error: 1 } });
         }
         this.restoreSessionFromState(messageData as GetStateForSessionMessage);
         break;
@@ -110,8 +119,8 @@ export class ActiveSessionComponent implements OnInit {
 
   getParticipant = () => this.participant;
 
-  submit = (value: string) => {
-    this.socketService.send(new PointSubmittedForParticipantMessage(new PointSubmittedForParticipantPayload(this.id, this.participant.name, value)));
+  submit = () => {
+    this.socketService.send(new PointSubmittedForParticipantMessage(new PointSubmittedForParticipantPayload(this.id, this.participant.name, this.selectedVote as string)));
   };
 
   resetPoints = () => {
@@ -158,24 +167,16 @@ export class ActiveSessionComponent implements OnInit {
   };
 
   private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
-    // const participants = messageData.payload['participants'];
-    // this.session.participants = participants;
     this.refreshParticipants(messageData);
   };
 
   private participantRemoved = (messageData: ParticipantRemovedSessionMessage) => {
-    // const participants = messageData.payload['participants'];
-    // this.session.participants = participants;
     this.refreshParticipants(messageData);
-
   };
 
   private refreshParticipants = (messageData: SpMessage) => {
-    console.log('.....!!! RESET', messageData.payload);
-
+    this.pointsAreHidden = true;
     const participants = messageData.payload['participants'];
     this.session.participants = participants;
   };
-
-
 }

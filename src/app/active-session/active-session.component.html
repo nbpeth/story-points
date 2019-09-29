@@ -1,15 +1,12 @@
-<!-- <marquee> -->
-<h1>{{id}}</h1>
-<!-- </marquee> -->
-
-<div *ngIf="getParticipant()">
-  I AM {{getParticipant().name}}
+<div style="text-align: center;">
+  <h1>{{id}}</h1>
 </div>
 
-<div style="display: flex;">
+<!-- css to classes -->
+<div style="display: flex; flex-wrap: wrap; justify-content: center;">
   <mat-card *ngFor="let participant of getParticipants() | keyvalue">
     <mat-card-title>
-      {{participant.value.point}}
+      {{pointsAreHidden ? "?" : participant.value.point}}
     </mat-card-title>
     <mat-card-content>
       {{participant.key}}
@@ -18,29 +15,41 @@
 </div>
 
 <div class="errors">
-
 </div>
 
-<ng-container *ngIf="lurker(); else leaveSessionTemplate">
-  <label><input type="text" #name placeholder="Your Name"></label>
-  <button (click)="joinSession(name.value)">Join Session</button>
-</ng-container>
-<ng-template #leaveSessionTemplate>
-  <button (click)="leaveSession()">Leave Session</button>
-</ng-template>
+<!-- should be component -->
+<mat-toolbar color="secondary" class="action-bar">
+  <mat-toolbar-row *ngIf="!lurker()">
 
-<P></P>
+    <mat-form-field>
+      <mat-select (selectionChange)="voteHasChanged($event)">
+        <mat-option *ngFor="let option of availableOptions" [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-<ng-container *ngIf="!lurker()">
-  <label>
-    <input type="text" #point>
-    <button name="smutButton" (click)="submit(point.value)">Submit</button>
-  </label>
-</ng-container>
-<P></P>
-<button class="mat-button mat-flat-button mat-icon-button mat-stroked-button ">I'm a basic generic button</button>
-<button md-button color="accent" (click)="resetPoints()">RESET</button>
+    <button name="smutButton" mat-stroked-button color="basic" (click)="submit()">Cast Vote</button>
 
-<label>
-  <button (click)="revealPoints()">REVEAL</button>
-</label>
+  </mat-toolbar-row>
+  <mat-toolbar-row *ngIf="!lurker()">
+    <span>
+      <button (click)="resetPoints()" mat-fab color="warn">Reset</button>
+      <button (click)="revealPoints()" mat-fab color="accent">Reveal</button>
+    </span>
+  </mat-toolbar-row>
+  <mat-toolbar-row>
+    <span>
+      <ng-container *ngIf="lurker(); else leaveSessionTemplate">
+        <mat-form-field>
+          <input matInput #name placeholder="Your Name">
+        </mat-form-field>
+        <button (click)="joinSession(name.value)" mat-stroked-button color="basic">Join Session</button>
+      </ng-container>
+      <ng-template #leaveSessionTemplate>
+        <button (click)="leaveSession()" mat-stroked-button color="warn">Leave Session</button>
+      </ng-template>
+    </span>
+  </mat-toolbar-row>
+
+</mat-toolbar>
