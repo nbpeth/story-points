@@ -1,7 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { SocketService } from '../services/socket.service';
-import { Events } from '../active-session/enum/events';
-import { GetCompleteStateMessage, NewSessionPayload, CreateNewSessionMessage, SpMessage, GetCompleteStatePayload } from '../active-session/model/events.model';
+import {Component, OnInit} from '@angular/core';
+import {SocketService} from '../services/socket.service';
+import {Events} from '../active-session/enum/events';
+import {
+  GetCompleteStateMessage,
+  NewSessionPayload,
+  CreateNewSessionMessage,
+  SpMessage,
+  GetCompleteStatePayload
+} from '../active-session/model/events.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,7 +16,7 @@ import { GetCompleteStateMessage, NewSessionPayload, CreateNewSessionMessage, Sp
 })
 export class DashboardComponent implements OnInit {
   error: string;
-  activeSessions = {}
+  activeSessions = {};
 
   constructor(private socketService: SocketService) {
   }
@@ -48,10 +54,10 @@ export class DashboardComponent implements OnInit {
 
     switch (eventType) {
       case Events.COMPLETE_STATE:
-        this.setSessionsFrom(payload as GetCompleteStatePayload)
+        this.setSessionsFrom(payload as GetCompleteStatePayload);
         break;
       case Events.SESSION_CREATED:
-        this.newSessionWasCreated(payload as NewSessionPayload)
+        this.newSessionWasCreated(payload as NewSessionPayload);
         break;
     }
   };
@@ -62,7 +68,7 @@ export class DashboardComponent implements OnInit {
 
   private newSessionWasCreated = (payload: NewSessionPayload | undefined) => {
     if (payload) {
-      this.activeSessions = { ...this.activeSessions, ...payload.sessions };
+      this.activeSessions = {...this.activeSessions, ...payload.sessions};
     }
   };
 }

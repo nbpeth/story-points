@@ -1,5 +1,7 @@
-<a [routerLink]="['sessions', urlEncode(id)]">
-    <div class="tile">
-        {{id}}
-    </div>
-</a>
+<mat-card>
+  <mat-card-title>
+    <a [routerLink]="['sessions', urlEncode(id)]">
+      {{id}}
+    </a>
+  </mat-card-title>
+</mat-card>

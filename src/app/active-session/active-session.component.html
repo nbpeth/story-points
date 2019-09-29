@@ -1,27 +1,20 @@
 <!-- <marquee> -->
-  <h1>{{id}}</h1>
+<h1>{{id}}</h1>
 <!-- </marquee> -->
 
 <div *ngIf="getParticipant()">
   I AM {{getParticipant().name}}
-  <hr>
 </div>
 
-<div>
-  <table class="table">
-    <thead>
-    <tr>
-      <th>User</th>
-      <th>Score</th>
-    </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let participant of getParticipants() | keyvalue">
-        <td>{{participant.key}}</td>
-        <td>{{pointsAreHidden ? "???" : participant.value.point }}</td>
-      </tr>
-    </tbody>
-  </table>
+<div style="display: flex;">
+  <mat-card *ngFor="let participant of getParticipants() | keyvalue">
+    <mat-card-title>
+      {{participant.value.point}}
+    </mat-card-title>
+    <mat-card-content>
+      {{participant.key}}
+    </mat-card-content>
+  </mat-card>
 </div>
 
 <div class="errors">
@@ -45,10 +38,8 @@
   </label>
 </ng-container>
 <P></P>
-
-<label>
-  <button (click)="resetPoints()">RESET</button>
-</label>
+<button class="mat-button mat-flat-button mat-icon-button mat-stroked-button ">I'm a basic generic button</button>
+<button md-button color="accent" (click)="resetPoints()">RESET</button>
 
 <label>
   <button (click)="revealPoints()">REVEAL</button>

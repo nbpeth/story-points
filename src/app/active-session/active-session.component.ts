@@ -1,10 +1,24 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { SocketService } from '../services/socket.service';
-import { map, filter } from 'rxjs/Operators';
-import { Events } from './enum/events';
-import { GetStateForSessionMessage, GetStateForSessionPayload, SpMessage, ParticipantJoinedSessionMessage, ParticipantJoinedSessionPayload, ParticipantRemovedSessionMessage, ParticipantRemovedSessionPayload, PointSubmittedForParticipantMessage, PointSubmittedForParticipantPayload, ResetPointsForSessionPayload, ResetPointsForSessionMessage, RevealPointsForSessionMessage, RevealPointsForSessionPayload } from './model/events.model';
-import { StoryPointSession, Participant } from './model/session.model';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {SocketService} from '../services/socket.service';
+import {map, filter} from 'rxjs/Operators';
+import {Events} from './enum/events';
+import {
+  GetStateForSessionMessage,
+  GetStateForSessionPayload,
+  SpMessage,
+  ParticipantJoinedSessionMessage,
+  ParticipantJoinedSessionPayload,
+  ParticipantRemovedSessionMessage,
+  ParticipantRemovedSessionPayload,
+  PointSubmittedForParticipantMessage,
+  PointSubmittedForParticipantPayload,
+  ResetPointsForSessionPayload,
+  ResetPointsForSessionMessage,
+  RevealPointsForSessionMessage,
+  RevealPointsForSessionPayload
+} from './model/events.model';
+import {StoryPointSession, Participant} from './model/session.model';
 
 @Component({
   selector: 'app-active-session',
@@ -15,7 +29,7 @@ export class ActiveSessionComponent implements OnInit {
   private participant: Participant;
   pointsAreHidden = true;
   id: string;
-  session: StoryPointSession = { participants: {} };
+  session: StoryPointSession = {participants: {}};
 
   constructor(private route: ActivatedRoute, private router: Router, private socketService: SocketService) {
   }
@@ -50,16 +64,16 @@ export class ActiveSessionComponent implements OnInit {
     // console.log('INCOMING', message.data)
     const messageData = JSON.parse(message.data) as SpMessage;
     return messageData;
-  }
+  };
 
   private eventsOnlyForThisSession = (message: SpMessage): boolean => {
     const targetSession = message.targetSession;
 
     return this.id === targetSession || message.eventType === Events.SESSION_STATE;
-  }
+  };
 
   private handleEvents = (messageData: SpMessage) => {
-    console.log('PASSED FILTER', messageData)
+    console.log('PASSED FILTER', messageData);
 
     const eventType = messageData.eventType;
     const payload = messageData.payload;
@@ -67,7 +81,7 @@ export class ActiveSessionComponent implements OnInit {
     switch (eventType) {
       case Events.SESSION_STATE:
         if (!payload) {
-          this.router.navigate(['/'], { queryParams: { error: 1 } });
+          this.router.navigate(['/'], {queryParams: {error: 1}});
         }
         this.restoreSessionFromState(messageData as GetStateForSessionMessage);
         break;
@@ -88,7 +102,7 @@ export class ActiveSessionComponent implements OnInit {
         this.pointsAreHidden = false;
         break;
       default:
-        console.log('not matched', eventType)
+        console.log('not matched', eventType);
     }
   };
 
@@ -107,7 +121,7 @@ export class ActiveSessionComponent implements OnInit {
 
   revealPoints = () => {
     this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.id)));
-  }
+  };
 
   joinSession = (name: string) => {
     const maybeNewParticipant = new Participant(name, 0);
@@ -134,34 +148,34 @@ export class ActiveSessionComponent implements OnInit {
 
   private pointSubmittedForParticipant = (messageData: PointSubmittedForParticipantMessage) => {
     const sessionState = messageData.payload;
-    console.log('session', sessionState)
+    console.log('session', sessionState);
     this.session = sessionState;
-  }
+  };
 
   private restoreSessionFromState = (messageData: GetStateForSessionMessage) => {
     const sessionState = messageData.payload;
     this.session = sessionState;
-  }
+  };
 
   private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
     // const participants = messageData.payload['participants'];
     // this.session.participants = participants;
     this.refreshParticipants(messageData);
-  }
+  };
 
   private participantRemoved = (messageData: ParticipantRemovedSessionMessage) => {
     // const participants = messageData.payload['participants'];
     // this.session.participants = participants;
     this.refreshParticipants(messageData);
 
-  }
+  };
 
   private refreshParticipants = (messageData: SpMessage) => {
-    console.log('.....!!! RESET', messageData.payload)
+    console.log('.....!!! RESET', messageData.payload);
 
     const participants = messageData.payload['participants'];
     this.session.participants = participants;
-  }
+  };
 
 
 }

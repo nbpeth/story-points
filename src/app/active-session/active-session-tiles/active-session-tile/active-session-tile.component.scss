@@ -1,18 +1,4 @@
-.tile {
-    border: 1px solid blue;
-    width: 150px;
-    height: 150px;
-    margin: 10px;
 
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    
-}
-
-a {
-    :hover {
-        color: red;
-    }
+a:link {
+  text-decoration: none;
 }
