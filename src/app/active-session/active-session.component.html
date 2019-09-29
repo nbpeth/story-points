@@ -1,4 +1,6 @@
-<marquee><h1>{{id}}</h1></marquee>
+<!-- <marquee> -->
+  <h1>{{id}}</h1>
+<!-- </marquee> -->
 
 <div *ngIf="getParticipant()">
   I AM {{getParticipant().name}}
@@ -16,7 +18,7 @@
     <tbody>
       <tr *ngFor="let participant of getParticipants() | keyvalue">
         <td>{{participant.key}}</td>
-        <td>{{participant.value.point}}</td>
+        <td>{{pointsAreHidden ? "???" : participant.value.point }}</td>
       </tr>
     </tbody>
   </table>
@@ -49,5 +51,5 @@
 </label>
 
 <label>
-  <button (click)="revealPoints()">REVAL</button>
+  <button (click)="revealPoints()">REVEAL</button>
 </label>

@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SocketService } from '../services/socket.service';
-import { Participant, ParticipantMetaData } from '../model/models';
 import { map, filter } from 'rxjs/Operators';
 import { Events } from './enum/events';
-import { GetStateForSession, GetStateForSessionPayload, SpMessage, ParticipantJoinedSessionMessage, ParticipantJoinedSessionPayload, ParticipantRemovedSessionMessage, ParticipantRemovedSessionPayload } from './model/events.model';
+import { GetStateForSessionMessage, GetStateForSessionPayload, SpMessage, ParticipantJoinedSessionMessage, ParticipantJoinedSessionPayload, ParticipantRemovedSessionMessage, ParticipantRemovedSessionPayload, PointSubmittedForParticipantMessage, PointSubmittedForParticipantPayload, ResetPointsForSessionPayload, ResetPointsForSessionMessage, RevealPointsForSessionMessage, RevealPointsForSessionPayload } from './model/events.model';
+import { StoryPointSession, Participant } from './model/session.model';
 
 @Component({
   selector: 'app-active-session',
@@ -13,20 +13,25 @@ import { GetStateForSession, GetStateForSessionPayload, SpMessage, ParticipantJo
 })
 export class ActiveSessionComponent implements OnInit {
   private participant: Participant;
+  pointsAreHidden = true;
   id: string;
-  session: ActiveSession = { participants: {} };
+  session: StoryPointSession = { participants: {} };
 
   constructor(private route: ActivatedRoute, private router: Router, private socketService: SocketService) {
   }
 
+  // should be able to preview your vote (inline?)
+
+  // store state locally
+  //       attempt to restore from local, if can't, then request
+
   // need to persist who this person was in case of a refresh
 
   ngOnInit() {
-    // if the session has been deleted route back to dashboard.
     this.route.paramMap.subscribe(this.setId);
     this.socketService
       .getSocket()
-      .pipe(        
+      .pipe(
         map(this.mapEvents),
         filter(this.eventsOnlyForThisSession),
         map(this.handleEvents),
@@ -38,10 +43,11 @@ export class ActiveSessionComponent implements OnInit {
     const urlEncodedId = paramMap.get('id');
     const id = decodeURIComponent(urlEncodedId);
     this.id = id;
-    this.socketService.send(new GetStateForSession(new GetStateForSessionPayload(id)));
+    this.socketService.send(new GetStateForSessionMessage(new GetStateForSessionPayload(id)));
   };
 
   private mapEvents = (message: MessageEvent): SpMessage => {
+    // console.log('INCOMING', message.data)
     const messageData = JSON.parse(message.data) as SpMessage;
     return messageData;
   }
@@ -53,15 +59,17 @@ export class ActiveSessionComponent implements OnInit {
   }
 
   private handleEvents = (messageData: SpMessage) => {
-    // console.log('received', message)
+    console.log('PASSED FILTER', messageData)
+
     const eventType = messageData.eventType;
     const payload = messageData.payload;
 
     switch (eventType) {
       case Events.SESSION_STATE:
         if (!payload) {
-          this.router.navigate(['/'], { queryParams: { error: 1000 } });
+          this.router.navigate(['/'], { queryParams: { error: 1 } });
         }
+        this.restoreSessionFromState(messageData as GetStateForSessionMessage);
         break;
       case Events.PARTICIPANT_JOINED:
         this.participantJoined(messageData as ParticipantJoinedSessionMessage);
@@ -69,37 +77,40 @@ export class ActiveSessionComponent implements OnInit {
       case Events.PARTICIPANT_REMOVED:
         this.participantRemoved(messageData as ParticipantRemovedSessionMessage);
         break;
+      case Events.POINT_SUBMITTED:
+        this.pointSubmittedForParticipant(messageData as PointSubmittedForParticipantMessage);
+        break;
+      case Events.POINTS_RESET:
+        this.refreshParticipants(messageData);
+        break;
+      case Events.POINTS_REVEALED:
+        console.log('REVEALED!');
+        this.pointsAreHidden = false;
+        break;
+      default:
+        console.log('not matched', eventType)
     }
   };
-
-  private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
-    const participants = messageData.payload['participants'];
-    this.session.participants = participants;
-  }
-
-  private participantRemoved = (messageData: ParticipantRemovedSessionMessage) => {
-    const participants = messageData.payload['participants'];
-    this.session.participants = participants;
-  }
 
   getParticipants = () => this.session.participants;
 
   getParticipant = () => this.participant;
 
-  submit = (value) => {
-    this.socketService.send({ [Events.VALUE_SUBMITTED]: { [this.participant.name]: new ParticipantMetaData(value) } });
+  submit = (value: string) => {
+    this.socketService.send(new PointSubmittedForParticipantMessage(new PointSubmittedForParticipantPayload(this.id, this.participant.name, value)));
   };
 
   resetPoints = () => {
-
+    // this.pointsAreHidden = true;
+    this.socketService.send(new ResetPointsForSessionMessage(new ResetPointsForSessionPayload(this.id)));
   };
 
   revealPoints = () => {
-
+    this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.id)));
   }
 
   joinSession = (name: string) => {
-    const maybeNewParticipant = new Participant(name);
+    const maybeNewParticipant = new Participant(name, 0);
     // validate server side
     if (this.session.participants[maybeNewParticipant.name]) {
       console.log('user exists!');
@@ -107,11 +118,9 @@ export class ActiveSessionComponent implements OnInit {
     }
 
     this.participant = maybeNewParticipant;
-    this.session.participants[this.participant.name] = new ParticipantMetaData();
 
     this.socketService.send(new ParticipantJoinedSessionMessage(new ParticipantJoinedSessionPayload(this.id, maybeNewParticipant.name)));
 
-    // this.socketService.send({ [Events.PARTICIPANT_JOINED]: { [this.id]: this.session } });
     // if name exists, can't do it -> error
   };
 
@@ -123,12 +132,36 @@ export class ActiveSessionComponent implements OnInit {
 
   lurker = (): boolean => !this.participant;
 
-}
+  private pointSubmittedForParticipant = (messageData: PointSubmittedForParticipantMessage) => {
+    const sessionState = messageData.payload;
+    console.log('session', sessionState)
+    this.session = sessionState;
+  }
 
-export interface SessionState {
-  sessions: ActiveSession;
-}
+  private restoreSessionFromState = (messageData: GetStateForSessionMessage) => {
+    const sessionState = messageData.payload;
+    this.session = sessionState;
+  }
 
-export interface ActiveSession {
-  participants: {};
+  private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
+    // const participants = messageData.payload['participants'];
+    // this.session.participants = participants;
+    this.refreshParticipants(messageData);
+  }
+
+  private participantRemoved = (messageData: ParticipantRemovedSessionMessage) => {
+    // const participants = messageData.payload['participants'];
+    // this.session.participants = participants;
+    this.refreshParticipants(messageData);
+
+  }
+
+  private refreshParticipants = (messageData: SpMessage) => {
+    console.log('.....!!! RESET', messageData.payload)
+
+    const participants = messageData.payload['participants'];
+    this.session.participants = participants;
+  }
+
+
 }
