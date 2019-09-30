@@ -5,6 +5,7 @@
 <!-- css to classes -->
 <div style="display: flex; flex-wrap: wrap; justify-content: center;">
   <mat-card *ngFor="let participant of getParticipants() | keyvalue">
+     <!-- [ngClass]="{'my-card': isMyCard()}" -->
     <mat-card-title>
       {{pointsAreHidden ? "?" : participant.value.point}}
     </mat-card-title>

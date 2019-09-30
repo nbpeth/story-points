@@ -155,6 +155,11 @@ export class ActiveSessionComponent implements OnInit {
 
   lurker = (): boolean => !this.participant;
 
+  isMyCard = (cardId: string) => {
+    console.log(this.participant ? this.participant.name : undefined, cardId)
+    return this.participant ? this.participant.name === cardId : false;
+  }
+
   private pointSubmittedForParticipant = (messageData: PointSubmittedForParticipantMessage) => {
     const sessionState = messageData.payload;
     console.log('session', sessionState);
