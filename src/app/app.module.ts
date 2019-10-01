@@ -8,7 +8,15 @@ import {ActiveSessionTileComponent} from './active-session/active-session-tiles/
 import {ActiveSessionTilesComponent} from './active-session/active-session-tiles/active-session-tiles.component';
 import {ActiveSessionComponent} from './active-session/active-session.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatButtonModule, MatCardModule, MatIconModule, MatToolbarModule, MatSelectModule, MatInputModule} from '@angular/material';
+import {
+  MatButtonModule,
+  MatCardModule,
+  MatIconModule,
+  MatToolbarModule,
+  MatSelectModule,
+  MatInputModule,
+  MatBadgeModule
+} from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -28,6 +36,7 @@ import {MatButtonModule, MatCardModule, MatIconModule, MatToolbarModule, MatSele
     MatButtonModule,
     MatSelectModule,
     MatInputModule,
+    MatBadgeModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

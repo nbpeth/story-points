@@ -1,25 +1,26 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { SocketService } from '../services/socket.service';
-import { map, filter } from 'rxjs/Operators';
-import { Events } from './enum/events';
+import {Component, Inject, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {SocketService} from '../services/socket.service';
+import {filter, map} from 'rxjs/Operators';
+import {Events} from './enum/events';
 import {
   GetStateForSessionMessage,
   GetStateForSessionPayload,
-  SpMessage,
   ParticipantJoinedSessionMessage,
   ParticipantJoinedSessionPayload,
   ParticipantRemovedSessionMessage,
   ParticipantRemovedSessionPayload,
   PointSubmittedForParticipantMessage,
   PointSubmittedForParticipantPayload,
-  ResetPointsForSessionPayload,
   ResetPointsForSessionMessage,
+  ResetPointsForSessionPayload,
   RevealPointsForSessionMessage,
-  RevealPointsForSessionPayload
+  RevealPointsForSessionPayload,
+  SpMessage
 } from './model/events.model';
-import { StoryPointSession, Participant } from './model/session.model';
-import { MatSelectChange } from '@angular/material';
+import {Participant, StoryPointSession} from './model/session.model';
+import {MatSelectChange} from '@angular/material';
+import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
 
 @Component({
   selector: 'app-active-session',
@@ -30,12 +31,15 @@ export class ActiveSessionComponent implements OnInit {
   private participant: Participant;
   private selectedVote: number | string;
   availableOptions = [0, 1, 2, 3, 5, 8, 13, 21, 34, 'Abstain'];
-  
+
   pointsAreHidden = true;
   id: string;
-  session: StoryPointSession = { participants: {} };
+  session: StoryPointSession = {participants: {}};
 
-  constructor(private route: ActivatedRoute, private router: Router, private socketService: SocketService) {
+  constructor(private route: ActivatedRoute,
+              private router: Router,
+              private socketService: SocketService,
+              @Inject(LOCAL_STORAGE) private storage: StorageService) {
   }
 
   // should be able to preview your vote (inline?)
@@ -48,7 +52,7 @@ export class ActiveSessionComponent implements OnInit {
 
   voteHasChanged = (vote: MatSelectChange) => {
     this.selectedVote = vote.value;
-  }
+  };
 
   ngOnInit() {
     this.route.paramMap.subscribe(this.setId);
@@ -66,11 +70,22 @@ export class ActiveSessionComponent implements OnInit {
     const urlEncodedId = paramMap.get('id');
     const id = decodeURIComponent(urlEncodedId);
     this.id = id;
+    this.recoverUser(id);
     this.socketService.send(new GetStateForSessionMessage(new GetStateForSessionPayload(id)));
   };
 
+  private recoverUser = (id: string) => {
+    const maybeRecoveredUser = this.storage.get(id);
+    console.log('attempting to recover user', maybeRecoveredUser);
+
+    if (maybeRecoveredUser) {
+      console.log('...recovered user', maybeRecoveredUser);
+      this.participant = new Participant(maybeRecoveredUser, 0);
+    }
+
+  };
+
   private mapEvents = (message: MessageEvent): SpMessage => {
-    // console.log('INCOMING', message.data)
     const messageData = JSON.parse(message.data) as SpMessage;
     return messageData;
   };
@@ -82,15 +97,13 @@ export class ActiveSessionComponent implements OnInit {
   };
 
   private handleEvents = (messageData: SpMessage) => {
-    console.log('PASSED FILTER', messageData);
-
     const eventType = messageData.eventType;
     const payload = messageData.payload;
 
     switch (eventType) {
       case Events.SESSION_STATE:
         if (!payload) {
-          this.router.navigate(['/'], { queryParams: { error: 1 } });
+          this.router.navigate(['/'], {queryParams: {error: 1}});
         }
         this.restoreSessionFromState(messageData as GetStateForSessionMessage);
         break;
@@ -104,10 +117,10 @@ export class ActiveSessionComponent implements OnInit {
         this.pointSubmittedForParticipant(messageData as PointSubmittedForParticipantMessage);
         break;
       case Events.POINTS_RESET:
+        this.pointsAreHidden = true;
         this.refreshParticipants(messageData);
         break;
       case Events.POINTS_REVEALED:
-        console.log('REVEALED!');
         this.pointsAreHidden = false;
         break;
       default:
@@ -124,7 +137,6 @@ export class ActiveSessionComponent implements OnInit {
   };
 
   resetPoints = () => {
-    // this.pointsAreHidden = true;
     this.socketService.send(new ResetPointsForSessionMessage(new ResetPointsForSessionPayload(this.id)));
   };
 
@@ -142,27 +154,27 @@ export class ActiveSessionComponent implements OnInit {
 
     this.participant = maybeNewParticipant;
 
-    this.socketService.send(new ParticipantJoinedSessionMessage(new ParticipantJoinedSessionPayload(this.id, maybeNewParticipant.name)));
+    this.storage.set(this.id, this.participant.name);
 
+    this.socketService.send(new ParticipantJoinedSessionMessage(new ParticipantJoinedSessionPayload(this.id, maybeNewParticipant.name)));
     // if name exists, can't do it -> error
   };
 
   leaveSession = () => {
     const name = this.participant.name;
     this.participant = undefined;
+    this.storage.remove(this.id);
     this.socketService.send(new ParticipantRemovedSessionMessage(new ParticipantRemovedSessionPayload(this.id, name)));
   };
 
   lurker = (): boolean => !this.participant;
 
   isMyCard = (cardId: string) => {
-    console.log(this.participant ? this.participant.name : undefined, cardId)
     return this.participant ? this.participant.name === cardId : false;
-  }
+  };
 
   private pointSubmittedForParticipant = (messageData: PointSubmittedForParticipantMessage) => {
     const sessionState = messageData.payload;
-    console.log('session', sessionState);
     this.session = sessionState;
   };
 
@@ -180,8 +192,7 @@ export class ActiveSessionComponent implements OnInit {
   };
 
   private refreshParticipants = (messageData: SpMessage) => {
-    this.pointsAreHidden = true;
-    const participants = messageData.payload['participants'];
+    const participants = messageData.payload.participants;
     this.session.participants = participants;
   };
 }
