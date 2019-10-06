@@ -1,10 +1,11 @@
-
 export class Participant {
   constructor(
     public name: string,
-    public point: number | string) {
+    public point: number | string,
+    public hasVoted: boolean = false,
+  ) {
     if (!name) {
-      this.name = `Lurker ${Math.random()}`
+      this.name = `Lurker ${Math.random()}`;
     }
   }
 }

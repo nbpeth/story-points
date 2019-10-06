@@ -66,17 +66,18 @@ revealPoints = (messageData) => {
   const requestedSession = payload.sessionName;
   const sessionData = state.sessions[requestedSession];
   notifyClients(formatMessage(eventType, sessionData, requestedSession))
-}
+};
 
 resetPoints = (messageData) => {
   const eventType = messageData.eventType;
   const payload = messageData.payload;
   const requestedSession = payload.sessionName;
   const sessionData = state.sessions[requestedSession];
-  // ew
+
   Object.values(sessionData).forEach(participant => {
     Object.values(participant).forEach(p => {
       if (p) {
+        p['hasVoted'] = false;
         p.point = 0;
       }
     });
@@ -84,7 +85,7 @@ resetPoints = (messageData) => {
 
   notifyClients(formatMessage(eventType, sessionData, requestedSession))
 
-}
+};
 
 getSessionState = (messageData) => {
   const eventType = messageData.eventType;
@@ -92,7 +93,7 @@ getSessionState = (messageData) => {
   const requestedSession = payload.sessionName;
   const sessionData = state.sessions[requestedSession];
   notifyCaller(formatMessage(eventType, sessionData, requestedSession));
-}
+};
 
 pointWasSubmitted = (messageData) => {
   const payload = messageData.payload;
@@ -100,11 +101,11 @@ pointWasSubmitted = (messageData) => {
   const sessionData = state.sessions[requestedSession];
   const targetUser = payload.userName;
 
-  console.log('point sub!!!!', targetUser, "...", requestedSession, state)
-
-  sessionData.participants[targetUser].point = payload.value;
+  const userData = sessionData.participants[targetUser];
+  userData.point = payload.value;
+  userData.hasVoted = true;
   notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
-}
+};
 
 addParticipantToSession = (messageData) => {
   const payload = messageData.payload;
@@ -115,7 +116,7 @@ addParticipantToSession = (messageData) => {
   sessionData.participants[participantToAdd] = {point: 0};
 
   notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
-}
+};
 
 removeParticipantFromSession = (messageData) => {
   const payload = messageData.payload;
@@ -123,12 +124,8 @@ removeParticipantFromSession = (messageData) => {
   const sessionData = state.sessions[requestedSession];
   const participantToRemove = payload.userName;
 
-  console.log('remove!', messageData,sessionData.participants[participantToRemove])
-
 
   sessionData.participants[participantToRemove] = undefined;
-
-  console.log('removeDD!', messageData,sessionData.participants)
 
 
   notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))

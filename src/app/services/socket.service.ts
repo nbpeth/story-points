@@ -15,6 +15,7 @@ export class SocketService {
   constructor() {
     const config = {
       url: 'ws://localhost:8999',
+      // url: 'ws://localhost:8999',
       deserializer: (data) => data,
     } as WebSocketSubjectConfig<any>;
 

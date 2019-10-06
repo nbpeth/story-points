@@ -133,6 +133,7 @@ export class ActiveSessionComponent implements OnInit {
   getParticipant = () => this.participant;
 
   submit = () => {
+    console.log('!', this.getParticipants());
     this.socketService.send(new PointSubmittedForParticipantMessage(new PointSubmittedForParticipantPayload(this.id, this.participant.name, this.selectedVote as string)));
   };
 
@@ -169,12 +170,12 @@ export class ActiveSessionComponent implements OnInit {
 
   lurker = (): boolean => !this.participant;
 
-  isMyCard = (cardId: string) => {
-    return this.participant ? this.participant.name === cardId : false;
-  };
+  isMyCard = (cardId: string) =>
+    this.participant ? this.participant.name === cardId : false;
 
   private pointSubmittedForParticipant = (messageData: PointSubmittedForParticipantMessage) => {
     const sessionState = messageData.payload;
+    console.log('sub', sessionState);
     this.session = sessionState;
   };
 

@@ -7,10 +7,7 @@
     "build": "ng build --verbose=true",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "postinstall": "ng build --aot -prod",
-    "heroku-postbuild": "ng build --prod",
-    "start-server": "npm start --prefix server/"
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
