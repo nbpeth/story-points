@@ -133,8 +133,8 @@ export class ActiveSessionComponent implements OnInit {
   getParticipant = () => this.participant;
 
   submit = () => {
-    console.log('!', this.getParticipants());
-    this.socketService.send(new PointSubmittedForParticipantMessage(new PointSubmittedForParticipantPayload(this.id, this.participant.name, this.selectedVote as string)));
+    const vote = this.selectedVote ? this.selectedVote as string : 'Abstain';
+    this.socketService.send(new PointSubmittedForParticipantMessage(new PointSubmittedForParticipantPayload(this.id, this.participant.name, vote)));
   };
 
   resetPoints = () => {
