@@ -42,13 +42,8 @@ export class ActiveSessionComponent implements OnInit {
               @Inject(LOCAL_STORAGE) private storage: StorageService) {
   }
 
-  // should be able to preview your vote (inline?)
-
   // store state locally
   //       attempt to restore from local, if can't, then request
-
-  // need to persist who this person was in case of a refresh
-
 
   voteHasChanged = (vote: MatSelectChange) => {
     this.selectedVote = vote.value;
@@ -75,12 +70,13 @@ export class ActiveSessionComponent implements OnInit {
   };
 
   private recoverUser = (id: string) => {
-    const maybeRecoveredUser = this.storage.get(id);
-    console.log('attempting to recover user', maybeRecoveredUser);
+    const maybeRecoveredUserEntry = this.storage.get(id);
+    console.log('attempting to recover user', maybeRecoveredUserEntry);
 
-    if (maybeRecoveredUser) {
+    if (maybeRecoveredUserEntry) {
+      const maybeRecoveredUser = JSON.parse(maybeRecoveredUserEntry) as Participant;
       console.log('...recovered user', maybeRecoveredUser);
-      this.participant = new Participant(maybeRecoveredUser, 0);
+      this.participant = new Participant(maybeRecoveredUser.name, 0, maybeRecoveredUser.hasVoted, maybeRecoveredUser.isAdmin);
     }
 
   };
@@ -128,7 +124,17 @@ export class ActiveSessionComponent implements OnInit {
     }
   };
 
-  getParticipants = () => this.session.participants;
+  getParticipants = () => {
+    const participants = this.session.participants;
+    const admins = Object.entries(participants).filter((body) => body[1].isAdmin).map(body => body[0]);
+
+    admins.forEach(name => {
+      console.log(name);
+      delete participants[name];
+    });
+
+    return participants;
+  };
 
   getParticipant = () => this.participant;
 
@@ -145,8 +151,8 @@ export class ActiveSessionComponent implements OnInit {
     this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.id)));
   };
 
-  joinSession = (name: string) => {
-    const maybeNewParticipant = new Participant(name, 0);
+  joinSession = (name: string, admin: boolean = false) => {
+    const maybeNewParticipant = new Participant(name, 0, false, admin);
     // validate server side
     if (this.session.participants[maybeNewParticipant.name]) {
       console.log('user exists!');
@@ -154,10 +160,9 @@ export class ActiveSessionComponent implements OnInit {
     }
 
     this.participant = maybeNewParticipant;
+    this.storage.set(this.id, JSON.stringify(this.participant));
 
-    this.storage.set(this.id, this.participant.name);
-
-    this.socketService.send(new ParticipantJoinedSessionMessage(new ParticipantJoinedSessionPayload(this.id, maybeNewParticipant.name)));
+    this.socketService.send(new ParticipantJoinedSessionMessage(new ParticipantJoinedSessionPayload(this.id, maybeNewParticipant.name, admin)));
     // if name exists, can't do it -> error
   };
 
@@ -170,12 +175,15 @@ export class ActiveSessionComponent implements OnInit {
 
   lurker = (): boolean => !this.participant;
 
+  youAreTheAdmin = (): boolean => this.participant.isAdmin;
+
+  canSeeControlPanel = (): boolean => !this.lurker() && this.youAreTheAdmin();
+
   isMyCard = (cardId: string) =>
     this.participant ? this.participant.name === cardId : false;
 
   private pointSubmittedForParticipant = (messageData: PointSubmittedForParticipantMessage) => {
     const sessionState = messageData.payload;
-    console.log('sub', sessionState);
     this.session = sessionState;
   };
 
@@ -186,6 +194,7 @@ export class ActiveSessionComponent implements OnInit {
 
   private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
     this.refreshParticipants(messageData);
+    console.log(this.session.participants);
   };
 
   private participantRemoved = (messageData: ParticipantRemovedSessionMessage) => {

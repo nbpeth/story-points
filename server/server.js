@@ -43,10 +43,10 @@ handleIncomingMessages = (message) => {
       getSessionState(messageData);
       break;
     case 'participant-joined':
-      addParticipantToSession(messageData)
+      addParticipantToSession(messageData);
       break;
     case 'participant-removed':
-      removeParticipantFromSession(messageData)
+      removeParticipantFromSession(messageData);
       break;
     case 'point-submitted':
       pointWasSubmitted(messageData);
@@ -112,8 +112,9 @@ addParticipantToSession = (messageData) => {
   const requestedSession = payload.sessionName;
   const sessionData = state.sessions[requestedSession];
   const participantToAdd = payload.userName;
+  const isAdmin = payload.isAdmin;
 
-  sessionData.participants[participantToAdd] = {point: 0};
+  sessionData.participants[participantToAdd] = {point: 0, isAdmin: isAdmin};
 
   notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
 };
@@ -124,12 +125,10 @@ removeParticipantFromSession = (messageData) => {
   const sessionData = state.sessions[requestedSession];
   const participantToRemove = payload.userName;
 
-
   sessionData.participants[participantToRemove] = undefined;
 
-
   notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
-}
+};
 
 createNewSession = (messageData) => {
   const payload = messageData.payload;

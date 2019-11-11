@@ -19,9 +19,8 @@
 <div class="errors">
 </div>
 
-<!-- should be component -->
 <mat-toolbar color="secondary" class="action-bar">
-  <mat-toolbar-row *ngIf="!lurker()">
+  <mat-toolbar-row *ngIf="!lurker() && !youAreTheAdmin()">
 
     <mat-form-field>
       <mat-select (selectionChange)="voteHasChanged($event)">
@@ -34,7 +33,7 @@
     <button name="smutButton" mat-stroked-button color="basic" (click)="submit()">Cast Vote</button>
 
   </mat-toolbar-row>
-  <mat-toolbar-row *ngIf="!lurker()">
+  <mat-toolbar-row *ngIf="canSeeControlPanel()" style="padding: 5px;">
     <span>
       <button (click)="resetPoints()" mat-fab color="warn">Reset</button>
       <button (click)="revealPoints()" mat-fab color="accent">Reveal</button>
@@ -43,10 +42,11 @@
   <mat-toolbar-row>
     <span>
       <ng-container *ngIf="lurker(); else leaveSessionTemplate">
-        <mat-form-field>
+        <mat-form-field style="padding-right: 15px;">
           <input matInput #name placeholder="Your Name">
         </mat-form-field>
-        <button (click)="joinSession(name.value)" mat-stroked-button color="basic">Join Session</button>
+        <button (click)="joinSession(name.value)" mat-flat-button color="basic">Join Session</button>
+        <button (click)="joinSession(name.value, true)" mat-flat-button color="accent">Join Session As Admin</button>
       </ng-container>
       <ng-template #leaveSessionTemplate>
         <button (click)="leaveSession()" mat-stroked-button color="warn">Leave Session</button>

@@ -45,7 +45,7 @@ export class RevealPointsForSessionPayload extends SpMessagePayload {
 }
 
 export class ParticipantJoinedSessionPayload extends SpMessagePayload {
-  constructor(public sessionName: string, public userName: string) {
+  constructor(public sessionName: string, public userName: string, public isAdmin: boolean) {
     super();
   }
 }

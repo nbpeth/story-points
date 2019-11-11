@@ -6,7 +6,7 @@ import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
   providedIn: 'root'
 })
 export class SocketService {
-  private socket: WebSocketSubject<any>;
+  private readonly socket: WebSocketSubject<any>;
 
   // TODO: environment properties
   // TODO: connection healing on send
@@ -14,10 +14,11 @@ export class SocketService {
 
   constructor() {
     const config = {
-      url: 'ws://localhost:8999',
+      url: 'ws://10.0.2.14:8999',
       // url: 'ws://localhost:8999',
       deserializer: (data) => data,
     } as WebSocketSubjectConfig<any>;
+
 
     this.socket = webSocket(config);
   }
