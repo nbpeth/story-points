@@ -1,8 +1,9 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {SocketService} from '../services/socket.service';
-import {filter, map} from 'rxjs/Operators';
-import {Events} from './enum/events';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SocketService } from '../services/socket.service';
+import { filter, map } from 'rxjs/operators';
+import { Subject } from 'rxjs'
+import { Events } from './enum/events';
 import {
   GetStateForSessionMessage,
   GetStateForSessionPayload,
@@ -18,9 +19,9 @@ import {
   RevealPointsForSessionPayload,
   SpMessage
 } from './model/events.model';
-import {Participant, StoryPointSession} from './model/session.model';
-import {MatSelectChange} from '@angular/material';
-import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
+import { Participant, StoryPointSession } from './model/session.model';
+import { MatSelectChange } from '@angular/material';
+import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
 
 @Component({
   selector: 'app-active-session',
@@ -34,16 +35,13 @@ export class ActiveSessionComponent implements OnInit {
 
   pointsAreHidden = true;
   id: string;
-  session: StoryPointSession = {participants: {}};
+  session: StoryPointSession = { participants: {} };
 
   constructor(private route: ActivatedRoute,
-              private router: Router,
-              private socketService: SocketService,
-              @Inject(LOCAL_STORAGE) private storage: StorageService) {
+    private router: Router,
+    private socketService: SocketService,
+    @Inject(LOCAL_STORAGE) private storage: StorageService) {
   }
-
-  // store state locally
-  //       attempt to restore from local, if can't, then request
 
   voteHasChanged = (vote: MatSelectChange) => {
     this.selectedVote = vote.value;
@@ -99,7 +97,7 @@ export class ActiveSessionComponent implements OnInit {
     switch (eventType) {
       case Events.SESSION_STATE:
         if (!payload) {
-          this.router.navigate(['/'], {queryParams: {error: 1}});
+          this.router.navigate(['/'], { queryParams: { error: 1 } });
         }
         this.restoreSessionFromState(messageData as GetStateForSessionMessage);
         break;

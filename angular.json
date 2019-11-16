@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "scrummy-ui": {
+    "story-points": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/scrummy-ui",
+            "outputPath": "dist/story-points",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -68,18 +68,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "scrummy-ui:build"
+            "browserTarget": "story-points:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "scrummy-ui:build:production"
+              "browserTarget": "story-points:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "scrummy-ui:build"
+            "browserTarget": "story-points:build"
           }
         },
         "test": {
@@ -117,16 +117,16 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "scrummy-ui:serve"
+            "devServerTarget": "story-points:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "scrummy-ui:serve:production"
+              "devServerTarget": "story-points:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "scrummy-ui"
+  "defaultProject": "story-points"
 }

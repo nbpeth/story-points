@@ -5,12 +5,12 @@ const app = express();
 const http = require('http');
 const WebSocket = require('ws');
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors);
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({server});
+const wss = new WebSocket.Server({ server });
 let _ws;
 const state = {
   sessions: {},
@@ -29,8 +29,6 @@ handleNewClients = (ws) => {
 handleIncomingMessages = (message) => {
   const messageData = JSON.parse(message);
   const eventType = messageData.eventType;
-
-  console.log('type:::', eventType, 'load...', messageData);
 
   switch (eventType) {
     case 'state-of-the-state':
@@ -114,7 +112,7 @@ addParticipantToSession = (messageData) => {
   const participantToAdd = payload.userName;
   const isAdmin = payload.isAdmin;
 
-  sessionData.participants[participantToAdd] = {point: 0, isAdmin: isAdmin};
+  sessionData.participants[participantToAdd] = { point: 0, isAdmin: isAdmin };
 
   notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
 };
@@ -136,7 +134,7 @@ createNewSession = (messageData) => {
   if (!sessionName) {
     return;
   }
-  state.sessions[sessionName] = {participants: {}};
+  state.sessions[sessionName] = { participants: {} };
   const stateMessage = formatMessage('session-created', state);
 
   notifyClients(stateMessage)
