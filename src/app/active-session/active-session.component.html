@@ -2,9 +2,9 @@
   <h1>{{id}}</h1>
 </div>
 
-<!-- css to classes -->
 <div style="display: flex; flex-wrap: wrap; justify-content: center;">
-  <mat-card *ngFor="let participant of getParticipants() | keyvalue"  [ngClass]="{'my-card': isMyCard(participant.key), 'voted': participant.value.hasVoted}">
+  <mat-card *ngFor="let participant of getParticipants() | keyvalue"
+    [ngClass]="{'my-card': isMyCard(participant.key), 'voted': participant.value.hasVoted}">
     <mat-card-title>
 
       <span>{{pointsAreHidden && !isMyCard(participant.key) ? "?" : participant.value.point}}</span>

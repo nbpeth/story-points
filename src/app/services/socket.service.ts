@@ -25,7 +25,6 @@ export class SocketService {
   getSocket = (): WebSocketSubject<any> => this.socket;
 
   send = (message: any): void => {
-    // console.log('sending!', message)
     this.socket.next(message);
   };
 }

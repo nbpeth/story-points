@@ -1,7 +1,12 @@
-<label><input type="text" #name placeholder="Session Name"></label>
-<button (click)="createNewSession(name.value)">Create New Session</button>
+<mat-form-field style="padding-right: 15px;">
+    <input matInput #name placeholder="Session Name">
+</mat-form-field>
+<button (click)="createNewSession(name.value)" mat-flat-button color="primary">Create New</button>
+
+
+
 <hr>
-<h1>Active Session</h1>
+<h1>Active Sessions</h1>
 <hr>
 
 <div *ngIf="error" style="background-color: #FFAAAA">
