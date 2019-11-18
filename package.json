@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node server.js",
+    "start-server": "node server.js",
     "build": "ng build --verbose=true",
     "test": "ng test",
     "lint": "ng lint",
@@ -31,7 +31,11 @@
     "rxjs-compat": "^6.5.3",
     "sockjs-client": "^1.4.0",
     "tslib": "^1.10.0",
-    "zone.js": "~0.9.1"
+    "zone.js": "~0.9.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "http": "0.0.0",
+    "ws": "^7.1.2"
   },
   "engines": {
     "node": "^6.11.0",
@@ -39,7 +43,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.802.2",
-    "@angular/cli": "^8.2.2",
+    "@angular/cli": "^8.3.19",
     "@angular/compiler-cli": "^8.2.13",
     "@angular/language-service": "^8.2.13",
     "@types/jasmine": "~3.3.8",
