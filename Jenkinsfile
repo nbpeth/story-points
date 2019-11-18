@@ -4,7 +4,7 @@ deployNode {
     checkoutCode {}
 
     def tag = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-    def environment = BRANCH_NAME == 'master' ? 'prod' : 'test'
+    def environment = 'test'
     def cluster = "workload1-${environment}"
 
     deployWithHelm {
