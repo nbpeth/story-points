@@ -13,7 +13,7 @@ app.get('/*',  (req, res) => {
   res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
 });
 
-const staticContentPort = process.env.PORT || 8085;
+const staticContentPort = process.env.PORT || 8080;
 console.log(`Starting server on port 8085 ${staticContentPort}`);
 app.listen(staticContentPort);
 

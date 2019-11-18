@@ -1,0 +1,76 @@
+namespace: partnerdevelopment
+labels:
+  name: story-points
+  app: story-points
+
+image:
+  tag: JenkinsOverride
+
+deployment:
+  metadata:
+    name: story-points
+  spec:
+    replicas: 1
+    template:
+      spec:
+        containers:
+        - name: story-points
+          image: 596297932419.dkr.ecr.us-east-1.amazonaws.com/story-points
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health.html?source=k8s
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 3
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health.html?source=k8s
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 3
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 50m
+              memory: 50Mi
+            limits:
+              cpu: 500m
+              memory: 500Mi
+
+services:
+- name: story-points
+  spec:
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+
+ingresses:
+- name: story-points
+  metadata:
+    annotations:
+      alb.ingress.kubernetes.io/alb-name: test-stock-web-rp-ext
+      alb.ingress.kubernetes.io/healthcheck-path: /health.html?source=k8s
+      kubernetes.io/ingress.class: rpalb
+  spec:
+    rules:
+    - host: story-points.app.tst.returnpath.net
+      http:
+        paths:
+        - backend:
+            serviceName: story-points
+            servicePort: 80
+          path: /
+
+dnsendpoints:
+- name: story-points.app.tst.returnpath.net
+  spec:
+    endpoints:
+    - dnsName: story-points.app.tst.returnpath.net
+      recordType: CNAME
+      targets:
+      - test-stock-web-rp-ext-1216837820.us-east-1.elb.amazonaws.com
