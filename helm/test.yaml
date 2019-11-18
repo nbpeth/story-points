@@ -17,19 +17,19 @@ deployment:
         - name: story-points
           image: 596297932419.dkr.ecr.us-east-1.amazonaws.com/story-points
           ports:
-          - containerPort: 80
+          - containerPort: 8080
             protocol: TCP
           livenessProbe:
             httpGet:
               path: /health.html?source=k8s
-              port: 80
+              port: 8081
               scheme: HTTP
             initialDelaySeconds: 3
             periodSeconds: 30
           readinessProbe:
             httpGet:
               path: /health.html?source=k8s
-              port: 80
+              port: 8081
               scheme: HTTP
             initialDelaySeconds: 3
             periodSeconds: 30

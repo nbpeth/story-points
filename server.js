@@ -13,11 +13,6 @@ app.get('/*',  (req, res) => {
   res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
 });
 
-const staticContentPort = process.env.PORT || 8080;
-console.log(`Starting server on port ${staticContentPort}`);
-app.listen(staticContentPort);
-
-
 /*
   web socket server
  */
@@ -182,6 +177,6 @@ notifyCaller = (message) => {
 
 wss.on('connection', handleNewClients);
 
-server.listen(process.env.PORT || 8999, () => {
-  console.log(`Websocket Server running on port ${server.address().port}`);
+server.listen(process.env.PORT || 8081, () => {
+  console.log(`Server running on port ${server.address().port}`);
 });
