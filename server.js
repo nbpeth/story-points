@@ -14,7 +14,7 @@ app.get('/*',  (req, res) => {
 });
 
 const staticContentPort = process.env.PORT || 8080;
-console.log(`Starting server on port 8085 ${staticContentPort}`);
+console.log(`Starting server on port ${staticContentPort}`);
 app.listen(staticContentPort);
 
 
