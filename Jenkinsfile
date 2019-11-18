@@ -7,6 +7,11 @@ deployNode {
     def environment = 'test'
     def cluster = "workload1-${environment}"
 
+    dockerBuild {
+        imageName = 'rp-story-points'
+        imageTag = tag
+    }
+
     deployWithHelm {
         deployCluster = cluster
         deployName = 'story-points'
