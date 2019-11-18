@@ -17,7 +17,7 @@ deployment:
         - name: story-points
           image: 596297932419.dkr.ecr.us-east-1.amazonaws.com/story-points
           ports:
-          - containerPort: 8080
+          - containerPort: 80
             protocol: TCP
           livenessProbe:
             httpGet:
