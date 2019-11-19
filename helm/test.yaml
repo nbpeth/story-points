@@ -42,7 +42,7 @@ deployment:
               memory: 500Mi
 
 services:
-- name: story-points
+- name: rp-story-points
   spec:
     ports:
     - name: http
@@ -51,7 +51,7 @@ services:
       targetPort: 8081
 
 ingresses:
-- name: story-points
+- name: rp-story-points
   metadata:
     annotations:
       alb.ingress.kubernetes.io/alb-name: test-stock-web-rp-ext
