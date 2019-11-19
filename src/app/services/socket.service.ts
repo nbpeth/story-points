@@ -13,9 +13,10 @@ export class SocketService {
   // TODO: disconnecting
 
   constructor() {
+    const host = document.location.host
     const config = {
       // environment level required, wss for aws - setup configuration
-      url: 'wss://0.0.0.0:8081/socket',
+      url: `wss://${host}/socket`,
       deserializer: (data) => data,
     } as WebSocketSubjectConfig<any>;
 
