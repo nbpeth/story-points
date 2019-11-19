@@ -12,7 +12,7 @@ export class SocketService {
 
   constructor() {
     const host = document.location.host;
-    const wsProtocol = document.location.protocol === 'https' ? 'wss' : 'ws';
+    const wsProtocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
 
     const config = {
       url: `${wsProtocol}://${host}/socket`,
