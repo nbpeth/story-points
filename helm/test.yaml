@@ -1,7 +1,7 @@
 namespace: partnerdevelopment
 labels:
-  name: rp-story-points
-  app: rp-story-points
+  name: story-points
+  app: story-points
 
 image:
   tag: JenkinsOverride
@@ -14,7 +14,7 @@ deployment:
     template:
       spec:
         containers:
-        - name: rp-story-points
+        - name: story-points
           image: 596297932419.dkr.ecr.us-east-1.amazonaws.com/rp-story-points
           ports:
           - containerPort: 80
@@ -42,7 +42,7 @@ deployment:
               memory: 500Mi
 
 services:
-- name: rp-story-points
+- name: story-points
   spec:
     ports:
     - name: http
@@ -51,7 +51,7 @@ services:
       targetPort: 8081
 
 ingresses:
-- name: rp-story-points
+- name: story-points
   metadata:
     annotations:
       alb.ingress.kubernetes.io/alb-name: test-stock-web-rp-ext
@@ -63,7 +63,7 @@ ingresses:
       http:
         paths:
         - backend:
-            serviceName: rp-story-points
+            serviceName: story-points
             servicePort: 80
           path: /
 
