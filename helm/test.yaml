@@ -48,6 +48,7 @@ services:
     - name: http
       port: 80
       protocol: TCP
+      targetPort: 8081
 
 ingresses:
 - name: rp-story-points
