@@ -14,7 +14,7 @@ deployNode {
 
     deployWithHelm {
         deployCluster = cluster
-        deployName = 'story-points'
+        deployName = 'rp-story-points'
         overrideYaml = "${environment}.yaml"
         overrides = [
             'image.tag': tag
