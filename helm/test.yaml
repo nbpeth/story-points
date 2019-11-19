@@ -8,7 +8,7 @@ image:
 
 deployment:
   metadata:
-    name: rp-story-points
+    name: story-points
   spec:
     replicas: 1
     template:
