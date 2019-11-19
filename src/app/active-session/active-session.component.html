@@ -6,6 +6,7 @@
   <user-tiles>
     <user-tile *ngFor="let participant of getParticipants() | keyvalue"
                [participant]="participant"
+               [sessionId]="id"
                [pointsAreHidden]="pointsAreHidden"
                [myCard]="isMyCard(participant.key)"
     ></user-tile>
@@ -39,7 +40,7 @@
   <mat-toolbar-row>
     <span>
       <ng-container *ngIf="lurker(); else leaveSessionTemplate">
-        <mat-form-field style="padding-right: 15px;">
+        <mat-form-field>
           <input matInput #name placeholder="Your Name">
         </mat-form-field>
         <button (click)="joinSession(name.value)" mat-flat-button color="basic">Join Session</button>
