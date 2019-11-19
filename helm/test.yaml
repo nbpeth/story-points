@@ -63,7 +63,7 @@ ingresses:
       http:
         paths:
         - backend:
-            serviceName: story-points
+            serviceName: rp-story-points
             servicePort: 80
           path: /
 
