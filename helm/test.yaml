@@ -14,7 +14,7 @@ deployment:
     template:
       spec:
         containers:
-        - name: story-points
+        - name: rp-story-points
           image: 596297932419.dkr.ecr.us-east-1.amazonaws.com/rp-story-points
           ports:
           - containerPort: 80
