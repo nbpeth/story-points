@@ -1,14 +1,14 @@
 namespace: partnerdevelopment
 labels:
-  name: story-points
-  app: story-points
+  name: rp-story-points
+  app: rp-story-points
 
 image:
   tag: JenkinsOverride
 
 deployment:
   metadata:
-    name: story-points
+    name: rp-story-points
   spec:
     replicas: 1
     template:
