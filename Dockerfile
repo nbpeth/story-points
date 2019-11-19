@@ -7,6 +7,6 @@ COPY . /usr/src/app/
 RUN npm install
 RUN npm run build
 
-EXPOSE 8081
+EXPOSE 8080
 
 CMD [ "npm", "run", "start-server" ]
