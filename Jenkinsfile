@@ -8,13 +8,13 @@ deployNode {
     def cluster = "workload1-${environment}"
 
     dockerBuild {
-        imageName = 'rp-story-points'
+        imageName = 'story-points'
         imageTag = tag
     }
 
     deployWithHelm {
         deployCluster = cluster
-        deployName = 'rp-story-points'
+        deployName = 'story-points'
         overrideYaml = "${environment}.yaml"
         overrides = [
             'image.tag': tag
