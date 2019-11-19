@@ -38,7 +38,7 @@ export class DashboardComponent implements OnInit {
     //   return;
     // }
 
-    const defaultName = `Session${Math.floor(Math.random() * 100000)}`;
+    const defaultName = `Session ${Math.floor(Math.random() * 100000)}`;
     const newSessionName = name ? name : defaultName;
 
     const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));

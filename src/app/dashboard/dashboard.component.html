@@ -1,19 +1,22 @@
-<mat-form-field style="padding-right: 15px;">
+<div class="body-container">
+
+  <mat-form-field style="padding-right: 15px;">
     <input matInput #name placeholder="Session Name">
-</mat-form-field>
-<button (click)="createNewSession(name.value)" mat-flat-button color="primary">Create New</button>
+  </mat-form-field>
+  <button (click)="createNewSession(name.value)" mat-flat-button color="primary">Create New</button>
 
 
+  <hr>
+    <h1>Active Sessions</h1>
+  <hr>
 
-<hr>
-<h1>Active Sessions</h1>
-<hr>
-
-<div *ngIf="error" style="background-color: #FFAAAA">
+  <div *ngIf="error" style="background-color: #FFAAAA">
     {{error}}
-</div>
+  </div>
 
-<active-session-tiles>
+  <active-session-tiles>
     <active-session-tile *ngFor="let tile of activeSessions | keyvalue" [id]="tile.key">
     </active-session-tile>
-</active-session-tiles>
+  </active-session-tiles>
+
+</div>

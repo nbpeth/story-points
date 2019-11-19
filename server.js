@@ -9,7 +9,7 @@ const WebSocketServer = require("ws").Server;
  */
 app.use(express.static(__dirname + '/dist/story-points'));
 
-app.get('/*',  (req, res) => {
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
 });
 
@@ -68,9 +68,25 @@ handleIncomingMessages = (message) => {
     case 'points-revealed':
       revealPoints(messageData);
       break;
+    case 'terminate-session':
+      terminateSession(messageData);
+      break;
 
   }
 };
+
+// protect terminated sessions from being able to take actions
+
+terminateSession = (messageData) => {
+  const payload = messageData.payload;
+  const requestedSession = payload.sessionName;
+
+  delete state.sessions[requestedSession];
+
+  const message = formatMessage('state-of-the-state', state);
+  notifyClients(message);
+};
+
 revealPoints = (messageData) => {
   const eventType = messageData.eventType;
   const payload = messageData.payload;
