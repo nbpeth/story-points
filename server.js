@@ -178,5 +178,5 @@ notifyCaller = (message) => {
 wss.on('connection', handleNewClients);
 
 server.listen(process.env.PORT || 8081, () => {
-  console.log(`Server running on port ${server.address().port}`);
+  console.log(`Server (${server.address().address}) running on port ${server.address().port}`);
 });

@@ -22,14 +22,14 @@ deployment:
           livenessProbe:
             httpGet:
               path: /health.html?source=k8s
-              port: 80
+              port: 8081
               scheme: HTTP
             initialDelaySeconds: 3
             periodSeconds: 30
           readinessProbe:
             httpGet:
               path: /health.html?source=k8s
-              port: 80
+              port: 8081
               scheme: HTTP
             initialDelaySeconds: 3
             periodSeconds: 30
