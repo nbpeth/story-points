@@ -2,18 +2,15 @@
   <h1>{{id}}</h1>
 </div>
 
-<div style="display: flex; flex-wrap: wrap; justify-content: center;">
-  <mat-card *ngFor="let participant of getParticipants() | keyvalue"
-    [ngClass]="{'my-card': isMyCard(participant.key), 'voted': participant.value.hasVoted}">
-    <mat-card-title>
+<div class="user-tiles">
+  <user-tiles>
+    <user-tile *ngFor="let participant of getParticipants() | keyvalue"
+               [participant]="participant"
+               [pointsAreHidden]="pointsAreHidden"
+               [myCard]="isMyCard(participant.key)"
+    ></user-tile>
+  </user-tiles>
 
-      <span>{{pointsAreHidden && !isMyCard(participant.key) ? "?" : participant.value.point}}</span>
-
-    </mat-card-title>
-    <mat-card-content>
-      {{participant.key}}
-    </mat-card-content>
-  </mat-card>
 </div>
 
 <div class="errors">

@@ -17,6 +17,8 @@ import {
   MatInputModule,
   MatBadgeModule
 } from '@angular/material';
+import { UserTileComponent } from './active-session/user-tile/user-tile.component';
+import { UserTilesComponent } from './active-session/user-tiles/user-tiles.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +27,8 @@ import {
     ActiveSessionTileComponent,
     ActiveSessionTilesComponent,
     ActiveSessionComponent,
+    UserTileComponent,
+    UserTilesComponent,
   ],
   imports: [
     BrowserModule,

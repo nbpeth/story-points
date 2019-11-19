@@ -1,0 +1,11 @@
+<mat-card
+  [ngClass]="{'my-card': myCard, 'voted': participant.value.hasVoted}">
+  <mat-card-title>
+
+    <span>{{pointsAreHidden && !myCard ? "?" : participant.value.point}}</span>
+
+  </mat-card-title>
+  <mat-card-content>
+    {{participant.key}}
+  </mat-card-content>
+</mat-card>
