@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { WebSocketSubjectConfig } from 'rxjs/src/internal/observable/dom/WebSocketSubject';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import {Injectable} from '@angular/core';
+import {WebSocketSubjectConfig} from 'rxjs/src/internal/observable/dom/WebSocketSubject';
+import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 
 @Injectable({
   providedIn: 'root'
@@ -8,15 +8,14 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 export class SocketService {
   private readonly socket: WebSocketSubject<any>;
 
-  // TODO: environment properties
   // TODO: connection healing on send
-  // TODO: disconnecting
 
   constructor() {
-    const host = document.location.host
+    const host = document.location.host;
+    const wsProtocol = document.location.protocol === 'https' ? 'wss' : 'ws';
+
     const config = {
-      // environment level required, wss for aws - setup configuration
-      url: `wss://${host}/socket`,
+      url: `${wsProtocol}://${host}/socket`,
       deserializer: (data) => data,
     } as WebSocketSubjectConfig<any>;
 
