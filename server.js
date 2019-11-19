@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors');
 const app = express();
-
+const WebSocketServer = require("ws").Server;
 /*
   serve static UI content
  */
@@ -17,14 +17,14 @@ app.get('/*',  (req, res) => {
   web socket server
  */
 const http = require('http');
-const WebSocket = require('ws');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(cors);
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({server});
+const wss = new WebSocketServer({server: server, path: "/socket"});
+
 let _ws;
 const state = {
   sessions: {},

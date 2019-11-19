@@ -14,8 +14,8 @@ export class SocketService {
 
   constructor() {
     const config = {
-      // environment level required, wss for aws
-      url: 'wss://0.0.0.0:8081',
+      // environment level required, wss for aws - setup configuration
+      url: 'wss://0.0.0.0:8081/socket',
       deserializer: (data) => data,
     } as WebSocketSubjectConfig<any>;
 
