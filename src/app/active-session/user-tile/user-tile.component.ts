@@ -19,8 +19,8 @@ export class UserTileComponent implements OnInit {
   ngOnInit() {
   }
 
-  // removeUser = (participant) => {
-  //   const message = new ParticipantRemovedSessionMessage(new ParticipantRemovedSessionPayload(this.sessionId, participant));
-  //   this.socketService.send(message);
-  // }
+  removeUser = (participant) => {
+    const message = new ParticipantRemovedSessionMessage(new ParticipantRemovedSessionPayload(this.sessionId, participant));
+    this.socketService.send(message);
+  }
 }

@@ -16,6 +16,8 @@ app.get('/*', (req, res) => {
 /*
   web socket server
  */
+
+
 const http = require('http');
 
 app.use(bodyParser.urlencoded({extended: false}));
@@ -42,6 +44,9 @@ handleNewClients = (ws) => {
 handleIncomingMessages = (message) => {
   const messageData = JSON.parse(message);
   const eventType = messageData.eventType;
+
+  console.log(messageData);
+  console.log('');
 
   switch (eventType) {
     case 'state-of-the-state':
