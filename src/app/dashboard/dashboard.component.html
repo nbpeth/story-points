@@ -15,7 +15,7 @@
   </div>
 
   <active-session-tiles>
-    <active-session-tile *ngFor="let tile of activeSessions | keyvalue" [id]="tile.key">
+    <active-session-tile cdkDrag *ngFor="let tile of activeSessions | keyvalue" [id]="tile.key">
     </active-session-tile>
   </active-session-tiles>
 

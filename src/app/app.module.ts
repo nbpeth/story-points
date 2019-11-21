@@ -9,16 +9,17 @@ import {ActiveSessionTilesComponent} from './active-session/active-session-tiles
 import {ActiveSessionComponent} from './active-session/active-session.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
+  MatBadgeModule,
   MatButtonModule,
   MatCardModule,
   MatIconModule,
-  MatToolbarModule,
-  MatSelectModule,
   MatInputModule,
-  MatBadgeModule
+  MatSelectModule,
+  MatToolbarModule
 } from '@angular/material';
-import { UserTileComponent } from './active-session/user-tile/user-tile.component';
-import { UserTilesComponent } from './active-session/user-tiles/user-tiles.component';
+import {UserTileComponent} from './active-session/user-tile/user-tile.component';
+import {UserTilesComponent} from './active-session/user-tiles/user-tiles.component';
+import {DragDropModule} from "@angular/cdk/drag-drop";
 
 @NgModule({
   declarations: [
@@ -31,9 +32,10 @@ import { UserTilesComponent } from './active-session/user-tiles/user-tiles.compo
     UserTilesComponent,
   ],
   imports: [
-    BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    BrowserModule,
+    DragDropModule,
     MatToolbarModule,
     MatCardModule,
     MatIconModule,

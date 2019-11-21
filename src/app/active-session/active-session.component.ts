@@ -2,7 +2,6 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SocketService} from '../services/socket.service';
 import {filter, map} from 'rxjs/operators';
-import {Subject} from 'rxjs'
 import {Events} from './enum/events';
 import {
   GetStateForSessionMessage,

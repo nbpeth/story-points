@@ -8,6 +8,7 @@ import {
   SpMessage,
   GetCompleteStatePayload
 } from '../active-session/model/events.model';
+import {NameBuilder} from "../name-builder";
 
 @Component({
   selector: 'app-dashboard',
@@ -38,8 +39,8 @@ export class DashboardComponent implements OnInit {
     //   return;
     // }
 
-    const defaultName = `Session ${Math.floor(Math.random() * 100000)}`;
-    const newSessionName = name ? name : defaultName;
+
+    const newSessionName = name ? name : NameBuilder.generate();
 
     const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));
 
