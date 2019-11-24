@@ -11,5 +11,4 @@ export class TitlebarComponent implements OnInit {
 
   ngOnInit() {
   }
-
 }

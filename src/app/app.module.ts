@@ -21,6 +21,7 @@ import {UserTileComponent} from './active-session/user-tile/user-tile.component'
 import {UserTilesComponent} from './active-session/user-tiles/user-tiles.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import { TitlebarComponent } from './titlebar/titlebar.component';
+import { ThemeToggleComponent } from './theme-toggle/theme-toggle.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { TitlebarComponent } from './titlebar/titlebar.component';
     UserTileComponent,
     UserTilesComponent,
     TitlebarComponent,
+    ThemeToggleComponent,
   ],
   imports: [
     AppRoutingModule,

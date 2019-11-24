@@ -1,20 +1,17 @@
 <mat-toolbar color="primary" class="mat-elevation-z8">
   <mat-toolbar-row>
     <div class="items">
-<span>
-<a [routerLink]="['']">
-  <mat-icon>home</mat-icon>
-</a>
-</span>
-<!--<span>-->
-  <!--<mat-icon>add</mat-icon>-->
-<!--</span>-->
-<span>
-  <mat-slide-toggle>
-  <!--<mat-icon>cloud</mat-icon>-->
-    <mat-icon>brightness_2</mat-icon>
-  </mat-slide-toggle>
-</span>
+      <span>
+        <a [routerLink]="['']">
+          <mat-icon>home</mat-icon>
+        </a>
+      </span>
+      <!--<span>-->
+      <!--<mat-icon>add</mat-icon>-->
+      <!--</span>-->
+      <span>
+        <app-theme-toggle></app-theme-toggle>
+      </span>
     </div>
   </mat-toolbar-row>
 </mat-toolbar>
