@@ -11,6 +11,7 @@ export class Participant {
   }
 }
 
+// move me somewhere meaningful
 export class StoryPointSession {
   participants: {
     [name: string]: Participant

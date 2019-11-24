@@ -14,12 +14,13 @@ import {
   MatCardModule,
   MatIconModule,
   MatInputModule,
-  MatSelectModule,
+  MatSelectModule, MatSlideToggle, MatSlideToggleModule,
   MatToolbarModule
 } from '@angular/material';
 import {UserTileComponent} from './active-session/user-tile/user-tile.component';
 import {UserTilesComponent} from './active-session/user-tiles/user-tiles.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
+import { TitlebarComponent } from './titlebar/titlebar.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
     ActiveSessionComponent,
     UserTileComponent,
     UserTilesComponent,
+    TitlebarComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -43,6 +45,7 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
     MatSelectModule,
     MatInputModule,
     MatBadgeModule,
+    MatSlideToggleModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
