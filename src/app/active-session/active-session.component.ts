@@ -21,6 +21,7 @@ import {
 import {Participant, StoryPointSession} from './model/session.model';
 import {MatSelectChange} from '@angular/material';
 import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
+import {ThemeService} from "../services/theme.service";
 
 @Component({
   selector: 'app-active-session',
@@ -30,8 +31,8 @@ import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
 export class ActiveSessionComponent implements OnInit {
   private participant: Participant;
   private selectedVote: number | string;
+  isDarkTheme: boolean;
   availableOptions = [0, 1, 2, 3, 5, 8, 13, 21, 34, 'Abstain'];
-
   pointsAreHidden = true;
   id: string;
   session: StoryPointSession = {participants: {}};
@@ -39,6 +40,7 @@ export class ActiveSessionComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private router: Router,
               private socketService: SocketService,
+              private themeService: ThemeService,
               @Inject(LOCAL_STORAGE) private storage: StorageService) {
   }
 
@@ -56,6 +58,9 @@ export class ActiveSessionComponent implements OnInit {
         map(this.handleEvents),
       )
       .subscribe();
+
+    this.themeService.isDarkTheme.subscribe(isIt => this.isDarkTheme = isIt);
+
   }
 
   private setId = paramMap => {

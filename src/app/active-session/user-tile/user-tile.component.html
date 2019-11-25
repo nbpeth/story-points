@@ -1,4 +1,5 @@
-<mat-card [ngClass]="{'my-card': myCard, 'voted': participant.value.hasVoted}">
+<mat-card
+  [ngClass]="{'my-card': myCard && !isDarkTheme, 'my-card-dark': myCard && isDarkTheme, 'voted': participant.value.hasVoted && !isDarkTheme, 'voted-dark': participant.value.hasVoted && isDarkTheme}">
   <mat-card-title>
 
     <span>{{pointsAreHidden && !myCard ? "?" : participant.value.point}}</span>
