@@ -1,6 +1,6 @@
-import {Component, Input} from '@angular/core';
-import {SocketService} from "../../../services/socket.service";
-import {TerminateSessionMessage, TerminateSessionPayload} from "../../model/events.model";
+import { Component, Input, SimpleChanges } from '@angular/core';
+import { SocketService } from "../../../services/socket.service";
+import { TerminateSessionMessage, TerminateSessionPayload } from "../../model/events.model";
 
 @Component({
   selector: 'active-session-tile',
@@ -8,9 +8,16 @@ import {TerminateSessionMessage, TerminateSessionPayload} from "../../model/even
   styleUrls: ['./active-session-tile.component.scss']
 })
 export class ActiveSessionTileComponent {
-  @Input() id: string;
+  @Input() session: { [id: string]: any };
+  id: string;
 
   constructor(private socketService: SocketService) {
+  }
+
+  ngOnChanges(change: SimpleChanges) {
+    if (change['session']) {
+      this.id = Object.keys(change.session.currentValue)[0]
+    }
   }
 
   urlEncode = (id: string) => encodeURIComponent(id);

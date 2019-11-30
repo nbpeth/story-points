@@ -1,3 +1,5 @@
+<app-dashboard-header (searchBoxValue)="searchBoxValueChanged($event)"></app-dashboard-header>
+
 <div class="body-container">
 
   <mat-form-field style="padding-right: 15px;">
@@ -7,7 +9,7 @@
 
 
   <hr>
-    <h1>Active Sessions</h1>
+  <h1>Active Sessions</h1>
   <hr>
 
   <div *ngIf="error" style="background-color: #FFAAAA">
@@ -15,7 +17,7 @@
   </div>
 
   <active-session-tiles>
-    <active-session-tile cdkDrag *ngFor="let tile of activeSessions | keyvalue" [id]="tile.key">
+    <active-session-tile cdkDrag *ngFor="let tile of visibleSessions" [session]="tile">
     </active-session-tile>
   </active-session-tiles>
 

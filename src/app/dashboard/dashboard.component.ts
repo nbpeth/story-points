@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {SocketService} from '../services/socket.service';
-import {Events} from '../active-session/enum/events';
+import { Component, OnInit } from '@angular/core';
+import { SocketService } from '../services/socket.service';
+import { Events } from '../active-session/enum/events';
 import {
   GetCompleteStateMessage,
   NewSessionPayload,
@@ -8,7 +8,7 @@ import {
   SpMessage,
   GetCompleteStatePayload
 } from '../active-session/model/events.model';
-import {NameBuilder} from "../name-builder";
+import { NameBuilder } from "../name-builder";
 
 @Component({
   selector: 'app-dashboard',
@@ -16,8 +16,10 @@ import {NameBuilder} from "../name-builder";
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  private sessionSearchTerm = '';
+  private activeSessions = {};
+  visibleSessions = [];
   error: string;
-  activeSessions = {};
 
   constructor(private socketService: SocketService) {
   }
@@ -27,7 +29,6 @@ export class DashboardComponent implements OnInit {
       .getSocket()
       .subscribe(this.handleEvents);
 
-    // this.socketService.send({[Events.COMPLETE_STATE]: 'undefined'});
     this.socketService.send(new GetCompleteStateMessage());
   }
 
@@ -38,8 +39,6 @@ export class DashboardComponent implements OnInit {
     //   this.error = 'Session Name Already Exists';
     //   return;
     // }
-
-
     const newSessionName = name ? name : NameBuilder.generate();
 
     const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));
@@ -47,6 +46,19 @@ export class DashboardComponent implements OnInit {
     this.socketService.send(message);
 
   };
+
+  searchBoxValueChanged = (value: string) => {
+    this.sessionSearchTerm = value;
+    this.applySearchFilter();
+  }
+
+  private applySearchFilter = () => {
+    const sessions = { ...this.activeSessions }
+    const matches = Object.keys(sessions).filter((key: string) => key.includes(this.sessionSearchTerm));
+    const filtered = matches.map(matched => ({ [matched]: sessions[matched] }));
+
+    this.visibleSessions = filtered;
+  }
 
   private handleEvents = (message: MessageEvent) => {
     const messageData = JSON.parse(message.data) as SpMessage;
@@ -65,12 +77,14 @@ export class DashboardComponent implements OnInit {
 
   private setSessionsFrom = (payload: GetCompleteStatePayload) => {
     this.activeSessions = payload.sessions;
+    this.applySearchFilter();
   };
 
   private newSessionWasCreated = (payload: NewSessionPayload | undefined) => {
     if (payload) {
-      this.activeSessions = {...this.activeSessions, ...payload.sessions};
+      this.activeSessions = { ...this.activeSessions, ...payload.sessions };
     }
+    this.applySearchFilter();
   };
 }
 

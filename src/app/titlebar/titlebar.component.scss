@@ -1,9 +1,24 @@
 .items {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
 
   span {
     padding: 10px;
   }
+}
+
+.icons {
+  width: 100%;
+  justify-content: flex-end;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:visited {
+  color: inherit
+}
+
+mat-icon {
+  line-height: inherit;
 }

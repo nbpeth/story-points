@@ -1,0 +1,14 @@
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+        <div class="items">
+            <span>
+                <mat-icon>add</mat-icon>
+            </span>
+        </div>
+        <div class="items icons">
+            <span>
+                <app-search-box (searchBoxValue)="searchValueChanged($event)"></app-search-box>
+            </span>
+        </div>
+    </mat-toolbar-row>
+</mat-toolbar>
