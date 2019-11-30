@@ -7,6 +7,8 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 })
 export class DashboardHeaderComponent implements OnInit {
   @Output() searchBoxValue: EventEmitter<string> = new EventEmitter<string>();
+  @Output() createSession: EventEmitter<string> = new EventEmitter<string>();
+
   constructor() { }
 
   ngOnInit() {
@@ -14,5 +16,9 @@ export class DashboardHeaderComponent implements OnInit {
 
   searchValueChanged = (value: string) => {
     this.searchBoxValue.emit(value);
+  }
+
+  createNewSession = (withName: string) => {
+    this.createSession.emit(withName);
   }
 }

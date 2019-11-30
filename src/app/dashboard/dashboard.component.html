@@ -1,17 +1,7 @@
-<app-dashboard-header (searchBoxValue)="searchBoxValueChanged($event)"></app-dashboard-header>
+<app-dashboard-header (createSession)="createNewSession($event)" (searchBoxValue)="searchBoxValueChanged($event)">
+</app-dashboard-header>
 
 <div class="body-container">
-
-  <mat-form-field style="padding-right: 15px;">
-    <input matInput #name placeholder="Session Name">
-  </mat-form-field>
-  <button (click)="createNewSession(name.value)" mat-flat-button color="primary">Create New</button>
-
-
-  <hr>
-  <h1>Active Sessions</h1>
-  <hr>
-
   <div *ngIf="error" style="background-color: #FFAAAA">
     {{error}}
   </div>
