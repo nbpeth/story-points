@@ -1,0 +1,20 @@
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+        <div class="items">
+            <span>
+            </span>
+            <span>
+                <!-- <mat-icon>add</mat-icon> -->
+                <mat-form-field style="padding-right: 15px;">
+                    <input matInput #name placeholder="Session Name">
+                </mat-form-field>
+                <button (click)="createNewSession(name.value)" mat-flat-button color="accent">Create New</button>
+            </span>
+        </div>
+        <div class="items icons">
+            <span>
+                <app-search-box (searchBoxValue)="searchValueChanged($event)"></app-search-box>
+            </span>
+        </div>
+    </mat-toolbar-row>
+</mat-toolbar>

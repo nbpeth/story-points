@@ -3,33 +3,30 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors');
 const app = express();
-
+const WebSocketServer = require("ws").Server;
 /*
   serve static UI content
  */
 app.use(express.static(__dirname + '/dist/story-points'));
 
-app.get('/*',  (req, res) => {
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
 });
-
-const staticContentPort = process.env.PORT || 8085;
-console.log(`Starting server on port 8085 ${staticContentPort}`);
-app.listen(staticContentPort);
-
 
 /*
   web socket server
  */
+
+
 const http = require('http');
-const WebSocket = require('ws');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(cors);
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({server});
+const wss = new WebSocketServer({server: server, path: "/socket"});
+
 let _ws;
 const state = {
   sessions: {},
@@ -47,6 +44,9 @@ handleNewClients = (ws) => {
 handleIncomingMessages = (message) => {
   const messageData = JSON.parse(message);
   const eventType = messageData.eventType;
+
+  console.log(messageData);
+  console.log('');
 
   switch (eventType) {
     case 'state-of-the-state':
@@ -73,9 +73,25 @@ handleIncomingMessages = (message) => {
     case 'points-revealed':
       revealPoints(messageData);
       break;
+    case 'terminate-session':
+      terminateSession(messageData);
+      break;
 
   }
 };
+
+// protect terminated sessions from being able to take actions
+
+terminateSession = (messageData) => {
+  const payload = messageData.payload;
+  const requestedSession = payload.sessionName;
+
+  delete state.sessions[requestedSession];
+
+  const message = formatMessage('state-of-the-state', state);
+  notifyClients(message);
+};
+
 revealPoints = (messageData) => {
   const eventType = messageData.eventType;
   const payload = messageData.payload;
@@ -182,6 +198,6 @@ notifyCaller = (message) => {
 
 wss.on('connection', handleNewClients);
 
-server.listen(process.env.PORT || 8999, () => {
-  console.log(`Websocket Server running on port ${server.address().port}`);
+server.listen(process.env.PORT || 8081, () => {
+  console.log(`Server (${server.address().address}) running on port ${server.address().port}`);
 });

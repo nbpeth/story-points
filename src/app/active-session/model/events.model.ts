@@ -1,4 +1,4 @@
-import { Events } from 'src/app/active-session/enum/events';
+import {Events} from 'src/app/active-session/enum/events';
 
 export class SpMessage {
   eventType: string;
@@ -39,6 +39,11 @@ export class ResetPointsForSessionPayload extends SpMessagePayload {
 }
 
 export class RevealPointsForSessionPayload extends SpMessagePayload {
+  constructor(public sessionName: string) {
+    super();
+  }
+}
+export class TerminateSessionPayload extends SpMessagePayload {
   constructor(public sessionName: string) {
     super();
   }
@@ -105,15 +110,22 @@ export class PointSubmittedForParticipantMessage extends SpMessage {
 }
 
 export class ResetPointsForSessionMessage extends SpMessage {
-  constructor(public payload: ResetPointsForSessionPayload){
+  constructor(public payload: ResetPointsForSessionPayload) {
     super(payload);
     this.eventType = Events.POINTS_RESET as string;
   }
 }
 
 export class RevealPointsForSessionMessage extends SpMessage {
-  constructor(public payload: RevealPointsForSessionPayload){
+  constructor(public payload: RevealPointsForSessionPayload) {
     super(payload);
     this.eventType = Events.POINTS_REVEALED as string;
+  }
+}
+
+export class TerminateSessionMessage extends SpMessage {
+  constructor(public payload: TerminateSessionPayload) {
+    super(payload);
+    this.eventType = Events.TERMINATE_SESSION as string;
   }
 }

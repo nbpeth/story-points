@@ -1,0 +1,17 @@
+<mat-card
+  [ngClass]="{'my-card': myCard && !isDarkTheme, 'my-card-dark': myCard && isDarkTheme, 'voted': participant.value.hasVoted && !isDarkTheme, 'voted-dark': participant.value.hasVoted && isDarkTheme}">
+  <mat-card-title>
+
+    <span>{{pointsAreHidden && !myCard ? "?" : participant.value.point}}</span>
+
+  </mat-card-title>
+  <mat-card-content>
+    {{participant.key}}
+  </mat-card-content>
+
+  <mat-card-footer>
+    <div class="actions">
+      <button (click)="removeUser(participant.key)" mat-button color="warn">x</button>
+    </div>
+  </mat-card-footer>
+</mat-card>

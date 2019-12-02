@@ -8,13 +8,15 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 export class SocketService {
   private readonly socket: WebSocketSubject<any>;
 
-  // TODO: environment properties
   // TODO: connection healing on send
-  // TODO: disconnecting
 
   constructor() {
+    const host = document.location.host;
+    const wsProtocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
+
     const config = {
-      url: 'ws://localhost:8999',
+      // url: `ws://localhost:8081/socket`,
+      url: `${wsProtocol}://${host}/socket`,
       deserializer: (data) => data,
     } as WebSocketSubjectConfig<any>;
 

@@ -2,18 +2,17 @@
   <h1>{{id}}</h1>
 </div>
 
-<div style="display: flex; flex-wrap: wrap; justify-content: center;">
-  <mat-card *ngFor="let participant of getParticipants() | keyvalue"
-    [ngClass]="{'my-card': isMyCard(participant.key), 'voted': participant.value.hasVoted}">
-    <mat-card-title>
+<div class="user-tiles">
+  <user-tiles>
+    <user-tile *ngFor="let participant of getParticipants() | keyvalue"
+               [participant]="participant"
+               [sessionId]="id"
+               [pointsAreHidden]="pointsAreHidden"
+               [isDarkTheme]="isDarkTheme"
+               [myCard]="isMyCard(participant.key)"
+    ></user-tile>
+  </user-tiles>
 
-      <span>{{pointsAreHidden && !isMyCard(participant.key) ? "?" : participant.value.point}}</span>
-
-    </mat-card-title>
-    <mat-card-content>
-      {{participant.key}}
-    </mat-card-content>
-  </mat-card>
 </div>
 
 <div class="errors">
@@ -42,7 +41,7 @@
   <mat-toolbar-row>
     <span>
       <ng-container *ngIf="lurker(); else leaveSessionTemplate">
-        <mat-form-field style="padding-right: 15px;">
+        <mat-form-field>
           <input matInput #name placeholder="Your Name">
         </mat-form-field>
         <button (click)="joinSession(name.value)" mat-flat-button color="basic">Join Session</button>
