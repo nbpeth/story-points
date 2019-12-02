@@ -120,6 +120,7 @@ const initHandlers = (db) => {
   };
 
   getSessionState = (messageData) => {
+    // extract the items into an object
     const eventType = messageData.eventType;
     const payload = messageData.payload;
     const requestedSession = payload.sessionName;
@@ -205,5 +206,6 @@ const initHandlers = (db) => {
 }
 
 
-const mongoDb = dbClient.initDB()
+dbClient
+  .connect()
   .then(initHandlers)
