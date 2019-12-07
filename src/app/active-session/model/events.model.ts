@@ -1,4 +1,4 @@
-import {Events} from 'src/app/active-session/enum/events';
+import { Events } from 'src/app/active-session/enum/events';
 
 export class SpMessage {
   eventType: string;
@@ -15,7 +15,6 @@ export class SpMessagePayload {
 }
 
 export class GetCompleteStatePayload extends SpMessagePayload {
-  sessions: any;
 }
 
 export class NewSessionPayload extends SpMessagePayload {

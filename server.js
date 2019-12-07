@@ -4,14 +4,14 @@ const path = require('path');
 const cors = require('cors');
 const app = express();
 const WebSocketServer = require("ws").Server;
-const dbClient = require('./db');
+const db = require('./db');
 
 let _ws;
 const state = {
   sessions: {},
 };
 
-const initHandlers = (db) => {
+const initHandlers = () => {
   /*
   serve static UI content
  */
@@ -36,23 +36,30 @@ const initHandlers = (db) => {
 
   handleNewClients = (ws) => {
     _ws = ws;
-    const message = formatMessage('state-of-the-state', state);
 
-    notifyCaller(message);
+    db.getAllSessions().then((sessions) => {
+      const message = formatMessage('state-of-the-state', sessions);
 
-    ws.on('message', handleIncomingMessages);
+      notifyCaller(message);
+
+      ws.on('message', handleIncomingMessages);
+    })
+
   };
 
   handleIncomingMessages = (message) => {
     const messageData = JSON.parse(message);
     const eventType = messageData.eventType;
 
-    console.log(messageData);
-    console.log('');
+    // console.log(messageData);
+    // console.log('');
 
     switch (eventType) {
       case 'state-of-the-state':
-        notifyCaller(formatMessage(eventType, state));
+        db.getAllSessions().then((sessions) => {
+          notifyCaller(formatMessage('state-of-the-state', sessions));
+        });
+
         break;
       case 'session-created':
         createNewSession(messageData);
@@ -164,14 +171,15 @@ const initHandlers = (db) => {
   };
 
   createNewSession = (messageData) => {
-    const payload = messageData.payload;
-    const sessionName = payload && payload.sessionName ? payload.sessionName : undefined;
-    if (!sessionName) {
-      return;
-    }
-    state.sessions[sessionName] = { participants: {} };
-    const stateMessage = formatMessage('session-created', state);
-
+    console.log(db.dlClient)
+    // const payload = messageData.payload;
+    // const sessionName = payload && payload.sessionName ? payload.sessionName : undefined;
+    // if (!sessionName) {
+    //   return;
+    // }
+    // state.sessions[sessionName] = { participants: {} };
+    // const stateMessage = formatMessage('session-created', state);
+    const stateMessage = db.createSession(messageData)
     notifyClients(stateMessage)
   };
 
@@ -205,7 +213,7 @@ const initHandlers = (db) => {
 
 }
 
-
-dbClient
-  .connect()
-  .then(initHandlers)
+db.connect()
+  .finally(() => {
+    initHandlers();
+  });

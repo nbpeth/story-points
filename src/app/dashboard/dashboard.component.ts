@@ -58,6 +58,7 @@ export class DashboardComponent implements OnInit {
     const filtered = matches.map(matched => ({ [matched]: sessions[matched] }));
 
     this.visibleSessions = filtered;
+    console.log(this.visibleSessions)
   }
 
   private handleEvents = (message: MessageEvent) => {
@@ -67,7 +68,7 @@ export class DashboardComponent implements OnInit {
 
     switch (eventType) {
       case Events.COMPLETE_STATE:
-        this.setSessionsFrom(payload as GetCompleteStatePayload);
+        this.setSessionsFrom(payload);
         break;
       case Events.SESSION_CREATED:
         this.newSessionWasCreated(payload as NewSessionPayload);
@@ -76,7 +77,8 @@ export class DashboardComponent implements OnInit {
   };
 
   private setSessionsFrom = (payload: GetCompleteStatePayload) => {
-    this.activeSessions = payload.sessions;
+    console.log('pay', payload)
+    this.activeSessions = payload;
     this.applySearchFilter();
   };
 
