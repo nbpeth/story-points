@@ -8,16 +8,9 @@ import { TerminateSessionMessage, TerminateSessionPayload } from "../../model/ev
   styleUrls: ['./active-session-tile.component.scss']
 })
 export class ActiveSessionTileComponent {
-  @Input() session: { [id: string]: any };
-  id: string;
+  @Input() id: string;
 
   constructor(private socketService: SocketService) {
-  }
-
-  ngOnChanges(change: SimpleChanges) {
-    if (change['session']) {
-      this.id = Object.keys(change.session.currentValue)[0]
-    }
   }
 
   urlEncode = (id: string) => encodeURIComponent(id);

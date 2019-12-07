@@ -51,9 +51,6 @@ const initHandlers = () => {
     const messageData = JSON.parse(message);
     const eventType = messageData.eventType;
 
-    // console.log(messageData);
-    // console.log('');
-
     switch (eventType) {
       case 'state-of-the-state':
         db.getAllSessions().then((sessions) => {
@@ -171,14 +168,6 @@ const initHandlers = () => {
   };
 
   createNewSession = (messageData) => {
-    console.log(db.dlClient)
-    // const payload = messageData.payload;
-    // const sessionName = payload && payload.sessionName ? payload.sessionName : undefined;
-    // if (!sessionName) {
-    //   return;
-    // }
-    // state.sessions[sessionName] = { participants: {} };
-    // const stateMessage = formatMessage('session-created', state);
     const stateMessage = db.createSession(messageData)
     notifyClients(stateMessage)
   };

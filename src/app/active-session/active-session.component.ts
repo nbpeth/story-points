@@ -1,8 +1,8 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {SocketService} from '../services/socket.service';
-import {filter, map} from 'rxjs/operators';
-import {Events} from './enum/events';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SocketService } from '../services/socket.service';
+import { filter, map } from 'rxjs/operators';
+import { Events } from './enum/events';
 import {
   GetStateForSessionMessage,
   GetStateForSessionPayload,
@@ -18,10 +18,10 @@ import {
   RevealPointsForSessionPayload,
   SpMessage
 } from './model/events.model';
-import {Participant, StoryPointSession} from './model/session.model';
-import {MatSelectChange} from '@angular/material';
-import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
-import {ThemeService} from "../services/theme.service";
+import { Participant, StoryPointSession } from './model/session.model';
+import { MatSelectChange } from '@angular/material';
+import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
+import { ThemeService } from "../services/theme.service";
 
 @Component({
   selector: 'app-active-session',
@@ -35,13 +35,13 @@ export class ActiveSessionComponent implements OnInit {
   availableOptions = [0, 1, 2, 3, 5, 8, 13, 21, 34, 'Abstain'];
   pointsAreHidden = true;
   id: string;
-  session: StoryPointSession = {participants: {}};
+  session: StoryPointSession = { participants: {} };
 
   constructor(private route: ActivatedRoute,
-              private router: Router,
-              private socketService: SocketService,
-              private themeService: ThemeService,
-              @Inject(LOCAL_STORAGE) private storage: StorageService) {
+    private router: Router,
+    private socketService: SocketService,
+    private themeService: ThemeService,
+    @Inject(LOCAL_STORAGE) private storage: StorageService) {
   }
 
   voteHasChanged = (vote: MatSelectChange) => {
@@ -73,11 +73,9 @@ export class ActiveSessionComponent implements OnInit {
 
   private recoverUser = (id: string) => {
     const maybeRecoveredUserEntry = this.storage.get(id);
-    console.log('attempting to recover user', maybeRecoveredUserEntry);
 
     if (maybeRecoveredUserEntry) {
       const maybeRecoveredUser = JSON.parse(maybeRecoveredUserEntry) as Participant;
-      console.log('...recovered user', maybeRecoveredUser);
       this.participant = new Participant(maybeRecoveredUser.name, 0, maybeRecoveredUser.hasVoted, maybeRecoveredUser.isAdmin);
     }
 
@@ -101,7 +99,7 @@ export class ActiveSessionComponent implements OnInit {
     switch (eventType) {
       case Events.SESSION_STATE:
         if (!payload) {
-          this.router.navigate(['/'], {queryParams: {error: 1}});
+          this.router.navigate(['/'], { queryParams: { error: 1 } });
         }
         this.restoreSessionFromState(messageData as GetStateForSessionMessage);
         break;
@@ -131,7 +129,6 @@ export class ActiveSessionComponent implements OnInit {
     const admins = Object.entries(participants).filter((body) => body[1].isAdmin).map(body => body[0]);
 
     admins.forEach(name => {
-      console.log(name);
       delete participants[name];
     });
 
@@ -157,7 +154,6 @@ export class ActiveSessionComponent implements OnInit {
     const maybeNewParticipant = new Participant(name, 0, false, admin);
     // validate server side
     if (this.session.participants[maybeNewParticipant.name]) {
-      console.log('user exists!');
       return;
     }
 

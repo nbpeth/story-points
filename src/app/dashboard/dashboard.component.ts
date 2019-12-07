@@ -18,7 +18,7 @@ import { NameBuilder } from "../name-builder";
 export class DashboardComponent implements OnInit {
   private sessionSearchTerm = '';
   private activeSessions = {};
-  visibleSessions = [];
+  visibleSessions = {};
   error: string;
 
   constructor(private socketService: SocketService) {
@@ -33,18 +33,11 @@ export class DashboardComponent implements OnInit {
   }
 
   createNewSession = (name: string) => {
-    // const maybeExistsAlready = this.activeSessions.find(session => session.id === name);
-    //
-    // if (maybeExistsAlready) {
-    //   this.error = 'Session Name Already Exists';
-    //   return;
-    // }
     const newSessionName = name ? name : NameBuilder.generate();
 
     const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));
 
     this.socketService.send(message);
-
   };
 
   searchBoxValueChanged = (value: string) => {
@@ -54,11 +47,14 @@ export class DashboardComponent implements OnInit {
 
   private applySearchFilter = () => {
     const sessions = { ...this.activeSessions }
-    const matches = Object.keys(sessions).filter((key: string) => key.includes(this.sessionSearchTerm));
-    const filtered = matches.map(matched => ({ [matched]: sessions[matched] }));
+    const matches = Object.keys(sessions).reduce((result, next) => {
+      if (next.includes(this.sessionSearchTerm)) {
+        result[next] = {}
+      }
+      return result;
+    }, {});
 
-    this.visibleSessions = filtered;
-    console.log(this.visibleSessions)
+    this.visibleSessions = matches;
   }
 
   private handleEvents = (message: MessageEvent) => {
@@ -77,7 +73,6 @@ export class DashboardComponent implements OnInit {
   };
 
   private setSessionsFrom = (payload: GetCompleteStatePayload) => {
-    console.log('pay', payload)
     this.activeSessions = payload;
     this.applySearchFilter();
   };
