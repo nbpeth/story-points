@@ -126,10 +126,11 @@ const initHandlers = () => {
   getSessionState = (messageData) => {
     // extract the items into an object
     const eventType = messageData.eventType;
-    const payload = messageData.payload;
-    const requestedSession = payload.sessionName;
-    const sessionData = state.sessions[requestedSession];
-    notifyCaller(formatMessage(eventType, sessionData, requestedSession));
+    const requestedSession = messageData.payload.sessionName;
+
+    db.getStateForSession(requestedSession).then((stateForSession) => {
+      notifyCaller(formatMessage(eventType, stateForSession, requestedSession));
+    })
   };
 
   pointWasSubmitted = (messageData) => {
@@ -147,24 +148,22 @@ const initHandlers = () => {
   addParticipantToSession = (messageData) => {
     const payload = messageData.payload;
     const requestedSession = payload.sessionName;
-    const sessionData = state.sessions[requestedSession];
     const participantToAdd = payload.userName;
     const isAdmin = payload.isAdmin;
 
-    sessionData.participants[participantToAdd] = { point: 0, isAdmin: isAdmin };
-
-    notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
+    db.addParticipantToSession(requestedSession, participantToAdd, isAdmin).then((stateForSession) => {
+      notifyClients(formatMessage(messageData.eventType, stateForSession, requestedSession))
+    });
   };
 
   removeParticipantFromSession = (messageData) => {
     const payload = messageData.payload;
     const requestedSession = payload.sessionName;
-    const sessionData = state.sessions[requestedSession];
     const participantToRemove = payload.userName;
 
-    sessionData.participants[participantToRemove] = undefined;
-
-    notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
+    db.removeParticipantFromSession(requestedSession, participantToRemove).then((stateForSession) => {
+      notifyClients(formatMessage(messageData.eventType, stateForSession, requestedSession))
+    })
   };
 
   createNewSession = (messageData) => {

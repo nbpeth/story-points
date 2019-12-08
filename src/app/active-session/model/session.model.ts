@@ -6,7 +6,7 @@ export class Participant {
     public isAdmin: boolean = false,
   ) {
     if (!name) {
-      this.name = `Lurker ${Math.random()}`;
+      this.name = `Lurker${Math.floor(Math.random() * 1000000)}`;
     }
   }
 }
