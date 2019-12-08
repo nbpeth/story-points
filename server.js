@@ -136,13 +136,15 @@ const initHandlers = () => {
   pointWasSubmitted = (messageData) => {
     const payload = messageData.payload;
     const requestedSession = payload.sessionName;
-    const sessionData = state.sessions[requestedSession];
     const targetUser = payload.userName;
+    const point = payload.value
 
-    const userData = sessionData.participants[targetUser];
-    userData.point = payload.value;
-    userData.hasVoted = true;
-    notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
+    db.pointWasSubmitted(requestedSession, targetUser, point).then((sessionData) => {
+      notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
+    })
+    // const userData = sessionData.participants[targetUser];
+    // userData.point = payload.value;
+    // userData.hasVoted = true;
   };
 
   addParticipantToSession = (messageData) => {
