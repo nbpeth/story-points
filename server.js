@@ -5,6 +5,7 @@ const cors = require('cors');
 const app = express();
 const WebSocketServer = require("ws").Server;
 const db = require('./db');
+const http = require('http');
 
 let _ws;
 const state = {
@@ -25,7 +26,6 @@ const initHandlers = () => {
     web socket server
    */
 
-  const http = require('http');
 
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
@@ -82,7 +82,6 @@ const initHandlers = () => {
       case 'terminate-session':
         terminateSession(messageData);
         break;
-
     }
   };
 
@@ -90,10 +89,11 @@ const initHandlers = () => {
     const payload = messageData.payload;
     const requestedSession = payload.sessionName;
 
-    delete state.sessions[requestedSession];
+    db.terminateSession(requestedSession).then((sessions) => {
+      const message = formatMessage('state-of-the-state', sessions);
 
-    const message = formatMessage('state-of-the-state', state);
-    notifyClients(message);
+      notifyClients(message);
+    })
   };
 
   revealPoints = (messageData) => {
@@ -106,25 +106,15 @@ const initHandlers = () => {
 
   resetPoints = (messageData) => {
     const eventType = messageData.eventType;
-    const payload = messageData.payload;
-    const requestedSession = payload.sessionName;
-    const sessionData = state.sessions[requestedSession];
+    const requestedSession = messageData.payload.sessionName;
 
-    Object.values(sessionData).forEach(participant => {
-      Object.values(participant).forEach(p => {
-        if (p) {
-          p['hasVoted'] = false;
-          p.point = 0;
-        }
-      });
-    });
-
-    notifyClients(formatMessage(eventType, sessionData, requestedSession))
+    db.resetPoints(requestedSession).then((stateForSession) => {
+      notifyClients(formatMessage(eventType, stateForSession, requestedSession))
+    })
 
   };
 
   getSessionState = (messageData) => {
-    // extract the items into an object
     const eventType = messageData.eventType;
     const requestedSession = messageData.payload.sessionName;
 
@@ -142,9 +132,6 @@ const initHandlers = () => {
     db.pointWasSubmitted(requestedSession, targetUser, point).then((sessionData) => {
       notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
     })
-    // const userData = sessionData.participants[targetUser];
-    // userData.point = payload.value;
-    // userData.hasVoted = true;
   };
 
   addParticipantToSession = (messageData) => {
@@ -200,7 +187,6 @@ const initHandlers = () => {
   server.listen(process.env.PORT || 8081, () => {
     console.log(`Server (${server.address().address}) running on port ${server.address().port}`);
   });
-
 }
 
 db.connect()
