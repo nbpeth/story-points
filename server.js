@@ -26,7 +26,6 @@ const initHandlers = () => {
     web socket server
    */
 
-
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
   app.use(cors);
@@ -111,7 +110,6 @@ const initHandlers = () => {
     db.resetPoints(requestedSession).then((stateForSession) => {
       notifyClients(formatMessage(eventType, stateForSession, requestedSession))
     })
-
   };
 
   getSessionState = (messageData) => {
@@ -156,8 +154,10 @@ const initHandlers = () => {
   };
 
   createNewSession = (messageData) => {
-    const stateMessage = db.createSession(messageData)
-    notifyClients(stateMessage)
+    db.createSession(messageData).then((sessions) => {
+      const message = formatMessage('state-of-the-state', sessions);
+      notifyClients(message)
+    })
   };
 
   formatMessage = (eventType, payload, targetSession) => ({
