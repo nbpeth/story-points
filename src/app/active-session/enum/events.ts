@@ -8,4 +8,5 @@ export enum Events {
   POINTS_RESET = 'points-reset',
   POINTS_REVEALED = 'points-revealed',
   TERMINATE_SESSION = 'terminate-session',
+  ERROR = 'error',
 }

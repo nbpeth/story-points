@@ -8,8 +8,6 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 export class SocketService {
   private readonly socket: WebSocketSubject<any>;
 
-  // TODO: connection healing on send
-
   constructor() {
     const host = document.location.host;
     const wsProtocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
@@ -19,7 +17,6 @@ export class SocketService {
       // url: `${wsProtocol}://${host}/socket`,
       deserializer: (data) => data,
     } as WebSocketSubjectConfig<any>;
-
 
     this.socket = webSocket(config);
   }

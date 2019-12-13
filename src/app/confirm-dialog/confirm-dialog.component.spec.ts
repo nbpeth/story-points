@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CloseSessionComponent } from './close-session.component';
+import { ConfirmDialogComponent } from './confirm-dialog.component';
 
-describe('CloseSessionComponent', () => {
-  let component: CloseSessionComponent;
-  let fixture: ComponentFixture<CloseSessionComponent>;
+describe('ConfirmDialogComponent', () => {
+  let component: ConfirmDialogComponent;
+  let fixture: ComponentFixture<ConfirmDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CloseSessionComponent ]
+      declarations: [ ConfirmDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CloseSessionComponent);
+    fixture = TestBed.createComponent(ConfirmDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

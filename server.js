@@ -155,8 +155,12 @@ const initHandlers = () => {
 
   createNewSession = (messageData) => {
     db.createSession(messageData).then((sessions) => {
+      // reject("bad")
       const message = formatMessage('state-of-the-state', sessions);
       notifyClients(message)
+    }).catch(error => {
+      console.log('ERROR!') // something bad happened, we should tell them why
+      // notifyCaller(formatMessage('state-of-the-fart', {}))
     })
   };
 
