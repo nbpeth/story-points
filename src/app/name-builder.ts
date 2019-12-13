@@ -6,7 +6,6 @@ export class NameBuilder {
 
     return `${randomAdjective}-${randomNoun}-${Math.floor(Math.random() * 1000)}`;
   }
-
 }
 
 class Names {

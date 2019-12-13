@@ -7,24 +7,13 @@ import { NameBuilder } from '../name-builder';
   templateUrl: './create-session-dialog.component.html',
   styleUrls: ['./create-session-dialog.component.scss']
 })
-export class CreateSessionDialogComponent implements OnInit {
+export class CreateSessionDialogComponent {
 
-  constructor(private dialogRef: MatDialogRef<CreateSessionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: any) {
-  }
-
-  ngOnInit() {
+  constructor(private dialogRef: MatDialogRef<CreateSessionDialogComponent>) {
   }
 
   create = (name: string) => {
-
     const newSessionName = name ? name : NameBuilder.generate();
-
-    // const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));
-
-    // this.socketService.send(message);
-
-
     this.dialogRef.close(newSessionName);
   }
 

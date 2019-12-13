@@ -8,7 +8,6 @@ import {
   SpMessage,
   GetCompleteStatePayload
 } from '../active-session/model/events.model';
-import { NameBuilder } from "../name-builder";
 
 @Component({
   selector: 'app-dashboard',
@@ -33,7 +32,6 @@ export class DashboardComponent implements OnInit {
   }
 
   createNewSession = (newSessionName: string) => {
-
     const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));
 
     this.socketService.send(message);
