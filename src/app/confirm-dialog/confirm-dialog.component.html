@@ -1,14 +1,10 @@
-<div [ngClass]="{'dark-theme': isDarkTheme, 'light-theme': !isDarkTheme}">
-    <h2 mat-dialog-title>{{message}}</h2>
+<h2 mat-dialog-title>{{message}}</h2>
 
-    <mat-dialog-content>
+<mat-dialog-content>
+    {{id}}
+</mat-dialog-content>
 
-        {{id}}
-
-    </mat-dialog-content>
-
-    <mat-dialog-actions>
-        <button class="mat-raised-button" (click)="close(false)">Cancel</button>
-        <button class="mat-raised-button mat-warn" (click)="close(true)">Yes</button>
-    </mat-dialog-actions>
-</div>
+<mat-dialog-actions>
+    <button class="mat-raised-button" (click)="close(false)">Cancel</button>
+    <button class="mat-raised-button mat-warn" (click)="close(true)">Yes</button>
+</mat-dialog-actions>

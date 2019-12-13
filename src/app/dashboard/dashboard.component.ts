@@ -32,8 +32,7 @@ export class DashboardComponent implements OnInit {
     this.socketService.send(new GetCompleteStateMessage());
   }
 
-  createNewSession = (name: string) => {
-    const newSessionName = name ? name : NameBuilder.generate();
+  createNewSession = (newSessionName: string) => {
 
     const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));
 

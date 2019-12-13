@@ -18,7 +18,7 @@ export class ActiveSessionTileComponent {
 
   closeSession = (id: string) => {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
+    dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
       id: id,
@@ -33,6 +33,4 @@ export class ActiveSessionTileComponent {
       }
     });
   }
-
-
 }

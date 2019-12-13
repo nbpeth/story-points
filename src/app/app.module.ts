@@ -28,6 +28,7 @@ import { SearchBoxComponent } from './search-box/search-box.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { ThemeService } from './services/theme.service';
+import { CreateSessionDialogComponent } from './create-session-dialog/create-session-dialog.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { ThemeService } from './services/theme.service';
     DashboardHeaderComponent,
     SearchBoxComponent,
     ConfirmDialogComponent,
+    CreateSessionDialogComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -61,16 +63,20 @@ import { ThemeService } from './services/theme.service';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [ConfirmDialogComponent]
+  entryComponents: [ConfirmDialogComponent, CreateSessionDialogComponent]
 
 })
 export class AppModule {
-  constructor(overlayContainer: OverlayContainer, private themeService: ThemeService) {
-    this.themeService.isDarkTheme.subscribe(isDarkTheme => {
-      const theme = isDarkTheme ? 'dark-theme' : 'light-theme';
-      overlayContainer.getContainerElement().classList.add(theme);
-    });
+  constructor(private overlayContainer: OverlayContainer, private themeService: ThemeService) {
 
+    this.themeService.isDarkTheme.subscribe(this.toggleDarkThemeForOverlay);
+  }
 
+  private toggleDarkThemeForOverlay = (isDarkTheme: boolean) => {
+    const theme = isDarkTheme ? 'dark-theme' : 'light-theme';
+    const removeTheme = !isDarkTheme ? 'dark-theme' : 'light-theme';
+
+    this.overlayContainer.getContainerElement().classList.remove(removeTheme);
+    this.overlayContainer.getContainerElement().classList.add(theme);
   }
 }
