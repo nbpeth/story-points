@@ -10,15 +10,23 @@ export class Participant {
       this.participantName = `Lurker${Math.floor(Math.random() * 1000000)}`;
     }
   }
+
+  setPoint = (point: any) => {
+    this.point = point;
+  }
 }
 
 export class StoryPointSession {
   participants: Participant[] = [];
   sessionId: number;
   sessionName: string;
+  pointsAreHidden = true;
 
   setName = (name: string) => {
-    console.log('set name', name)
     this.sessionName = name;
+  }
+
+  loadParticipants = (participants: Participant[]): void => {
+    this.participants = participants;
   }
 }

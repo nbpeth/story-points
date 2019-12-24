@@ -1,11 +1,13 @@
+<div *ngIf="socketObs | async"></div>
+
 <div style="text-align: center;">
-  <h1>{{name}}</h1>
+  <h1>{{session.sessionName}}</h1>
 </div>
 
 <div class="user-tiles">
   <user-tiles>
     <user-tile *ngFor="let participant of session.participants | participantFilter" [participant]="participant"
-      [sessionId]="id" [pointsAreHidden]="pointsAreHidden" [isDarkTheme]="isDarkTheme"
+      [sessionId]="session.sessionId" [pointsAreHidden]="session.pointsAreHidden" [isDarkTheme]="isDarkTheme"
       [myCard]="isMyCard(participant.participantName)">
     </user-tile>
   </user-tiles>
