@@ -19,9 +19,13 @@ export class SocketService {
     } as WebSocketSubjectConfig<any>;
 
     this.socket = webSocket(config);
+
+
   }
 
-  getSocket = (): WebSocketSubject<any> => this.socket;
+  getSocket = () => {
+    return this.socket;
+  }
 
   send = (message: any): void => {
     this.socket.next(message);

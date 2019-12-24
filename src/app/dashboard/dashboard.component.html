@@ -7,7 +7,8 @@
   </div>
 
   <active-session-tiles>
-    <active-session-tile cdkDrag *ngFor="let tile of visibleSessions | keyvalue" [id]="tile.key">
+    <active-session-tile cdkDrag *ngFor="let tile of visibleSessions" [session]="tile">
+
     </active-session-tile>
   </active-session-tiles>
 

@@ -1,9 +1,11 @@
 import { Events } from 'src/app/active-session/enum/events';
 
+// should have different messages for in / out
+
 export class SpMessage {
   eventType: string;
   payload: SpMessagePayload;
-  targetSession: String;
+  targetSession: number;
 
   constructor(payload?: SpMessagePayload) {
     this.payload = payload;
@@ -15,6 +17,7 @@ export class SpMessagePayload {
 }
 
 export class GetCompleteStatePayload extends SpMessagePayload {
+  sessions: { id: number, sessionName: string }[]
 }
 
 export class NewSessionPayload extends SpMessagePayload {
@@ -26,42 +29,49 @@ export class NewSessionPayload extends SpMessagePayload {
 }
 
 export class GetStateForSessionPayload extends SpMessagePayload {
-  constructor(public sessionName: string) {
+  constructor(public sessionId: number, participants?: any[], sessionName?: string) {
     super();
   }
 }
 
 export class ResetPointsForSessionPayload extends SpMessagePayload {
-  constructor(public sessionName: string) {
+  constructor(public sessionId: number) {
     super();
   }
 }
 
 export class RevealPointsForSessionPayload extends SpMessagePayload {
-  constructor(public sessionName: string) {
+  constructor(public sessionId: number) {
     super();
   }
 }
 export class TerminateSessionPayload extends SpMessagePayload {
-  constructor(public sessionName: string) {
+  constructor(public sessionId: number) {
     super();
   }
 }
 
 export class ParticipantJoinedSessionPayload extends SpMessagePayload {
-  constructor(public sessionName: string, public userName: string, public isAdmin: boolean) {
+  constructor(public sessionId: number, public userName: string, public isAdmin: boolean) {
     super();
   }
 }
 
 export class ParticipantRemovedSessionPayload extends SpMessagePayload {
-  constructor(public sessionName: string, public userName: string) {
+  constructor(public participantId: number, public sessionId: number) {
     super();
   }
 }
 
 export class PointSubmittedForParticipantPayload extends SpMessagePayload {
-  constructor(public sessionName: string, public userName: string, public value: string) {
+  constructor(public sessionId: number, public userId: number, public userName: string, public value: string) {
+    super();
+  }
+}
+
+
+export class GetSessionNamePayload extends SpMessagePayload {
+  constructor(public sessionId: number, public sessionName?: string) {
     super();
   }
 }
@@ -105,6 +115,13 @@ export class PointSubmittedForParticipantMessage extends SpMessage {
   constructor(public payload: PointSubmittedForParticipantPayload) {
     super(payload);
     this.eventType = Events.POINT_SUBMITTED as string;
+  }
+}
+
+export class GetSessionNameMessage extends SpMessage {
+  constructor(public payload: GetSessionNamePayload) {
+    super(payload);
+    this.eventType = Events.GET_SESSION_NAME as string;
   }
 }
 

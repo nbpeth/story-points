@@ -1,5 +1,6 @@
 const sanitize = require('mongo-sanitize');
 const url = 'mongodb://localhost:27017/storypoints';
+
 const mongoClient = require('mongodb').MongoClient;
 let dbClient
 

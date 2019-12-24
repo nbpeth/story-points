@@ -1,16 +1,13 @@
 <div style="text-align: center;">
-  <h1>{{id}}</h1>
+  <h1>{{name}}</h1>
 </div>
 
 <div class="user-tiles">
   <user-tiles>
-    <user-tile *ngFor="let participant of getParticipants() | keyvalue"
-               [participant]="participant"
-               [sessionId]="id"
-               [pointsAreHidden]="pointsAreHidden"
-               [isDarkTheme]="isDarkTheme"
-               [myCard]="isMyCard(participant.key)"
-    ></user-tile>
+    <user-tile *ngFor="let participant of session.participants | participantFilter" [participant]="participant"
+      [sessionId]="id" [pointsAreHidden]="pointsAreHidden" [isDarkTheme]="isDarkTheme"
+      [myCard]="isMyCard(participant.participantName)">
+    </user-tile>
   </user-tiles>
 
 </div>
@@ -23,7 +20,7 @@
 
     <mat-form-field>
       <mat-select (selectionChange)="voteHasChanged($event)">
-        <mat-option *ngFor="let option of availableOptions" [value]="option">
+        <mat-option *ngFor="let option of pointSelection.options" [value]="option">
           {{option}}
         </mat-option>
       </mat-select>

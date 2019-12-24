@@ -1,6 +1,5 @@
-import { Component, OnInit, Inject, Input } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { ThemeService } from '../services/theme.service';
 
 @Component({
   selector: 'app-confirm-dialog',
@@ -9,11 +8,13 @@ import { ThemeService } from '../services/theme.service';
 })
 export class ConfirmDialogComponent {
   id: string;
+  sessionName: string;
   message: string;
 
   constructor(private dialogRef: MatDialogRef<ConfirmDialogComponent>,
     @Inject(MAT_DIALOG_DATA) data: any) {
     this.id = data.id;
+    this.sessionName = data.sessionName;
     this.message = data.message;
   }
 

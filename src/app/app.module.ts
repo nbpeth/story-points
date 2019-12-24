@@ -29,6 +29,7 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { ThemeService } from './services/theme.service';
 import { CreateSessionDialogComponent } from './create-session-dialog/create-session-dialog.component';
+import { ParticipantFilterPipe } from './pipe/participant-filter.pipe';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { CreateSessionDialogComponent } from './create-session-dialog/create-ses
     SearchBoxComponent,
     ConfirmDialogComponent,
     CreateSessionDialogComponent,
+    ParticipantFilterPipe,
   ],
   imports: [
     AppRoutingModule,

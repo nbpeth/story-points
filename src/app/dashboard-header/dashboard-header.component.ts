@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { CreateSessionDialogComponent } from '../create-session-dialog/create-session-dialog.component';
 
@@ -7,14 +7,11 @@ import { CreateSessionDialogComponent } from '../create-session-dialog/create-se
   templateUrl: './dashboard-header.component.html',
   styleUrls: ['./dashboard-header.component.scss']
 })
-export class DashboardHeaderComponent implements OnInit {
+export class DashboardHeaderComponent {
   @Output() searchBoxValue: EventEmitter<string> = new EventEmitter<string>();
   @Output() createSession: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(private dialog: MatDialog) { }
-
-  ngOnInit() {
-  }
 
   create = () => {
     const dialogConfig = new MatDialogConfig();

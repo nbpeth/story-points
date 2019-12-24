@@ -10,18 +10,17 @@ import { ConfirmDialogComponent } from 'src/app/confirm-dialog/confirm-dialog.co
   styleUrls: ['./active-session-tile.component.scss']
 })
 export class ActiveSessionTileComponent {
-  @Input() id: string;
+  @Input() session: { id: number, sessionName: string };
   constructor(private socketService: SocketService, private dialog: MatDialog) {
   }
-
-  urlEncode = (id: string) => encodeURIComponent(id);
 
   closeSession = (id: string) => {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
-      id: id,
+      id: this.session.id,
+      sessionName: this.session.sessionName,
       message: 'Destroy Session - Be You Certain?'
     };
     const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig)
@@ -31,7 +30,7 @@ export class ActiveSessionTileComponent {
 
   private destroySessionIfItIsWilled = (result: boolean) => {
     if (result) {
-      const message = new TerminateSessionMessage(new TerminateSessionPayload(this.id));
+      const message = new TerminateSessionMessage(new TerminateSessionPayload(this.session.id));
       this.socketService.send(message);
     }
   }

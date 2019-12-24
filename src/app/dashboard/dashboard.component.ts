@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SocketService } from '../services/socket.service';
 import { Events } from '../active-session/enum/events';
 import {
@@ -8,28 +8,35 @@ import {
   SpMessage,
   GetCompleteStatePayload
 } from '../active-session/model/events.model';
-
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   private sessionSearchTerm = '';
-  private activeSessions = {};
-  visibleSessions = {};
+  private activeSessions = [];
+  visibleSessions = [];
   error: string;
+  socketSubscription: Subscription;
 
   constructor(private socketService: SocketService) {
   }
 
   ngOnInit() {
-    this.socketService
+    this.socketSubscription = this.socketService
       .getSocket()
       .subscribe(this.handleEvents);
 
+
     this.socketService.send(new GetCompleteStateMessage());
   }
+
+  ngOnDestroy(): void {
+    // this.socketSubscription.unsubscribe()
+  }
+
 
   createNewSession = (newSessionName: string) => {
     const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));
@@ -43,25 +50,24 @@ export class DashboardComponent implements OnInit {
   }
 
   private applySearchFilter = () => {
-    const sessions = { ...this.activeSessions }
-    const matches = Object.keys(sessions).reduce((result, next) => {
-      if (next.includes(this.sessionSearchTerm)) {
-        result[next] = {}
-      }
-      return result;
-    }, {});
+    const sessions = this.activeSessions ? [...this.activeSessions] : []
+
+    const matches = sessions.filter((session: { id: number, sessionName: string }) =>
+      session.sessionName ? session.sessionName.includes(this.sessionSearchTerm) : false
+    );
 
     this.visibleSessions = matches;
   }
 
   private handleEvents = (message: MessageEvent) => {
+
     const messageData = JSON.parse(message.data) as SpMessage;
     const eventType = messageData.eventType;
     const payload = messageData.payload;
 
     switch (eventType) {
       case Events.COMPLETE_STATE:
-        this.setSessionsFrom(payload);
+        this.setSessionsFrom(payload as GetCompleteStatePayload);
         break;
       case Events.SESSION_CREATED:
         this.newSessionWasCreated(payload as NewSessionPayload);
@@ -70,13 +76,13 @@ export class DashboardComponent implements OnInit {
   };
 
   private setSessionsFrom = (payload: GetCompleteStatePayload) => {
-    this.activeSessions = payload;
+    this.activeSessions = payload.sessions;
     this.applySearchFilter();
   };
 
   private newSessionWasCreated = (payload: NewSessionPayload | undefined) => {
     if (payload) {
-      this.activeSessions = { ...this.activeSessions, ...payload.sessions };
+      this.activeSessions = payload.sessions;
     }
     this.applySearchFilter();
   };

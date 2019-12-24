@@ -5,26 +5,23 @@ const cors = require('cors');
 const app = express();
 const WebSocketServer = require("ws").Server;
 const db = require('./db');
+const mysqlClient = require('./mysqlClient')
 const http = require('http');
 
 let _ws;
-const state = {
-  sessions: {},
-};
 
-const initHandlers = () => {
-  /*
-  serve static UI content
- */
+const serveStaticUIContent = () => {
+  console.log('Serving static content over server.');
+
   app.use(express.static(__dirname + '/dist/story-points'));
 
-  app.get('/*', (req, res) => {
+  app.get('/*', (_, res) => {
     res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
   });
+}
 
-  /*
-    web socket server
-   */
+const initHandlers = () => {
+  console.log('Initializing server and setting up handlers.');
 
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
@@ -36,15 +33,40 @@ const initHandlers = () => {
   handleNewClients = (ws) => {
     _ws = ws;
 
-    db.getAllSessions().then((sessions) => {
-      const message = formatMessage('state-of-the-state', sessions);
+    getStateOfTheAppForCaller();
 
-      notifyCaller(message);
-
-      ws.on('message', handleIncomingMessages);
-    })
-
+    ws.on('message', handleIncomingMessages);
   };
+
+  getStateOfTheAppForCaller = () => {
+    const getAllSessionsCallback = (err, results) => {
+      if (err) {
+        // error ?
+      }
+      notifyCaller(formatMessage('state-of-the-state', { sessions: results }))
+    }
+
+    mysqlClient.getAllSessions(getAllSessionsCallback)
+  }
+
+  getSessionState = (sessionId, notifier) => {
+    mysqlClient.getSessionState(sessionId, (err, participants) => {
+      if (err) {
+      }
+      notifier(formatMessage('session-state', { sessionId: sessionId, participants: participants }, sessionId));
+    })
+  }
+
+  getStateOfTheAppForClients = () => {
+    const getAllSessionsCallback = (err, results) => {
+      if (err) {
+        // error ?
+      }
+      notifyClients(formatMessage('state-of-the-state', { sessions: results }))
+    }
+
+    mysqlClient.getAllSessions(getAllSessionsCallback)
+  }
 
   handleIncomingMessages = (message) => {
     const messageData = JSON.parse(message);
@@ -52,16 +74,13 @@ const initHandlers = () => {
 
     switch (eventType) {
       case 'state-of-the-state':
-        db.getAllSessions().then((sessions) => {
-          notifyCaller(formatMessage('state-of-the-state', sessions));
-        });
-
+        getStateOfTheAppForCaller();
         break;
       case 'session-created':
         createNewSession(messageData);
         break;
       case 'session-state':
-        getSessionState(messageData);
+        getSessionStateUsing(messageData);
         break;
       case 'participant-joined':
         addParticipantToSession(messageData);
@@ -78,21 +97,30 @@ const initHandlers = () => {
       case 'points-revealed':
         revealPoints(messageData);
         break;
+      case 'points-revealed':
+        revealPoints(messageData);
+        break;
       case 'terminate-session':
         terminateSession(messageData);
+        break;
+      case 'get-session-name':
+        getSessionNameFor(messageData);
         break;
     }
   };
 
   terminateSession = (messageData) => {
     const payload = messageData.payload;
-    const requestedSession = payload.sessionName;
+    const requestedSession = payload.sessionId;
 
-    db.terminateSession(requestedSession).then((sessions) => {
-      const message = formatMessage('state-of-the-state', sessions);
+    const callback = (err) => {
+      if (err) {
+      }
 
-      notifyClients(message);
-    })
+      getStateOfTheAppForClients();
+    }
+
+    mysqlClient.terminateSession(requestedSession, callback);
   };
 
   revealPoints = (messageData) => {
@@ -105,64 +133,107 @@ const initHandlers = () => {
 
   resetPoints = (messageData) => {
     const eventType = messageData.eventType;
-    const requestedSession = messageData.payload.sessionName;
+    // const requestedSession = messageData.payload.sessionName;
 
-    db.resetPoints(requestedSession).then((stateForSession) => {
-      notifyClients(formatMessage(eventType, stateForSession, requestedSession))
-    })
+
   };
 
-  getSessionState = (messageData) => {
+  getSessionNameFor = (messageData) => {
     const eventType = messageData.eventType;
-    const requestedSession = messageData.payload.sessionName;
+    const sessionId = messageData.payload.sessionId;
 
-    db.getStateForSession(requestedSession).then((stateForSession) => {
-      notifyCaller(formatMessage(eventType, stateForSession, requestedSession));
+    mysqlClient.getSessionNameFor(sessionId, (err, sessionNameResults) => {
+      if (err) {
+      }
+
+      const maybeSessionName = sessionNameResults && sessionNameResults.length > 0 ? sessionNameResults[0].sessionName : undefined;
+
+      if (maybeSessionName) {
+        notifyCaller(formatMessage(eventType, { sessionId: sessionId, sessionName: maybeSessionName }, sessionId));
+      }
     })
+  }
+
+  getSessionStateUsing = (messageData) => {
+    const eventType = messageData.eventType;
+    const sessionId = messageData.payload.sessionId;
+
+    mysqlClient.getSessionState(sessionId, (err, participants) => {
+      if (err) {
+      }
+      notifyCaller(formatMessage(eventType, { sessionId: sessionId, participants: participants }));
+    })
+
   };
 
   pointWasSubmitted = (messageData) => {
-    const payload = messageData.payload;
-    const requestedSession = payload.sessionName;
-    const targetUser = payload.userName;
-    const point = payload.value
+    // const eventType = messageData.eventType;
 
-    db.pointWasSubmitted(requestedSession, targetUser, point).then((sessionData) => {
-      notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
-    })
+    const { userId, value, sessionId } = messageData.payload;
+
+    const pointWasSubmittedCallback = (err) => {
+      if (err) {
+      }
+
+      getSessionState(sessionId, notifyClients);
+    }
+
+    mysqlClient.pointWasSubmitted(userId, value, pointWasSubmittedCallback);
   };
 
   addParticipantToSession = (messageData) => {
-    const payload = messageData.payload;
-    const requestedSession = payload.sessionName;
-    const participantToAdd = payload.userName;
-    const isAdmin = payload.isAdmin;
+    const eventType = messageData.eventType;
+    const { sessionId, userName, isAdmin } = messageData.payload;
 
-    db.addParticipantToSession(requestedSession, participantToAdd, isAdmin).then((stateForSession) => {
-      notifyClients(formatMessage(messageData.eventType, stateForSession, requestedSession))
-    });
+    const callback = (err, _) => {
+      if (err) {
+      }
+      mysqlClient.getSessionState(sessionId, (err, participants) => {
+        if (err) {
+        }
+        notifyClients(formatMessage(eventType, { sessionId: sessionId, participants: participants }, sessionId));
+      })
+    }
+    mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, callback)
+
   };
 
   removeParticipantFromSession = (messageData) => {
     const payload = messageData.payload;
-    const requestedSession = payload.sessionName;
-    const participantToRemove = payload.userName;
+    const { participantId, sessionId } = payload;
 
-    db.removeParticipantFromSession(requestedSession, participantToRemove).then((stateForSession) => {
-      notifyClients(formatMessage(messageData.eventType, stateForSession, requestedSession))
+    mysqlClient.removeParticipantFromSession(participantId, sessionId, (err) => {
+      if (err) {
+      }
+      getSessionState(sessionId, notifyClients);
     })
   };
 
   createNewSession = (messageData) => {
-    db.createSession(messageData).then((sessions) => {
-      // reject("bad")
-      const message = formatMessage('state-of-the-state', sessions);
-      notifyClients(message)
-    }).catch(error => {
-      console.log('ERROR!') // something bad happened, we should tell them why
-      // notifyCaller(formatMessage('state-of-the-fart', {}))
-    })
+    const getAllSessionsCallback = (err, results) => {
+      if (err) {
+        console.error(err.message);
+        sendErrorToCaller(err.message);
+      } else {
+        notifyClients(formatMessage('state-of-the-state', { sessions: results }));
+      }
+    }
+
+    const createSessionCallback = (err) => {
+      if (err) {
+        console.error(err.message);
+        sendErrorToCaller(err.message);
+      } else {
+        mysqlClient.getAllSessions(getAllSessionsCallback)
+      }
+    }
+
+    mysqlClient.createSession(messageData, createSessionCallback);
   };
+
+  sendErrorToCaller = (message) => {
+    notifyCaller(formatMessage('error', { reason: message }))
+  }
 
   formatMessage = (eventType, payload, targetSession) => ({
     eventType: eventType,
@@ -193,7 +264,20 @@ const initHandlers = () => {
   });
 }
 
-db.connect()
-  .finally(() => {
-    initHandlers();
-  });
+const connectedToDB = (err, args) => {
+  if (err) {
+    throw Error(`Could not connect to DB: ${err.message}`);
+  }
+
+
+  serveStaticUIContent();
+  initHandlers();
+}
+
+const startApp = () => {
+  console.log('Connecting to DB...');
+  mysqlClient.initDB(connectedToDB);
+}
+
+startApp();
+

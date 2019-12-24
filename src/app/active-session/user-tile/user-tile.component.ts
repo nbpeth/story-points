@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { SocketService } from '../../services/socket.service';
 import { ParticipantRemovedSessionMessage, ParticipantRemovedSessionPayload } from "../model/events.model";
+import { Participant } from '../model/session.model';
 
 @Component({
   selector: 'user-tile',
@@ -8,8 +9,9 @@ import { ParticipantRemovedSessionMessage, ParticipantRemovedSessionPayload } fr
   styleUrls: ['./user-tile.component.scss']
 })
 export class UserTileComponent {
+
   @Input() sessionId: any;
-  @Input() participant: any;
+  @Input() participant: Participant = new Participant();
   @Input() pointsAreHidden: boolean;
   @Input() myCard: boolean;
   @Input() isDarkTheme: boolean;
@@ -17,11 +19,8 @@ export class UserTileComponent {
   constructor(private socketService: SocketService) {
   }
 
-  removeUser = (participant) => {
-    const message = new ParticipantRemovedSessionMessage(new ParticipantRemovedSessionPayload(this.sessionId, participant));
+  removeUser = () => {
+    const message = new ParticipantRemovedSessionMessage(new ParticipantRemovedSessionPayload(this.participant.participantId, this.sessionId));
     this.socketService.send(message);
   }
-
-  userDisplayName = () => unescape(this.participant.key)
-
 }

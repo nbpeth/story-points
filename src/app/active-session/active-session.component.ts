@@ -1,8 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SocketService } from '../services/socket.service';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { Events } from './enum/events';
+import { Subscription } from 'rxjs';
 import {
   GetStateForSessionMessage,
   GetStateForSessionPayload,
@@ -16,26 +17,38 @@ import {
   ResetPointsForSessionPayload,
   RevealPointsForSessionMessage,
   RevealPointsForSessionPayload,
-  SpMessage
+  SpMessage,
+  GetSessionNamePayload,
+  GetSessionNameMessage
 } from './model/events.model';
 import { Participant, StoryPointSession } from './model/session.model';
 import { MatSelectChange } from '@angular/material';
 import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
 import { ThemeService } from "../services/theme.service";
+import { ParticipantFilterPipe } from '../pipe/participant-filter.pipe';
+import { DefaultPointSelection } from '../point-selection/point-selection';
 
 @Component({
   selector: 'app-active-session',
   templateUrl: './active-session.component.html',
-  styleUrls: ['./active-session.component.scss']
+  styleUrls: ['./active-session.component.scss'],
+  providers: [ParticipantFilterPipe]
+
 })
-export class ActiveSessionComponent implements OnInit {
+export class ActiveSessionComponent implements OnInit, OnDestroy {
+
   private participant: Participant;
   private selectedVote: number | string;
   isDarkTheme: boolean;
-  availableOptions = [0, 1, 2, 3, 5, 8, 13, 21, 34, 'Abstain'];
+  pointSelection = new DefaultPointSelection();
   pointsAreHidden = true;
-  id: string;
-  session: StoryPointSession = { participants: {} };
+
+  id: number;
+  name: string;
+  // parts are broken out. ouch.
+  session: StoryPointSession = new StoryPointSession()
+
+  socketSubscription: Subscription;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -50,35 +63,85 @@ export class ActiveSessionComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(this.setId);
-    this.socketService
+
+    this.socketSubscription = this.socketService
       .getSocket()
       .pipe(
         map(this.mapEvents),
         filter(this.eventsOnlyForThisSession),
         map(this.handleEvents),
-      )
-      .subscribe();
+      ).subscribe();
 
     this.themeService.isDarkTheme.subscribe(isIt => this.isDarkTheme = isIt);
-
   }
 
-  private setId = paramMap => {
-    const urlEncodedId = paramMap.get('id');
-    const id = decodeURIComponent(urlEncodedId);
+  ngOnDestroy(): void {
+    // breaking subs, need to unsub and create new on init
+    // this.socketSubscription.unsubscribe()
+  }
+
+  getParticipant = () => this.participant;
+
+  submit = () => {
+    const vote = this.selectedVote ? this.selectedVote as string : 'Abstain';
+    this.socketService.send(new PointSubmittedForParticipantMessage(new PointSubmittedForParticipantPayload(this.id, this.participant.participantId, this.participant.participantName, vote)));
+  };
+
+  resetPoints = () => {
+    this.socketService.send(new ResetPointsForSessionMessage(new ResetPointsForSessionPayload(this.id)));
+  };
+
+  revealPoints = () => {
+    this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.id)));
+  };
+
+  joinSession = (name: string, admin: boolean = false) => {
+    const maybeNewParticipant = new Participant(name, undefined, 0, false, admin);
+
+    this.participant = maybeNewParticipant;
+    this.storage.set(String(this.id), JSON.stringify(this.participant));
+
+    this.socketService.send(new ParticipantJoinedSessionMessage(new ParticipantJoinedSessionPayload(this.id, maybeNewParticipant.participantName, admin)));
+    // if name exists, can't do it -> error
+  };
+
+  leaveSession = () => {
+    const participantId = this.participant.participantId;
+    this.socketService.send(new ParticipantRemovedSessionMessage(new ParticipantRemovedSessionPayload(participantId, this.session.sessionId)));
+    this.clearLocalUserState();
+  };
+
+  lurker = (): boolean => !this.participant;
+
+  youAreTheAdmin = (): boolean => this.participant.isAdmin;
+
+  canSeeControlPanel = (): boolean => !this.lurker() && this.youAreTheAdmin();
+
+  isMyCard = (cardId: string) =>
+    this.participant ? this.participant.participantName === cardId : false;
+
+
+  private setId = (paramMap: any) => {
+    const id = paramMap.get('id');
     this.id = id;
+
     this.recoverUser(id);
+    this.socketService.send(new GetSessionNameMessage(new GetSessionNamePayload(id)));
     this.socketService.send(new GetStateForSessionMessage(new GetStateForSessionPayload(id)));
   };
 
+  private setSessionName = (messageData: GetSessionNameMessage) => {
+    this.name = messageData.payload.sessionName
+  }
+
   private recoverUser = (id: string) => {
     const maybeRecoveredUserEntry = this.storage.get(id);
-
+    console.log('??? recovering', id)
     if (maybeRecoveredUserEntry) {
       const maybeRecoveredUser = JSON.parse(maybeRecoveredUserEntry) as Participant;
-      this.participant = new Participant(maybeRecoveredUser.name, 0, maybeRecoveredUser.hasVoted, maybeRecoveredUser.isAdmin);
+      this.participant = new Participant(maybeRecoveredUser.participantName, maybeRecoveredUser.participantId, 0, maybeRecoveredUser.hasVoted, maybeRecoveredUser.isAdmin);
+      console.log('# recovered', this.participant)
     }
-
   };
 
   private mapEvents = (message: MessageEvent): SpMessage => {
@@ -89,19 +152,37 @@ export class ActiveSessionComponent implements OnInit {
   private eventsOnlyForThisSession = (message: SpMessage): boolean => {
     const targetSession = message.targetSession;
 
-    return this.id === targetSession || message.eventType === Events.SESSION_STATE;
+    return this.id == targetSession || message.eventType === Events.SESSION_STATE;
   };
+
+  private restoreSessionFromState = (messageData: GetStateForSessionMessage) => {
+    const session = messageData.payload;
+    this.session = session as StoryPointSession;
+    this.setIdForLocalUser(session.participants);
+    this.refreshParticipants(messageData)
+  };
+
+  private setIdForLocalUser = (participants: any[]) => {
+    participants.forEach((p: { participantName: string, participantId: number }) => {
+
+      if (this.participant && p.participantName === this.participant.participantName) {
+        this.participant.participantId = p.participantId
+      }
+    })
+  }
 
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
 
+    // console.log('messageData', messageData)
     switch (eventType) {
       case Events.SESSION_STATE:
         if (!payload) {
           this.router.navigate(['/'], { queryParams: { error: 1 } });
+        } else {
+          this.restoreSessionFromState(messageData as GetStateForSessionMessage);
         }
-        this.restoreSessionFromState(messageData as GetStateForSessionMessage);
         break;
       case Events.PARTICIPANT_JOINED:
         this.participantJoined(messageData as ParticipantJoinedSessionMessage);
@@ -119,80 +200,24 @@ export class ActiveSessionComponent implements OnInit {
       case Events.POINTS_REVEALED:
         this.pointsAreHidden = false;
         break;
+      case Events.GET_SESSION_NAME:
+        this.setSessionName(messageData as GetStateForSessionMessage)
+        break;
       default:
         console.log('not matched', eventType);
     }
   };
 
-  getParticipants = () => {
-    const participants = this.session.participants;
-    const admins = Object.entries(participants).filter((body) => body[1].isAdmin).map(body => body[0]);
-
-    admins.forEach(name => {
-      delete participants[name];
-    });
-
-    return participants;
-  };
-
-  getParticipant = () => this.participant;
-
-  submit = () => {
-    const vote = this.selectedVote ? this.selectedVote as string : 'Abstain';
-    this.socketService.send(new PointSubmittedForParticipantMessage(new PointSubmittedForParticipantPayload(this.id, this.participant.name, vote)));
-  };
-
-  resetPoints = () => {
-    this.socketService.send(new ResetPointsForSessionMessage(new ResetPointsForSessionPayload(this.id)));
-  };
-
-  revealPoints = () => {
-    this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.id)));
-  };
-
-  joinSession = (name: string, admin: boolean = false) => {
-    const maybeNewParticipant = new Participant(name, 0, false, admin);
-    // validate server side
-    if (this.session.participants[maybeNewParticipant.name]) {
-      return;
-    }
-
-    this.participant = maybeNewParticipant;
-    this.storage.set(this.id, JSON.stringify(this.participant));
-
-    this.socketService.send(new ParticipantJoinedSessionMessage(new ParticipantJoinedSessionPayload(this.id, maybeNewParticipant.name, admin)));
-    // if name exists, can't do it -> error
-  };
-
-  leaveSession = () => {
-    const name = this.participant.name;
-    this.socketService.send(new ParticipantRemovedSessionMessage(new ParticipantRemovedSessionPayload(this.id, name)));
-    this.clearLocalUserState();
-  };
-
-  lurker = (): boolean => !this.participant;
-
-  youAreTheAdmin = (): boolean => this.participant.isAdmin;
-
-  canSeeControlPanel = (): boolean => !this.lurker() && this.youAreTheAdmin();
-
-  isMyCard = (cardId: string) =>
-    this.participant ? this.participant.name === cardId : false;
-
   private clearLocalUserState = () => {
     this.participant = undefined;
-    this.storage.remove(this.id);
+    this.storage.remove(String(this.id));
   };
 
   private pointSubmittedForParticipant = (messageData: PointSubmittedForParticipantMessage) => {
     const sessionState = messageData.payload;
-    this.session = sessionState;
+    // this.session = sessionState;
   };
 
-  private restoreSessionFromState = (messageData: GetStateForSessionMessage) => {
-    const sessionState = messageData.payload;
-    this.session = sessionState;
-  };
 
   private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
     this.refreshParticipants(messageData);
@@ -204,15 +229,19 @@ export class ActiveSessionComponent implements OnInit {
 
   private refreshParticipants = (messageData: SpMessage) => {
     const participants = messageData.payload.participants;
+    this.setIdForLocalUser(participants);
     this.session.participants = participants;
 
     this.ensureYouAreStillActive();
   };
 
+  // out of order, clearing every time you change a route
   private ensureYouAreStillActive = () => {
-    const youAreStillHere = Object.keys(this.session.participants).find((userName: string) =>
-      userName === (this.participant ? this.participant.name : undefined)
-    );
+    const youAreStillHere = this.session.participants.find((participant: Participant) =>
+      this.participant && participant.participantId == this.participant.participantId
+    )
+
+    console.log('youAreStillHere', this.session.participants, this.participant)
 
     if (!youAreStillHere) {
       this.clearLocalUserState();
