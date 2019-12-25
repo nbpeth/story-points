@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SocketService } from '../services/socket.service';
 import { filter, map, flatMap } from 'rxjs/operators';
@@ -26,7 +26,8 @@ import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
 import { ThemeService } from "../services/theme.service";
 import { ParticipantFilterPipe } from '../pipe/participant-filter.pipe';
 import { DefaultPointSelection } from '../point-selection/point-selection';
-import { Observable } from 'rxjs';
+
+
 @Component({
   selector: 'app-active-session',
   templateUrl: './active-session.component.html',
@@ -40,7 +41,7 @@ export class ActiveSessionComponent implements OnInit {
   isDarkTheme: boolean;
   pointSelection = new DefaultPointSelection();
   session: StoryPointSession = new StoryPointSession();
-  socketObs: Observable<any>;
+  // socketObs: Observable<any>;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -48,6 +49,9 @@ export class ActiveSessionComponent implements OnInit {
     private themeService: ThemeService,
     @Inject(LOCAL_STORAGE) private storage: StorageService) {
   }
+
+  getSessionName = () =>
+    this.session.sessionName;
 
   ngOnInit() {
     const getSessionIdAndInitialState = (paramMap: any) => {
@@ -58,22 +62,22 @@ export class ActiveSessionComponent implements OnInit {
       return this.socketService.getSocket()
     }
 
-    this.socketObs = this.route.paramMap
+    // this.socketObs = 
+    this.route.paramMap
       .pipe(
         flatMap(getSessionIdAndInitialState)
       )
       .pipe(
-        map(this.mapEvents),
         filter(this.eventsOnlyForThisSession),
         map(this.handleEvents),
-      );
+      ).subscribe();
 
     this.themeService.isDarkTheme.subscribe(isIt => this.isDarkTheme = isIt);
   }
 
   submit = () => {
     const vote = this.participant && this.participant.point ? this.participant.point as string : 'Abstain';
-    this.socketService.send(new PointSubmittedForParticipantMessage(new PointSubmittedForParticipantPayload(this.id, this.participant.participantId, this.participant.participantName, vote)));
+    this.socketService.send(new PointSubmittedForParticipantMessage(new PointSubmittedForParticipantPayload(this.session.sessionId, this.participant.participantId, this.participant.participantName, vote)));
   };
 
   voteHasChanged = (vote: MatSelectChange) => {
@@ -81,11 +85,11 @@ export class ActiveSessionComponent implements OnInit {
   };
 
   resetPoints = () => {
-    this.socketService.send(new ResetPointsForSessionMessage(new ResetPointsForSessionPayload(this.id)));
+    this.socketService.send(new ResetPointsForSessionMessage(new ResetPointsForSessionPayload(this.session.sessionId)));
   };
 
   revealPoints = () => {
-    this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.id)));
+    this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.session.sessionId)));
   };
 
   joinSession = (name: string, admin: boolean = false) => {
@@ -119,11 +123,6 @@ export class ActiveSessionComponent implements OnInit {
     this.session.sessionName = messageData.payload.sessionName
   }
 
-  private mapEvents = (message: MessageEvent): SpMessage => {
-    const messageData = JSON.parse(message.data) as SpMessage;
-    return messageData;
-  };
-
   private eventsOnlyForThisSession = (message: SpMessage): boolean => {
     const targetSession = message.targetSession;
 
@@ -134,7 +133,7 @@ export class ActiveSessionComponent implements OnInit {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
 
-    console.log('messageData', messageData)
+    // console.log('messageData', messageData)
     switch (eventType) {
       case Events.SESSION_STATE:
       case Events.PARTICIPANT_JOINED:
@@ -149,6 +148,9 @@ export class ActiveSessionComponent implements OnInit {
       case Events.POINTS_REVEALED:
         this.session.pointsAreHidden = false;
         break;
+      case Events.POINTS_RESET:
+        this.session.pointsAreHidden = true;
+        break;
       case Events.GET_SESSION_NAME:
         this.setSessionName(messageData as GetStateForSessionMessage)
         break;
@@ -159,7 +161,9 @@ export class ActiveSessionComponent implements OnInit {
 
   private updateSession = (messageData: GetStateForSessionMessage) => {
     const session = Object.assign(new StoryPointSession, messageData.payload)
+    const previousName = this.session.sessionName;
     this.session = session;
+    this.session.setName(previousName);
 
     if (!this.participant) {
       this.recoverUser(session);
@@ -178,7 +182,7 @@ export class ActiveSessionComponent implements OnInit {
   private refreshParticipants = (session: StoryPointSession) => {
     const participants = session.participants;
     this.setParticipantsInSession(participants);
-    this.ensureYouAreStillActive();
+    this.ensureYouAreStillActive(participants);
   };
 
   private setParticipantsInSession = (participants: Participant[]) => {
@@ -195,8 +199,8 @@ export class ActiveSessionComponent implements OnInit {
     })
   }
 
-  private ensureYouAreStillActive = () => {
-    const youAreStillHere = this.session.participants.find((participant: Participant) =>
+  private ensureYouAreStillActive = (participants: any[]) => {
+    const youAreStillHere = participants.find((participant: Participant) =>
       this.participant && participant.participantId == this.participant.participantId
     )
 

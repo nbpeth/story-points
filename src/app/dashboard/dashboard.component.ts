@@ -54,9 +54,7 @@ export class DashboardComponent implements OnInit {
     this.visibleSessions = matches;
   }
 
-  private handleEvents = (message: MessageEvent) => {
-
-    const messageData = JSON.parse(message.data) as SpMessage;
+  private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
 

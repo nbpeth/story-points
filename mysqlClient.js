@@ -65,7 +65,8 @@ getSessionState = (sessionId, onComplete) => {
         p.participant_name as participantName, 
         p.id as participantId, 
         p.point, 
-        p.is_admin as isAdmin
+        p.is_admin as isAdmin,
+        p.has_voted as hasVoted
         FROM storypoints.sessions s, storypoints.participant p 
         WHERE s.id = ?
         AND s.id = p.session_id;
@@ -118,6 +119,16 @@ pointWasSubmitted = (participantId, value, onComplete) => {
     runQuery(statement, onComplete);
 }
 
+resetPointsForSession = (sessionId, onComplete) => {
+    const sql = `
+        UPDATE storypoints.participant SET point = 0, has_voted = false WHERE session_id = ?
+    `
+
+    const statement = mysql.format(sql, [sessionId]);
+
+    runQuery(statement, onComplete);
+}
+
 module.exports = {
     initDB: initDB,
     getAllSessions: getAllSessions,
@@ -128,4 +139,5 @@ module.exports = {
     addParticipantToSession: addParticipantToSession,
     removeParticipantFromSession: removeParticipantFromSession,
     pointWasSubmitted: pointWasSubmitted,
+    resetPointsForSession: resetPointsForSession,
 }
