@@ -73,7 +73,7 @@ getSessionState = (sessionId, onComplete) => {
     `;
 
     const statement = mysql.format(sql, [sessionId]);
-
+    throw Error('!')
     runQuery(statement, onComplete);
 }
 
