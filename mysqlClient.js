@@ -9,8 +9,8 @@ initDB = (onComplete) => {
         canRetry: true,
     });
 
-    // on error reconnect
     pool.on('error', (err) => {
+
     });
 
     onComplete();
@@ -27,7 +27,9 @@ runQuery = (statement, onComplete) => {
 
             con.release();
         });
+
     })
+
 }
 
 getAllSessions = (onComplete) => {
@@ -73,7 +75,7 @@ getSessionState = (sessionId, onComplete) => {
     `;
 
     const statement = mysql.format(sql, [sessionId]);
-    throw Error('!')
+
     runQuery(statement, onComplete);
 }
 

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SocketService } from '../services/socket.service';
 import { filter, map, flatMap } from 'rxjs/operators';
@@ -26,7 +26,7 @@ import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
 import { ThemeService } from "../services/theme.service";
 import { ParticipantFilterPipe } from '../pipe/participant-filter.pipe';
 import { DefaultPointSelection } from '../point-selection/point-selection';
-
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-active-session',
@@ -35,13 +35,13 @@ import { DefaultPointSelection } from '../point-selection/point-selection';
   providers: [ParticipantFilterPipe]
 
 })
-export class ActiveSessionComponent implements OnInit {
+export class ActiveSessionComponent implements OnInit, OnDestroy {
   private participant: Participant;
 
   isDarkTheme: boolean;
   pointSelection = new DefaultPointSelection();
   session: StoryPointSession = new StoryPointSession();
-  // socketObs: Observable<any>;
+  socketServiceSubscription: Subscription
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -57,12 +57,12 @@ export class ActiveSessionComponent implements OnInit {
     const getSessionIdAndInitialState = (paramMap: any) => {
       const id = paramMap.get('id');
       this.session.sessionId = id;
+
       this.requestInitialStateOfSessionBy(id);
 
       return this.socketService.getSocket()
     }
 
-    // this.socketObs = 
     this.route.paramMap
       .pipe(
         flatMap(getSessionIdAndInitialState)
@@ -72,7 +72,12 @@ export class ActiveSessionComponent implements OnInit {
         map(this.handleEvents),
       ).subscribe();
 
+
     this.themeService.isDarkTheme.subscribe(isIt => this.isDarkTheme = isIt);
+  }
+
+  ngOnDestroy(): void {
+    // this.socketService.unsubscribe();
   }
 
   submit = () => {
@@ -133,7 +138,7 @@ export class ActiveSessionComponent implements OnInit {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
 
-    // console.log('messageData', messageData)
+    console.log('messageData', messageData)
     switch (eventType) {
       case Events.SESSION_STATE:
       case Events.PARTICIPANT_JOINED:

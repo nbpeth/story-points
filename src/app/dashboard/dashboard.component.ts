@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SocketService } from '../services/socket.service';
 import { Events } from '../active-session/enum/events';
 import {
@@ -8,17 +8,23 @@ import {
   SpMessage,
   GetCompleteStatePayload
 } from '../active-session/model/events.model';
+import { Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
+
   private sessionSearchTerm = '';
   private activeSessions = [];
   visibleSessions = [];
   error: string;
+
+  socketObs: Observable<any>;
+  socketServiceSubscription: Subscription
 
   constructor(private socketService: SocketService) {
   }
@@ -28,10 +34,12 @@ export class DashboardComponent implements OnInit {
       .getSocket()
       .subscribe(this.handleEvents);
 
-
     this.socketService.send(new GetCompleteStateMessage());
   }
 
+  ngOnDestroy(): void {
+    // this.socketService.unsubscribe();
+  }
 
   createNewSession = (newSessionName: string) => {
     const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));

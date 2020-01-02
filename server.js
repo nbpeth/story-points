@@ -4,7 +4,6 @@ const path = require('path');
 const cors = require('cors');
 const app = express();
 const WebSocketServer = require("ws").Server;
-const db = require('./db');
 const mysqlClient = require('./mysqlClient')
 const http = require('http');
 
@@ -30,6 +29,11 @@ const initHandlers = () => {
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server: server, path: "/socket" });
 
+  wss.on('error', (err) => {
+    console.log('Error: ', err.message)
+  })
+
+
   handleNewClients = (ws) => {
     _ws = ws;
 
@@ -41,7 +45,7 @@ const initHandlers = () => {
   getStateOfTheAppForCaller = () => {
     const getAllSessionsCallback = (err, results) => {
       if (err) {
-        // error ?
+        sendErrorToCaller('Unable to get sessions', err.message);
       }
       notifyCaller(formatMessage('state-of-the-state', { sessions: results }))
     }
@@ -52,6 +56,7 @@ const initHandlers = () => {
   getSessionState = (sessionId, notifier) => {
     mysqlClient.getSessionState(sessionId, (err, participants) => {
       if (err) {
+        sendErrorToCaller('Unable to get session state', err.message);
       }
       notifier(formatMessage('session-state', { sessionId: sessionId, participants: participants }, sessionId));
     })
@@ -60,7 +65,7 @@ const initHandlers = () => {
   getStateOfTheAppForClients = () => {
     const getAllSessionsCallback = (err, results) => {
       if (err) {
-        // error ?
+        sendErrorToCaller('Unable to terminate sessions', err.message);
       }
       notifyClients(formatMessage('state-of-the-state', { sessions: results }))
     }
@@ -147,7 +152,7 @@ const initHandlers = () => {
 
   getSessionNameFor = (messageData) => {
     const eventType = messageData.eventType;
-    const sessionId = messageData.payload.sessionId;
+    const { sessionId } = messageData.payload;
 
     mysqlClient.getSessionNameFor(sessionId, (err, sessionNameResults) => {
       if (err) {
@@ -164,7 +169,7 @@ const initHandlers = () => {
 
   getSessionStateUsing = (messageData) => {
     const eventType = messageData.eventType;
-    const sessionId = messageData.payload.sessionId;
+    const { sessionId } = messageData.payload;
 
     mysqlClient.getSessionState(sessionId, (err, participants) => {
       if (err) {
@@ -205,8 +210,7 @@ const initHandlers = () => {
   };
 
   removeParticipantFromSession = (messageData) => {
-    const payload = messageData.payload;
-    const { participantId, sessionId } = payload;
+    const { participantId, sessionId } = messageData.payload;
 
     mysqlClient.removeParticipantFromSession(participantId, sessionId, (err) => {
       if (err) {
@@ -271,11 +275,10 @@ const initHandlers = () => {
   });
 }
 
-const connectedToDB = (err, args) => {
+const connectedToDB = (err) => {
   if (err) {
     throw Error(`Could not connect to DB: ${err.message}`);
   }
-
 
   serveStaticUIContent();
   initHandlers();

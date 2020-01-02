@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { WebSocketSubjectConfig } from 'rxjs/src/internal/observable/dom/WebSocketSubject';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { SpMessage } from '../active-session/model/events.model';
-
+import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -19,11 +19,21 @@ export class SocketService {
       url: `ws://localhost:8081/socket`,
       // url: `${wsProtocol}://${host}/socket`,
       deserializer: (data) => data,
+      openObserver: {
+        next: () => {
+          console.log('WS connection ok');
+        }
+      },
+      closeObserver: {
+        next: (closeEvent) => {
+          console.log('WS connection closed', closeEvent);
+        }
+      }
     } as WebSocketSubjectConfig<any>;
 
     this.socket = webSocket(config);
-
   }
+
   showErrorBar = (message: string): void => {
     const config = new MatSnackBarConfig()
     config.verticalPosition = 'top';
@@ -33,7 +43,6 @@ export class SocketService {
 
   getSocket = () => {
     return this.socket
-      .asObservable()
       .pipe(
         map((event: MessageEvent) => {
           const messageData = JSON.parse(event.data) as SpMessage;
@@ -42,10 +51,12 @@ export class SocketService {
           }
           return messageData;
         })
-      );
+      )
   }
 
   send = (message: any): void => {
     this.socket.next(message);
   };
+
+  unsubscribe = () => this.socket.unsubscribe();
 }
