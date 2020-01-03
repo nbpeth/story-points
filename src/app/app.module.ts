@@ -31,7 +31,6 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { ThemeService } from './services/theme.service';
 import { CreateSessionDialogComponent } from './create-session-dialog/create-session-dialog.component';
 import { ParticipantFilterPipe } from './pipe/participant-filter.pipe';
-import { MessageBoxComponent } from './message-box/message-box.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +48,6 @@ import { MessageBoxComponent } from './message-box/message-box.component';
     ConfirmDialogComponent,
     CreateSessionDialogComponent,
     ParticipantFilterPipe,
-    MessageBoxComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -69,7 +67,7 @@ import { MessageBoxComponent } from './message-box/message-box.component';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [ConfirmDialogComponent, CreateSessionDialogComponent, MessageBoxComponent]
+  entryComponents: [ConfirmDialogComponent, CreateSessionDialogComponent]
 
 })
 export class AppModule {
