@@ -5,7 +5,6 @@ import { Events } from 'src/app/active-session/enum/events';
 export class SpMessage {
   eventType: string;
   payload: SpMessagePayload;
-  targetSession: number;
 
   constructor(payload?: SpMessagePayload) {
     this.payload = payload;
@@ -13,11 +12,13 @@ export class SpMessage {
 }
 
 export class SpMessagePayload {
+  sessionId: number;
+
   participants: any;
 }
 
 export class GetCompleteStatePayload extends SpMessagePayload {
-  sessions: { id: number, sessionName: string }[]
+  sessions: { id: number, sessionName: string }[];
 }
 
 export class NewSessionPayload extends SpMessagePayload {

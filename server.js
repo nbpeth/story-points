@@ -37,7 +37,7 @@ const initHandlers = () => {
   handleNewClients = (ws) => {
     _ws = ws;
 
-    getStateOfTheAppForCaller();
+    // getStateOfTheAppForCaller();
 
     ws.on('message', handleIncomingMessages);
   };

@@ -30,15 +30,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.socketService.connect();
+
     this.socketService
-      .getSocket()
+      .messages()
       .subscribe(this.handleEvents);
 
     this.socketService.send(new GetCompleteStateMessage());
   }
 
   ngOnDestroy(): void {
-    // this.socketService.unsubscribe();
+    this.socketService.unsubscribe();
   }
 
   createNewSession = (newSessionName: string) => {
