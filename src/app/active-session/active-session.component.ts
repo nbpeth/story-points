@@ -30,8 +30,10 @@ import {DefaultPointSelection} from '../point-selection/point-selection';
   templateUrl: './active-session.component.html',
   styleUrls: ['./active-session.component.scss'],
   providers: [ParticipantFilterPipe]
-
 })
+
+// user joined alert bar?
+
 export class ActiveSessionComponent implements OnInit, OnDestroy {
   private participant: Participant;
 
@@ -182,12 +184,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
           this.updateSession(messageData as GetStateForSessionMessage);
         }
         break;
-      case Events.POINTS_REVEALED:
-        this.session.pointsAreHidden = false;
-        break;
-      case Events.POINTS_RESET:
-        this.session.pointsAreHidden = true;
-        break;
       case Events.GET_SESSION_NAME:
         this.setSessionName(messageData as GetStateForSessionMessage)
         break;
@@ -237,7 +233,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   private ensureYouAreStillActive = (participants: any[]) => {
     const youAreStillHere = participants.find((participant: Participant) => {
-      return this.participant && participant.participantId === this.participant.participantId
+      return this.participant && participant.participantId === this.participant.participantId;
     });
 
     if (!youAreStillHere) {
@@ -249,5 +245,4 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.storage.remove(String(this.session.sessionId));
     this.participant = undefined;
   };
-
 }

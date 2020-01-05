@@ -7,7 +7,7 @@
 <div class="user-tiles">
   <user-tiles>
     <user-tile *ngFor="let participant of session.participants | participantFilter" [participant]="participant"
-      [sessionId]="session.sessionId" [pointsAreHidden]="session.pointsAreHidden" [isDarkTheme]="isDarkTheme"
+      [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
       [myCard]="isMyCard(participant.participantName)">
     </user-tile>
   </user-tiles>

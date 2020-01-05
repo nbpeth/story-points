@@ -37,8 +37,6 @@ const initHandlers = () => {
   handleNewClients = (ws) => {
     _ws = ws;
 
-    // getStateOfTheAppForCaller();
-
     ws.on('message', handleIncomingMessages);
   };
 
@@ -54,11 +52,12 @@ const initHandlers = () => {
   }
 
   getSessionState = (sessionId, notifier) => {
-    mysqlClient.getSessionState(sessionId, (err, participants) => {
+    mysqlClient.getSessionState(sessionId, (err, results) => {
       if (err) {
         sendErrorToCaller('Unable to get session state', err.message);
       }
-      notifier(formatMessage('session-state', { sessionId: sessionId, participants: participants }, sessionId));
+      console.log('???', results)
+      notifier(formatMessage('session-state', { sessionId: sessionId, participants: results }, sessionId));
     })
   }
 
@@ -129,7 +128,7 @@ const initHandlers = () => {
   revealPoints = (messageData) => {
     const { sessionId } = messageData.payload;
 
-    mysqlClient.resetPointsForSession(sessionId, (err) => {
+    mysqlClient.revealPointsForSession(sessionId, (err) => {
       if (err) {
         sendErrorToCaller('Unable to reveal points', err.message);
       } else {
@@ -171,11 +170,11 @@ const initHandlers = () => {
     const eventType = messageData.eventType;
     const { sessionId } = messageData.payload;
 
-    mysqlClient.getSessionState(sessionId, (err, participants) => {
+    mysqlClient.getSessionState(sessionId, (err, results) => {
       if (err) {
         sendErrorToCaller('Unable to fetch session state', err.message);
       } else {
-        notifyCaller(formatMessage(eventType, { sessionId: sessionId, participants: participants }));
+        notifyCaller(formatMessage(eventType, { sessionId: sessionId, participants: results }));
       }
     })
   };

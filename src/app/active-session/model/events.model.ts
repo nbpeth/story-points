@@ -30,7 +30,7 @@ export class NewSessionPayload extends SpMessagePayload {
 }
 
 export class GetStateForSessionPayload extends SpMessagePayload {
-  constructor(public sessionId: number, participants?: any[], sessionName?: string) {
+  constructor(public sessionId: number, participants?: any[], sessionName?: string, pointsVisible?: boolean) {
     super();
   }
 }

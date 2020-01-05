@@ -4,6 +4,7 @@ create table storypoints.sessions
     AUTO_INCREMENT,
 	session_name varchar
     (200) NOT NULL,
+    points_visible boolean,
     PRIMARY KEY
     (id)
 );
