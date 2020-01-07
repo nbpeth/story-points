@@ -56,7 +56,6 @@ const initHandlers = () => {
       if (err) {
         sendErrorToCaller('Unable to get session state', err.message);
       }
-      console.log('???', results)
       notifier(formatMessage('session-state', { sessionId: sessionId, participants: results }, sessionId));
     })
   }
