@@ -34,6 +34,8 @@ import {DefaultPointSelection} from '../point-selection/point-selection';
 
 // user joined alert bar?
 
+// overflow scrolling for user tile div
+
 export class ActiveSessionComponent implements OnInit, OnDestroy {
   private participant: Participant;
 

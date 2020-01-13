@@ -23,9 +23,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   visibleSessions = [];
   error: string;
 
-  socketObs: Observable<any>;
-  socketServiceSubscription: Subscription
-
   constructor(private socketService: SocketService) {
   }
 
