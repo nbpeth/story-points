@@ -34,14 +34,14 @@ resource "aws_db_instance" "rp-story-points-db" {
   max_allocated_storage = 20
 
   tags = {
-    Name = "example"
-    application = "example"
-    contact = "example@validity.com"
+    Name = "story-points"
+    application = "story-points"
+    contact = "parrtnerdevelopment@validity.com"
     environment = "test"
     managedby = "${var.managedby}"
-    project = "Example"
+    project = "story-points"
     repo_name = "${var.repo_name}"
 
-    team = "example"
+    team = "partner development"
   }
 }
