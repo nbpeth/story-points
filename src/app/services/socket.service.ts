@@ -12,6 +12,8 @@ export class SocketService {
   private socket: WebSocketSubject<any>;
 
   constructor(private snackBar: MatSnackBar) {
+
+
   }
 
   connect = () => {
@@ -51,16 +53,16 @@ export class SocketService {
   }
 
 
-  showErrorBar = (message: string): void => {
-    const config = new MatSnackBarConfig();
-    config.verticalPosition = 'top';
-    config.duration = 5000;
-    this.snackBar.open(message, '', config);
-  }
+showErrorBar = (message: string): void => {
+  const config = new MatSnackBarConfig();
+  config.verticalPosition = 'top';
+  config.duration = 5000;
+  this.snackBar.open(message, '', config);
+}
 
-// }
+send = (message: any): void => {
+  this.socket.next(message);
+};
 
-  send = (message: any): void => {
-    this.socket.next(message);
-  };
+unsubscribe = () => this.socket.unsubscribe();
 }

@@ -6,6 +6,14 @@ resource "aws_ecr_repository" "rp-story-points" {
   }
 }
 
+variable "db_password" {
+  type = string
+}
+
+variable "db_user" {
+  type = string
+}
+
 resource "aws_db_instance" "rp-story-points-db" {
   allow_major_version_upgrade = false
   auto_minor_version_upgrade = false
@@ -22,7 +30,7 @@ resource "aws_db_instance" "rp-story-points-db" {
   monitoring_role_arn = "${data.aws_iam_role.rds_monitoring_role.arn}"
   monitoring_interval = "60"
   multi_az = false
-  name = "rpstorypointsdb"
+  name = "storypoints-release"
   option_group_name = "default:postgres-10"
   parameter_group_name = "default.postgres10"
   password = "${var.db_password}"
@@ -34,7 +42,7 @@ resource "aws_db_instance" "rp-story-points-db" {
   max_allocated_storage = 20
 
   tags = {
-    Name = "story-points"
+    Name = "storypoints-release"
     application = "story-points"
     contact = "parrtnerdevelopment@validity.com"
     environment = "test"
