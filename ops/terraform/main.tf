@@ -6,6 +6,10 @@ resource "aws_ecr_repository" "rp-story-points" {
   }
 }
 
+data "aws_iam_role" "rds_monitoring_role" {
+  name = "rds-monitoring-role"
+}
+
 variable "db_password" {
   type = string
 }
@@ -31,8 +35,8 @@ resource "aws_db_instance" "rp-story-points-db" {
   monitoring_interval = "60"
   multi_az = false
   name = "storypoints-release"
-  option_group_name = "default:postgres-10"
-  parameter_group_name = "default.postgres10"
+  option_group_name = "default:mysql-5.7"
+  parameter_group_name = "default.mysql5.7"
   password = "${var.db_password}"
   username = "${var.db_user}"
 
