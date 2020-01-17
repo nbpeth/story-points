@@ -10,15 +10,11 @@ data "aws_iam_role" "rds_monitoring_role" {
   name = "rds-monitoring-role"
 }
 
-variable "db_password" {
+variable "release_db_password" {
   type = string
 }
 
-variable "db_user" {
-  type = string
-}
-
-resource "aws_db_instance" "rp-story-points-db" {
+resource "aws_db_instance" "release" {
   allow_major_version_upgrade = false
   auto_minor_version_upgrade = false
   backup_retention_period = 10
@@ -31,14 +27,14 @@ resource "aws_db_instance" "rp-story-points-db" {
   identifier = "example"
   instance_class = "db.t2.micro"
   maintenance_window = "Sun:05:54-Sun:06:24"
-  monitoring_role_arn = "${data.aws_iam_role.rds_monitoring_role.arn}"
+  monitoring_role_arn = data.aws_iam_role.rds_monitoring_role.arn
   monitoring_interval = "60"
   multi_az = false
   name = "storypoints-release"
   option_group_name = "default:mysql-5.7"
   parameter_group_name = "default.mysql5.7"
-  password = "${var.db_password}"
-  username = "${var.db_user}"
+  username = "storypoints_release"
+  password = var.release_db_password
 
   storage_encrypted = true
   storage_type = "gp2"
@@ -50,9 +46,9 @@ resource "aws_db_instance" "rp-story-points-db" {
     application = "story-points"
     contact = "parrtnerdevelopment@validity.com"
     environment = "test"
-    managedby = "${var.managedby}"
+    managedby = var.managedby
     project = "story-points"
-    repo_name = "${var.repo_name}"
+    repo_name = var.repo_name
 
     team = "partner development"
   }
