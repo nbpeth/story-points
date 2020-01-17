@@ -30,8 +30,8 @@ resource "aws_db_instance" "release" {
   monitoring_role_arn = data.aws_iam_role.rds_monitoring_role.arn
   monitoring_interval = "60"
   multi_az = false
-  name = "storypoints-release"
-  option_group_name = "default:mysql-5.7"
+  name = "storypointsrelease"
+  option_group_name = "default:mysql-5-7"
   parameter_group_name = "default.mysql5.7"
   username = "storypoints_release"
   password = var.release_db_password
