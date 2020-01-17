@@ -25,7 +25,7 @@ resource "aws_db_instance" "release" {
   engine = "mysql"
   engine_version = "5.7"
   identifier = "example"
-  instance_class = "db.t2.micro"
+  instance_class = "db.t2.small"
   maintenance_window = "Sun:05:54-Sun:06:24"
   monitoring_role_arn = data.aws_iam_role.rds_monitoring_role.arn
   monitoring_interval = "60"
