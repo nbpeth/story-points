@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
 import {WebSocketSubjectConfig} from 'rxjs/src/internal/observable/dom/WebSocketSubject';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
-import {MatSnackBar, MatSnackBarConfig} from '@angular/material';
+import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
 import {map} from 'rxjs/operators';
 import {SpMessage} from '../active-session/model/events.model';
+import {AlertSnackbarComponent} from "../alert-snackbar/alert-snackbar.component";
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +22,8 @@ export class SocketService {
     const wsProtocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
 
     const config = {
-      url: `ws://localhost:8081/socket`,
-      // url: `${wsProtocol}://${host}/socket`,
+      // url: `ws://localhost:8081/socket`,
+      url: `${wsProtocol}://${host}/socket`,
       deserializer: (data) => data,
       openObserver: {
         next: () => {
@@ -52,17 +53,21 @@ export class SocketService {
       );
   }
 
+  showErrorBar = (message: string): void => {
+    this.snackBar.openFromComponent(AlertSnackbarComponent, {
+      duration: 5000,
+      horizontalPosition: 'center' as MatSnackBarHorizontalPosition,
+      verticalPosition: 'top' as MatSnackBarVerticalPosition,
+      data: {
+        message,
+        labelClass: 'warn',
+      }
+    });
+  }
 
-showErrorBar = (message: string): void => {
-  const config = new MatSnackBarConfig();
-  config.verticalPosition = 'top';
-  config.duration = 5000;
-  this.snackBar.open(message, '', config);
-}
+  send = (message: any): void => {
+    this.socket.next(message);
+  };
 
-send = (message: any): void => {
-  this.socket.next(message);
-};
-
-unsubscribe = () => this.socket.unsubscribe();
+  unsubscribe = () => this.socket.unsubscribe();
 }
