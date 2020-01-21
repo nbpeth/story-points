@@ -23,7 +23,6 @@ export class ControlPanelComponent {
   constructor(private dialog: MatDialog) {
   }
 
-
   joinSession = () => {
     const dialogRef = this.dialog.open(JoinSessionDialogComponent, this.getDialogConfig());
 
