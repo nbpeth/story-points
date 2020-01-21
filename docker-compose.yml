@@ -1,0 +1,33 @@
+version: "3.5"
+services:
+  storypoints:
+    build:
+      context: .
+    container_name: story-points
+    ports:
+      - 8081:8081
+    links:
+      - db
+    environment:
+      - SPHOST=db
+      - SPUSER=user
+      - SPPASSWORD=password
+      - SPPORT=3306
+      - SPDB=storypoints
+    command: ["npm", "run", "start-server"]
+    restart: always
+  db:
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=example
+      - MYSQL_DATABASE=storypoints
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+    ports:
+      - 3306:3306
+    container_name: story-points-db
+    volumes:
+      - ./db_seed:/docker-entrypoint-initdb.d
+
