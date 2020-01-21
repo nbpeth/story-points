@@ -21,7 +21,7 @@ deployment:
               - name: SPPORT
                 value: "3306"
               - name: SPDB
-                value: "storypointsrelease"
+                value: "storypoints"
               - name: SPUSER
                 valueFrom:
                   secretKeyRef:
