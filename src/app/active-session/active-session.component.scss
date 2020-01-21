@@ -1,13 +1,3 @@
-.action-bar {
-  min-height: 200px;
-  position: absolute;
-  bottom: 0;
-}
-
-.mat-toolbar-row {
-  justify-content: center;
-}
-
 .big-text {
   font-size: 40px;
 }
@@ -22,6 +12,14 @@
   justify-content: center;
 }
 
-.x {
-  background: red;
+.action-bar {
+  min-height: 200px;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+
+
+.mat-toolbar-single-row {
+  padding: 0 0 0 0;
 }

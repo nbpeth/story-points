@@ -1,0 +1,49 @@
+<div class="container">
+
+  <mat-drawer-container class="options-container" autosize>
+    <mat-drawer #menu class="options-sidenav" mode="side">
+      <mat-checkbox [(ngModel)]="showAdminConsole">Admin Console</mat-checkbox>
+    </mat-drawer>
+
+    <div class="options-content">
+      <button type="button" mat-button (click)="menu.toggle()">
+        <mat-icon>settings</mat-icon>
+        Settings
+      </button>
+
+      <ng-container *ngIf="!participant; else leaveSessionButton">
+        <button type="button" mat-button (click)="joinSession()">
+          <mat-icon>add</mat-icon>
+          Join
+        </button>
+      </ng-container>
+
+      <ng-template #leaveSessionButton>
+        <button type="button" mat-button (click)="leaveSession()">
+          <mat-icon>close</mat-icon>
+          Bail
+        </button>
+
+      </ng-template>
+
+    </div>
+
+  </mat-drawer-container>
+
+  <div class="admin-console" *ngIf="showAdminConsole">
+    <button (click)="changePointVisibility('reset')" mat-button color="warn">Reset</button>
+    <button (click)="changePointVisibility('reveal')" mat-button color="accent">Reveal</button>
+  </div>
+
+  <div>
+    <mat-form-field>
+      <mat-select (selectionChange)="voteHasChanged($event)">
+        <mat-option *ngFor="let option of pointSelection.options" [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button name="smutButton" mat-stroked-button color="basic" (click)="submitVote()">Cast Vote</button>
+  </div>
+
+</div>

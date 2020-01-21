@@ -1,8 +1,8 @@
-import { Component, Input } from '@angular/core';
-import { SocketService } from "../../../services/socket.service";
-import { TerminateSessionMessage, TerminateSessionPayload } from "../../model/events.model";
-import { MatDialog, MatDialogConfig } from '@angular/material';
-import { ConfirmDialogComponent } from 'src/app/confirm-dialog/confirm-dialog.component';
+import {Component, Input} from '@angular/core';
+import {SocketService} from "../../../services/socket.service";
+import {TerminateSessionMessage, TerminateSessionPayload} from "../../model/events.model";
+import {MatDialog, MatDialogConfig} from '@angular/material';
+import {ConfirmDialogComponent} from 'src/app/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'active-session-tile',
@@ -14,7 +14,7 @@ export class ActiveSessionTileComponent {
   constructor(private socketService: SocketService, private dialog: MatDialog) {
   }
 
-  closeSession = (id: string) => {
+  closeSession = () => {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;

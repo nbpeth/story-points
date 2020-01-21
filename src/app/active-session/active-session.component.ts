@@ -32,6 +32,7 @@ import {ThemeService} from '../services/theme.service';
 import {ParticipantFilterPipe} from '../pipe/participant-filter.pipe';
 import {DefaultPointSelection} from '../point-selection/point-selection';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
+import {PointVisibilityChange} from "../control-panel/control-panel.component";
 
 @Component({
   selector: 'app-active-session',
@@ -43,10 +44,10 @@ import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component
 // admin that can also vote
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
-  private participant: Participant;
+  participant: Participant;
 
   isDarkTheme: boolean;
-  pointSelection = new DefaultPointSelection();
+  // pointSelection = new DefaultPointSelection();
   session: StoryPointSession = new StoryPointSession();
 
   constructor(private route: ActivatedRoute,
@@ -103,8 +104,23 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   voteHasChanged = (vote: MatSelectChange) => {
+    console.log('vote!');
     this.participant.setPoint(vote.value);
+    this.submit();
   };
+
+  changePointVisibility = (state: PointVisibilityChange) => {
+    switch (state) {
+      case 'reset':
+        this.resetPoints();
+        break
+      case 'reveal':
+        this.revealPoints();
+        break;
+      default:
+        break;
+    }
+  }
 
   resetPoints = () => {
     this.socketService.send(new ResetPointsForSessionMessage(new ResetPointsForSessionPayload(this.session.sessionId)));
@@ -114,24 +130,25 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.session.sessionId)));
   };
 
-  joinSession = (name: string, isAdmin: boolean = false) => {
-    const maybeNewParticipant = new Participant(name, undefined, 0, false, isAdmin);
-    this.participant = maybeNewParticipant;
+  joinSession = (maybeNewParticipant: Participant, isAdmin: boolean = false) => {
+    if (maybeNewParticipant) {
+      this.participant = maybeNewParticipant;
 
-    this.storage.set(String(this.session.sessionId), JSON.stringify(this.participant));
+      this.storage.set(String(this.session.sessionId), JSON.stringify(this.participant));
 
-    this.socketService.send(
-      new ParticipantJoinedSessionMessage(
-        new ParticipantJoinedSessionPayload(
-          this.session.sessionId,
-          maybeNewParticipant.participantName,
-          isAdmin
+      this.socketService.send(
+        new ParticipantJoinedSessionMessage(
+          new ParticipantJoinedSessionPayload(
+            this.session.sessionId,
+            maybeNewParticipant.participantName,
+            isAdmin
+          )
         )
-      )
-    );
+      );
+    }
   };
 
-  leaveSession = () => {
+  leaveSession = (participant: Participant) => {
     this.socketService.send(
       new ParticipantRemovedSessionMessage(
         new ParticipantRemovedSessionPayload(
@@ -141,8 +158,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         )
       )
     );
-
-    // this.clearLocalUserState();
   };
 
   lurker = (): boolean => !this.participant;
@@ -224,7 +239,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
     const {userName} = messageData.payload;
     const itWasMe = this.wasItMe(userName);
-    const message = itWasMe ? 'You joined' : `${userName} joined.`;
+    const message = itWasMe ? `You joined as ${userName}` : `${userName} joined.`;
 
     this.showInfoBar(message, 'happy');
     this.updateSession(messageData);
@@ -291,11 +306,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.participant = undefined;
   };
 
-  private showInfoBar = (message: string, labelClass: string, duration: number = 3000): void => {
+  private showInfoBar = (message: string, labelClass: string, duration: number = 2000): void => {
     this.snackBar.openFromComponent(AlertSnackbarComponent, {
       duration,
-      horizontalPosition: 'right' as MatSnackBarHorizontalPosition,
-      verticalPosition: 'left' as MatSnackBarVerticalPosition,
+      horizontalPosition: 'center' as MatSnackBarHorizontalPosition,
+      verticalPosition: 'bottom' as MatSnackBarVerticalPosition,
       data: {
         message,
         labelClass
