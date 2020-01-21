@@ -9,7 +9,9 @@ import {
   GetStateForSessionMessage,
   GetStateForSessionPayload,
   ParticipantJoinedSessionMessage,
-  ParticipantJoinedSessionPayload, ParticipantRemovedSessionMessage, ParticipantRemovedSessionPayload,
+  ParticipantJoinedSessionPayload,
+  ParticipantRemovedSessionMessage,
+  ParticipantRemovedSessionPayload,
   PointSubmittedForParticipantMessage,
   PointSubmittedForParticipantPayload,
   ResetPointsForSessionMessage,
@@ -19,11 +21,17 @@ import {
   SpMessage
 } from './model/events.model';
 import {Participant, StoryPointSession} from './model/session.model';
-import {MatSelectChange} from '@angular/material';
+import {
+  MatSelectChange,
+  MatSnackBar,
+  MatSnackBarHorizontalPosition,
+  MatSnackBarVerticalPosition
+} from '@angular/material';
 import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
 import {ThemeService} from '../services/theme.service';
 import {ParticipantFilterPipe} from '../pipe/participant-filter.pipe';
 import {DefaultPointSelection} from '../point-selection/point-selection';
+import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
 
 @Component({
   selector: 'app-active-session',
@@ -32,9 +40,7 @@ import {DefaultPointSelection} from '../point-selection/point-selection';
   providers: [ParticipantFilterPipe]
 })
 
-// user joined alert bar?
-
-// overflow scrolling for user tile div
+// admin that can also vote
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
   private participant: Participant;
@@ -47,6 +53,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
               private router: Router,
               private socketService: SocketService,
               private themeService: ThemeService,
+              private snackBar: MatSnackBar,
               @Inject(LOCAL_STORAGE) private storage: StorageService) {
   }
 
@@ -129,12 +136,13 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       new ParticipantRemovedSessionMessage(
         new ParticipantRemovedSessionPayload(
           this.participant.participantId,
+          this.participant.participantName,
           this.session.sessionId
         )
       )
     );
 
-    this.clearLocalUserState();
+    // this.clearLocalUserState();
   };
 
   lurker = (): boolean => !this.participant;
@@ -176,25 +184,32 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     console.log('messageData', messageData);
 
     switch (eventType) {
-      case Events.SESSION_STATE:
       case Events.PARTICIPANT_JOINED:
+        this.verifyPayloadAndUpdate(payload, this.participantJoined, messageData);
+        break;
+      case Events.SESSION_STATE:
+        this.verifyPayloadAndUpdate(payload, this.updateSession, messageData);
+        break;
       case Events.PARTICIPANT_REMOVED:
-        if (!payload) {
-          // real error code mappings, also not being used anywhere
-          this.router.navigate(['/'], {queryParams: {error: 1}});
-        } else {
-          this.updateSession(messageData as GetStateForSessionMessage);
-        }
+        this.verifyPayloadAndUpdate(payload, this.participantRemoved, messageData);
         break;
       case Events.GET_SESSION_NAME:
-        this.setSessionName(messageData as GetStateForSessionMessage)
+        this.setSessionName(messageData as GetStateForSessionMessage);
         break;
       default:
         console.log('not matched', eventType);
     }
   };
 
-  private updateSession = (messageData: GetStateForSessionMessage) => {
+  private verifyPayloadAndUpdate = (payload: any, updateFunction: any, messageData: any) => {
+    if (!payload) {
+      this.router.navigate(['/'], {queryParams: {error: 1}});
+    } else {
+      updateFunction(messageData);
+    }
+  }
+
+  private updateSession = (messageData: GetStateForSessionMessage | ParticipantJoinedSessionMessage) => {
     const session = Object.assign(new StoryPointSession(), messageData.payload);
     const previousName = this.session.sessionName;
     this.session = session;
@@ -205,6 +220,34 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     }
     this.refreshParticipants(session);
   };
+
+  private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
+    const {userName} = messageData.payload;
+    const itWasMe = this.wasItMe(userName);
+    const message = itWasMe ? 'You joined' : `${userName} joined.`;
+
+    this.showInfoBar(message, 'happy');
+    this.updateSession(messageData);
+  };
+
+  private participantRemoved = (messageData: ParticipantRemovedSessionMessage) => {
+    const {userName} = messageData.payload;
+    const itWasMe = this.wasItMe(userName);
+    const message = itWasMe ? 'You left' : `${userName} left.`;
+
+    if (itWasMe) {
+      this.clearLocalUserState();
+    }
+
+    this.showInfoBar(message, 'warn');
+    this.updateSession(messageData);
+  };
+
+  private wasItMe = (userName: string): boolean => {
+    const yourName = this.participant ? this.participant.participantName : '';
+
+    return yourName === userName;
+  }
 
   private recoverUser = (session: StoryPointSession): void => {
     const maybeRecoveredUserEntry = this.storage.get(String(session.sessionId));
@@ -247,4 +290,16 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.storage.remove(String(this.session.sessionId));
     this.participant = undefined;
   };
+
+  private showInfoBar = (message: string, labelClass: string, duration: number = 3000): void => {
+    this.snackBar.openFromComponent(AlertSnackbarComponent, {
+      duration,
+      horizontalPosition: 'right' as MatSnackBarHorizontalPosition,
+      verticalPosition: 'left' as MatSnackBarVerticalPosition,
+      data: {
+        message,
+        labelClass
+      }
+    });
+  }
 }

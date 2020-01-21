@@ -31,6 +31,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { ThemeService } from './services/theme.service';
 import { CreateSessionDialogComponent } from './create-session-dialog/create-session-dialog.component';
 import { ParticipantFilterPipe } from './pipe/participant-filter.pipe';
+import { AlertSnackbarComponent } from './alert-snackbar/alert-snackbar.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { ParticipantFilterPipe } from './pipe/participant-filter.pipe';
     ConfirmDialogComponent,
     CreateSessionDialogComponent,
     ParticipantFilterPipe,
+    AlertSnackbarComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -67,7 +69,7 @@ import { ParticipantFilterPipe } from './pipe/participant-filter.pipe';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [ConfirmDialogComponent, CreateSessionDialogComponent]
+  entryComponents: [ConfirmDialogComponent, CreateSessionDialogComponent, AlertSnackbarComponent]
 
 })
 export class AppModule {

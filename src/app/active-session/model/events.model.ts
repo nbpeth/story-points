@@ -1,7 +1,5 @@
 import { Events } from 'src/app/active-session/enum/events';
 
-// should have different messages for in / out
-
 export class SpMessage {
   eventType: string;
   payload: SpMessagePayload;
@@ -13,7 +11,6 @@ export class SpMessage {
 
 export class SpMessagePayload {
   sessionId: number;
-
   participants: any;
 }
 
@@ -59,7 +56,7 @@ export class ParticipantJoinedSessionPayload extends SpMessagePayload {
 }
 
 export class ParticipantRemovedSessionPayload extends SpMessagePayload {
-  constructor(public participantId: number, public sessionId: number) {
+  constructor(public participantId: number, public userName: string, public sessionId: number) {
     super();
   }
 }
