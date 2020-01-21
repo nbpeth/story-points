@@ -21,6 +21,10 @@ deployNode {
                 'image.tag': tag
             ]
             repoChart = "https://helm-charts.returnpath.net/charts/rp-standard-deployment-0.0.1.tgz"
+            secrets = [
+                'secrets.data.db_password': "storypoints-rds-password-${environment}",
+                'secrets.data.db_user': "storypoints-rds-user-${environment}"
+            ]
         }
     }
 }
