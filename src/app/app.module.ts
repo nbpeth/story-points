@@ -17,11 +17,11 @@ import {
   MatSelectModule, MatSlideToggleModule,
   MatToolbarModule,
   MatDialogModule,
-  MatSnackBarModule
+  MatSnackBarModule, MatSidenavModule
 } from '@angular/material';
 import { UserTileComponent } from './active-session/user-tile/user-tile.component';
 import { UserTilesComponent } from './active-session/user-tiles/user-tiles.component';
-import { DragDropModule } from "@angular/cdk/drag-drop";
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TitlebarComponent } from './titlebar/titlebar.component';
 import { ThemeToggleComponent } from './theme-toggle/theme-toggle.component';
 import { DashboardHeaderComponent } from './dashboard-header/dashboard-header.component';
@@ -32,6 +32,9 @@ import { ThemeService } from './services/theme.service';
 import { CreateSessionDialogComponent } from './create-session-dialog/create-session-dialog.component';
 import { ParticipantFilterPipe } from './pipe/participant-filter.pipe';
 import { AlertSnackbarComponent } from './alert-snackbar/alert-snackbar.component';
+import { ControlPanelComponent } from './control-panel/control-panel.component';
+import {JoinSessionDialogComponent} from "./join-session-dialog/join-session-dialog.component";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -50,12 +53,15 @@ import { AlertSnackbarComponent } from './alert-snackbar/alert-snackbar.componen
     CreateSessionDialogComponent,
     ParticipantFilterPipe,
     AlertSnackbarComponent,
+    ControlPanelComponent,
+    JoinSessionDialogComponent,
   ],
   imports: [
     AppRoutingModule,
     BrowserAnimationsModule,
     BrowserModule,
     DragDropModule,
+    FormsModule,
     MatToolbarModule,
     MatCardModule,
     MatIconModule,
@@ -66,10 +72,11 @@ import { AlertSnackbarComponent } from './alert-snackbar/alert-snackbar.componen
     MatBadgeModule,
     MatSlideToggleModule,
     MatSnackBarModule,
+    MatSidenavModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [ConfirmDialogComponent, CreateSessionDialogComponent, AlertSnackbarComponent]
+  entryComponents: [ConfirmDialogComponent, JoinSessionDialogComponent, CreateSessionDialogComponent, AlertSnackbarComponent]
 
 })
 export class AppModule {

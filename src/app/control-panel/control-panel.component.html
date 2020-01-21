@@ -1,0 +1,31 @@
+<mat-drawer-container class="options-container" autosize>
+  <mat-drawer #drawer class="options-sidenav" mode="side">
+    Control Panel
+  </mat-drawer>
+
+  <div class="options-content">
+    <button type="button" mat-button (click)="drawer.toggle()">
+      <mat-icon>settings</mat-icon>
+      Settings
+    </button>
+
+    <ng-container *ngIf="!participant; else leaveSessionButton">
+      <button type="button" mat-button (click)="joinSession()">
+        <mat-icon>add</mat-icon>
+        Join
+      </button>
+    </ng-container>
+
+    <ng-template #leaveSessionButton>
+      <button type="button" mat-button (click)="leaveSession()">
+        <mat-icon>close</mat-icon>
+        Leave
+      </button>
+
+    </ng-template>
+
+  </div>
+
+</mat-drawer-container>
+
+

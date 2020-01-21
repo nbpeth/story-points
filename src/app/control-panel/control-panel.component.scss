@@ -1,0 +1,25 @@
+
+
+.options-container {
+  min-height: 200px;
+  height: 100%;
+  border: 0;
+
+}
+
+.options-content {
+  text-align: left;
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: flex-start;
+}
+
+.options-sidenav {
+  padding: 0px;
+}
+
+.mat-icon {
+  padding-right: 10px;
+}
