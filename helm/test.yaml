@@ -17,11 +17,11 @@ deployment:
           - name: story-points
             env:
               - name: SPHOST
-                value: storypointsrelease.ch3aslfv4t7y.us-east-1.rds.amazonaws.com
+                value: "storypointsrelease.ch3aslfv4t7y.us-east-1.rds.amazonaws.com"
               - name: SPPORT
-                value: 3306
+                value: "3306"
               - name: SPDB
-                value: storypointsrelease
+                value: "storypointsrelease"
               - name: SPUSER
                 valueFrom:
                   secretKeyRef:
