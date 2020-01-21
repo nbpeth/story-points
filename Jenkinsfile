@@ -11,7 +11,7 @@ deployNode {
     def environment = 'test'
     def cluster = "workload1-${environment}"
 
-    if(tag == 'master') {
+    if(false) {
         dockerBuild {
             imageName = 'rp-story-points'
             imageTag = tag
