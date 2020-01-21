@@ -1,6 +1,8 @@
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { SocketService } from "../../../services/socket.service";
 import { TerminateSessionMessage, TerminateSessionPayload } from "../../model/events.model";
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { ConfirmDialogComponent } from 'src/app/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'active-session-tile',
@@ -8,22 +10,28 @@ import { TerminateSessionMessage, TerminateSessionPayload } from "../../model/ev
   styleUrls: ['./active-session-tile.component.scss']
 })
 export class ActiveSessionTileComponent {
-  @Input() session: { [id: string]: any };
-  id: string;
-
-  constructor(private socketService: SocketService) {
+  @Input() session: { id: number, sessionName: string };
+  constructor(private socketService: SocketService, private dialog: MatDialog) {
   }
-
-  ngOnChanges(change: SimpleChanges) {
-    if (change['session']) {
-      this.id = Object.keys(change.session.currentValue)[0]
-    }
-  }
-
-  urlEncode = (id: string) => encodeURIComponent(id);
 
   closeSession = (id: string) => {
-    const message = new TerminateSessionMessage(new TerminateSessionPayload(id));
-    this.socketService.send(message);
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = {
+      id: this.session.id,
+      sessionName: this.session.sessionName,
+      message: 'Destroy Session - Be You Certain?'
+    };
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig)
+
+    dialogRef.afterClosed().subscribe(this.destroySessionIfItIsWilled);
+  }
+
+  private destroySessionIfItIsWilled = (result: boolean) => {
+    if (result) {
+      const message = new TerminateSessionMessage(new TerminateSessionPayload(this.session.id));
+      this.socketService.send(message);
+    }
   }
 }

@@ -4,200 +4,306 @@ const path = require('path');
 const cors = require('cors');
 const app = express();
 const WebSocketServer = require("ws").Server;
-/*
-  serve static UI content
- */
-app.use(express.static(__dirname + '/dist/story-points'));
-
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
-});
-
-/*
-  web socket server
- */
-
-
+const mysqlClient = require('./mysqlClient')
 const http = require('http');
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
-app.use(cors);
-
-const server = http.createServer(app);
-const wss = new WebSocketServer({server: server, path: "/socket"});
-
 let _ws;
-const state = {
-  sessions: {},
-};
 
-handleNewClients = (ws) => {
-  _ws = ws;
-  const message = formatMessage('state-of-the-state', state);
+const serveStaticUIContent = () => {
+  console.log('Serving static content over server.');
 
-  notifyCaller(message);
+  app.use(express.static(__dirname + '/dist/story-points'));
 
-  ws.on('message', handleIncomingMessages);
-};
+  app.get('/*', (_, res) => {
+    res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
+  });
+}
 
-handleIncomingMessages = (message) => {
-  const messageData = JSON.parse(message);
-  const eventType = messageData.eventType;
+const initHandlers = () => {
+  console.log('Initializing server and setting up handlers.');
 
-  console.log(messageData);
-  console.log('');
+  app.use(bodyParser.urlencoded({extended: false}));
+  app.use(bodyParser.json());
+  app.use(cors);
 
-  switch (eventType) {
-    case 'state-of-the-state':
-      notifyCaller(formatMessage(eventType, state));
-      break;
-    case 'session-created':
-      createNewSession(messageData);
-      break;
-    case 'session-state':
-      getSessionState(messageData);
-      break;
-    case 'participant-joined':
-      addParticipantToSession(messageData);
-      break;
-    case 'participant-removed':
-      removeParticipantFromSession(messageData);
-      break;
-    case 'point-submitted':
-      pointWasSubmitted(messageData);
-      break;
-    case 'points-reset':
-      resetPoints(messageData);
-      break;
-    case 'points-revealed':
-      revealPoints(messageData);
-      break;
-    case 'terminate-session':
-      terminateSession(messageData);
-      break;
+  const server = http.createServer(app);
+  const wss = new WebSocketServer({server: server, path: "/socket"});
 
-  }
-};
+  wss.on('error', (err) => {
+    console.log('Error: ', err.message)
+  })
 
-// protect terminated sessions from being able to take actions
 
-terminateSession = (messageData) => {
-  const payload = messageData.payload;
-  const requestedSession = payload.sessionName;
+  handleNewClients = (ws) => {
+    _ws = ws;
 
-  delete state.sessions[requestedSession];
+    ws.on('message', handleIncomingMessages);
+  };
 
-  const message = formatMessage('state-of-the-state', state);
-  notifyClients(message);
-};
-
-revealPoints = (messageData) => {
-  const eventType = messageData.eventType;
-  const payload = messageData.payload;
-  const requestedSession = payload.sessionName;
-  const sessionData = state.sessions[requestedSession];
-  notifyClients(formatMessage(eventType, sessionData, requestedSession))
-};
-
-resetPoints = (messageData) => {
-  const eventType = messageData.eventType;
-  const payload = messageData.payload;
-  const requestedSession = payload.sessionName;
-  const sessionData = state.sessions[requestedSession];
-
-  Object.values(sessionData).forEach(participant => {
-    Object.values(participant).forEach(p => {
-      if (p) {
-        p['hasVoted'] = false;
-        p.point = 0;
+  getStateOfTheAppForCaller = () => {
+    const getAllSessionsCallback = (err, results) => {
+      if (err) {
+        sendErrorToCaller('Unable to get sessions', err.message);
       }
-    });
+      notifyCaller(formatMessage('state-of-the-state', {sessions: results}))
+    }
+
+    mysqlClient.getAllSessions(getAllSessionsCallback)
+  }
+
+  getSessionState = (sessionId, notifier) => {
+    mysqlClient.getSessionState(sessionId, (err, results) => {
+      if (err) {
+        sendErrorToCaller('Unable to get session state', err.message);
+      }
+      notifier(formatMessage('session-state', {sessionId: sessionId, participants: results}, sessionId));
+    })
+  }
+
+  getSessionStateForParticipantJoined = (sessionId, userName, notifier) => {
+    mysqlClient.getSessionState(sessionId, (err, results) => {
+      if (err) {
+        sendErrorToCaller('Unable to get session state', err.message);
+      }
+      notifier(formatMessage('participant-joined', {sessionId: sessionId, userName: userName, participants: results}, sessionId));
+    })
+  }
+
+  getSessionStateForParticipantRemoved = (sessionId, userName, notifier) => {
+    mysqlClient.getSessionState(sessionId, (err, results) => {
+      if (err) {
+        sendErrorToCaller('Unable to get session state', err.message);
+      }
+      notifier(formatMessage('participant-removed', {sessionId: sessionId, userName: userName, participants: results}, sessionId));
+    })
+  }
+
+  getStateOfTheAppForClients = () => {
+    const getAllSessionsCallback = (err, results) => {
+      if (err) {
+        sendErrorToCaller('Unable to terminate sessions', err.message);
+      }
+      notifyClients(formatMessage('state-of-the-state', {sessions: results}))
+    }
+
+    mysqlClient.getAllSessions(getAllSessionsCallback)
+  }
+
+  handleIncomingMessages = (message) => {
+    const messageData = JSON.parse(message);
+    const eventType = messageData.eventType;
+
+    switch (eventType) {
+      case 'state-of-the-state':
+        getStateOfTheAppForCaller();
+        break;
+      case 'session-created':
+        createNewSession(messageData);
+        break;
+      case 'session-state':
+        getSessionStateUsing(messageData);
+        break;
+      case 'participant-joined':
+        addParticipantToSession(messageData);
+        break;
+      case 'participant-removed':
+        removeParticipantFromSession(messageData);
+        break;
+      case 'point-submitted':
+        pointWasSubmitted(messageData);
+        break;
+      case 'points-reset':
+        resetPoints(messageData);
+        break;
+      case 'points-revealed':
+        revealPoints(messageData);
+        break;
+      case 'terminate-session':
+        terminateSession(messageData);
+        break;
+      case 'get-session-name':
+        getSessionNameFor(messageData);
+        break;
+    }
+  };
+
+  terminateSession = (messageData) => {
+    const payload = messageData.payload;
+    const requestedSession = payload.sessionId;
+
+    const callback = (err) => {
+      if (err) {
+        sendErrorToCaller('Unable to terminate sessions', err.message);
+      } else {
+        getStateOfTheAppForClients();
+      }
+    }
+
+    mysqlClient.terminateSession(requestedSession, callback);
+  };
+
+  revealPoints = (messageData) => {
+    const {sessionId} = messageData.payload;
+
+    mysqlClient.revealPointsForSession(sessionId, (err) => {
+      if (err) {
+        sendErrorToCaller('Unable to reveal points', err.message);
+      } else {
+        getSessionState(sessionId, notifyClients);
+      }
+    })
+  };
+
+  resetPoints = (messageData) => {
+    const {sessionId} = messageData.payload;
+
+    mysqlClient.resetPointsForSession(sessionId, (err) => {
+      if (err) {
+        sendErrorToCaller('Unable to reset points', err.message);
+      } else {
+        getSessionState(sessionId, notifyClients);
+      }
+    })
+  };
+
+  getSessionNameFor = (messageData) => {
+    const eventType = messageData.eventType;
+    const {sessionId} = messageData.payload;
+
+    mysqlClient.getSessionNameFor(sessionId, (err, sessionNameResults) => {
+      if (err) {
+        sendErrorToCaller('Unable to resolve session name', err.message);
+      } else {
+        const maybeSessionName = sessionNameResults && sessionNameResults.length > 0 ? sessionNameResults[0].sessionName : undefined;
+
+        if (maybeSessionName) {
+          notifyCaller(formatMessage(eventType, {sessionId: sessionId, sessionName: maybeSessionName}, sessionId));
+        }
+      }
+    })
+  }
+
+  getSessionStateUsing = (messageData) => {
+    const eventType = messageData.eventType;
+    const {sessionId} = messageData.payload;
+
+    mysqlClient.getSessionState(sessionId, (err, results) => {
+      if (err) {
+        sendErrorToCaller('Unable to fetch session state', err.message);
+      } else {
+        notifyCaller(formatMessage(eventType, {sessionId: sessionId, participants: results}));
+      }
+    })
+  };
+
+  pointWasSubmitted = (messageData) => {
+    const {userId, value, sessionId} = messageData.payload;
+
+    const pointWasSubmittedCallback = (err) => {
+      if (err) {
+        sendErrorToCaller('Unable to submit point', err.message);
+      } else {
+        getSessionState(sessionId, notifyClients);
+      }
+    }
+
+    mysqlClient.pointWasSubmitted(userId, value, pointWasSubmittedCallback);
+  };
+
+  addParticipantToSession = (messageData) => {
+    const {sessionId, userName, isAdmin} = messageData.payload;
+
+    const callback = (err) => {
+      if (err) {
+        sendErrorToCaller('Unable to add participant', err.message);
+      }
+
+      getSessionStateForParticipantJoined(sessionId, userName, notifyClients);
+
+    }
+    mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, callback)
+
+  };
+
+  removeParticipantFromSession = (messageData) => {
+    const {participantId, userName, sessionId} = messageData.payload;
+
+    mysqlClient.removeParticipantFromSession(participantId, sessionId, (err) => {
+      if (err) {
+        sendErrorToCaller('Unable to remove participant', err.message);
+      } else {
+        getSessionStateForParticipantRemoved(sessionId, userName, notifyClients);
+      }
+    })
+  };
+
+  createNewSession = (messageData) => {
+    const getAllSessionsCallback = (err, results) => {
+      if (err) {
+        sendErrorToCaller('Unable to get sessions', err.message);
+      } else {
+        notifyClients(formatMessage('state-of-the-state', {sessions: results}));
+      }
+    }
+
+    const createSessionCallback = (err) => {
+      if (err) {
+        sendErrorToCaller('Unable to create session', err.message);
+      } else {
+        mysqlClient.getAllSessions(getAllSessionsCallback)
+      }
+    }
+
+    mysqlClient.createSession(messageData, createSessionCallback);
+  };
+
+  sendErrorToCaller = (message, reason) => {
+    console.error(`${message}: ${reason}`);
+    notifyCaller(formatMessage('error', {message: message}))
+  }
+
+  formatMessage = (eventType, payload, targetSession) => ({
+    eventType: eventType,
+    payload: payload,
+    targetSession: targetSession,
   });
 
-  notifyClients(formatMessage(eventType, sessionData, requestedSession))
-
-};
-
-getSessionState = (messageData) => {
-  const eventType = messageData.eventType;
-  const payload = messageData.payload;
-  const requestedSession = payload.sessionName;
-  const sessionData = state.sessions[requestedSession];
-  notifyCaller(formatMessage(eventType, sessionData, requestedSession));
-};
-
-pointWasSubmitted = (messageData) => {
-  const payload = messageData.payload;
-  const requestedSession = payload.sessionName;
-  const sessionData = state.sessions[requestedSession];
-  const targetUser = payload.userName;
-
-  const userData = sessionData.participants[targetUser];
-  userData.point = payload.value;
-  userData.hasVoted = true;
-  notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
-};
-
-addParticipantToSession = (messageData) => {
-  const payload = messageData.payload;
-  const requestedSession = payload.sessionName;
-  const sessionData = state.sessions[requestedSession];
-  const participantToAdd = payload.userName;
-  const isAdmin = payload.isAdmin;
-
-  sessionData.participants[participantToAdd] = {point: 0, isAdmin: isAdmin};
-
-  notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
-};
-
-removeParticipantFromSession = (messageData) => {
-  const payload = messageData.payload;
-  const requestedSession = payload.sessionName;
-  const sessionData = state.sessions[requestedSession];
-  const participantToRemove = payload.userName;
-
-  sessionData.participants[participantToRemove] = undefined;
-
-  notifyClients(formatMessage(messageData.eventType, sessionData, requestedSession))
-};
-
-createNewSession = (messageData) => {
-  const payload = messageData.payload;
-  const sessionName = payload && payload.sessionName ? payload.sessionName : undefined;
-  if (!sessionName) {
-    return;
-  }
-  state.sessions[sessionName] = {participants: {}};
-  const stateMessage = formatMessage('session-created', state);
-
-  notifyClients(stateMessage)
-};
-
-formatMessage = (eventType, payload, targetSession) => ({
-  eventType: eventType,
-  payload: payload,
-  targetSession: targetSession,
-});
-
-notifyClients = (message) => {
-  wss.clients
-    .forEach(client => {
-      client.send(JSON.stringify(message));
-    });
-};
-
-notifyCaller = (message) => {
-  wss.clients
-    .forEach(client => {
-      if (client === _ws) {
+  notifyClients = (message) => {
+    wss.clients
+      .forEach(client => {
         client.send(JSON.stringify(message));
-      }
-    });
-};
+      });
+  };
 
-wss.on('connection', handleNewClients);
+  notifyCaller = (message) => {
+    wss.clients
+      .forEach(client => {
+        if (client === _ws) {
+          client.send(JSON.stringify(message));
+        }
+      });
+  };
 
-server.listen(process.env.PORT || 8081, () => {
-  console.log(`Server (${server.address().address}) running on port ${server.address().port}`);
-});
+  wss.on('connection', handleNewClients);
+
+  server.listen(process.env.PORT || 8081, () => {
+    console.log(`Server (${server.address().address}) running on port ${server.address().port}`);
+  });
+}
+
+const connectedToDB = (err) => {
+  if (err) {
+    throw Error(`Could not connect to DB: ${err.message}`);
+  }
+
+  serveStaticUIContent();
+  initHandlers();
+}
+
+const startApp = () => {
+  console.log('Connecting to DB...');
+  mysqlClient.initDB(connectedToDB);
+}
+
+startApp();
+

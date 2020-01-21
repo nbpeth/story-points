@@ -1,16 +1,15 @@
+<!-- <div *ngIf="socketObs | async"></div> -->
+
 <div style="text-align: center;">
-  <h1>{{id}}</h1>
+  <h1>{{getSessionName()}}</h1>
 </div>
 
 <div class="user-tiles">
   <user-tiles>
-    <user-tile *ngFor="let participant of getParticipants() | keyvalue"
-               [participant]="participant"
-               [sessionId]="id"
-               [pointsAreHidden]="pointsAreHidden"
-               [isDarkTheme]="isDarkTheme"
-               [myCard]="isMyCard(participant.key)"
-    ></user-tile>
+    <user-tile *ngFor="let participant of session.participants | participantFilter" [participant]="participant"
+      [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
+      [myCard]="isMyCard(participant.participantName)">
+    </user-tile>
   </user-tiles>
 
 </div>
@@ -23,7 +22,7 @@
 
     <mat-form-field>
       <mat-select (selectionChange)="voteHasChanged($event)">
-        <mat-option *ngFor="let option of availableOptions" [value]="option">
+        <mat-option *ngFor="let option of pointSelection.options" [value]="option">
           {{option}}
         </mat-option>
       </mat-select>
@@ -48,7 +47,7 @@
         <button (click)="joinSession(name.value, true)" mat-flat-button color="accent">Join Session As Admin</button>
       </ng-container>
       <ng-template #leaveSessionTemplate>
-        <button (click)="leaveSession()" mat-stroked-button color="warn">Leave Session</button>
+        <button (click)="leaveSession(participant)" mat-stroked-button color="warn">Leave Session</button>
       </ng-template>
     </span>
   </mat-toolbar-row>

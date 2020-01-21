@@ -4,11 +4,7 @@
             <span>
             </span>
             <span>
-                <!-- <mat-icon>add</mat-icon> -->
-                <mat-form-field style="padding-right: 15px;">
-                    <input matInput #name placeholder="Session Name">
-                </mat-form-field>
-                <button (click)="createNewSession(name.value)" mat-flat-button color="accent">Create New</button>
+                <mat-icon (click)="create()">add</mat-icon>
             </span>
         </div>
         <div class="items icons">
