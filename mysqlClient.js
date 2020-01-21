@@ -7,6 +7,7 @@ initDB = (onComplete) => {
     user: process.env.SPUSER,
     password: process.env.SPPASSWORD,
     canRetry: true,
+    charset : 'utf8mb4'
   });
 
   pool.on('error', (err) => {

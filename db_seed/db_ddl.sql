@@ -1,3 +1,5 @@
+ALTER DATABASE storypoints CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin;
+
 create table storypoints.sessions
 (
     id MEDIUMINT NOT NULL
@@ -28,3 +30,6 @@ create table storypoints.sessions
         DELETE CASCADE,
     PRIMARY KEY (id)
         );
+
+ALTER TABLE storypoints.sessions CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+ALTER TABLE storypoints.participant CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
