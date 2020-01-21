@@ -20,7 +20,13 @@ export class UserTileComponent {
   }
 
   removeUser = () => {
-    const message = new ParticipantRemovedSessionMessage(new ParticipantRemovedSessionPayload(this.participant.participantId, this.sessionId));
+    const message = new ParticipantRemovedSessionMessage(
+      new ParticipantRemovedSessionPayload(
+        this.participant.participantId,
+        this.participant.participantName,
+        this.sessionId
+      )
+    );
     this.socketService.send(message);
   }
 }

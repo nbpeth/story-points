@@ -60,6 +60,24 @@ const initHandlers = () => {
     })
   }
 
+  getSessionStateForParticipantJoined = (sessionId, userName, notifier) => {
+    mysqlClient.getSessionState(sessionId, (err, results) => {
+      if (err) {
+        sendErrorToCaller('Unable to get session state', err.message);
+      }
+      notifier(formatMessage('participant-joined', {sessionId: sessionId, userName: userName, participants: results}, sessionId));
+    })
+  }
+
+  getSessionStateForParticipantRemoved = (sessionId, userName, notifier) => {
+    mysqlClient.getSessionState(sessionId, (err, results) => {
+      if (err) {
+        sendErrorToCaller('Unable to get session state', err.message);
+      }
+      notifier(formatMessage('participant-removed', {sessionId: sessionId, userName: userName, participants: results}, sessionId));
+    })
+  }
+
   getStateOfTheAppForClients = () => {
     const getAllSessionsCallback = (err, results) => {
       if (err) {
@@ -200,7 +218,7 @@ const initHandlers = () => {
         sendErrorToCaller('Unable to add participant', err.message);
       }
 
-      getSessionState(sessionId, notifyClients);
+      getSessionStateForParticipantJoined(sessionId, userName, notifyClients);
 
     }
     mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, callback)
@@ -208,13 +226,13 @@ const initHandlers = () => {
   };
 
   removeParticipantFromSession = (messageData) => {
-    const {participantId, sessionId} = messageData.payload;
+    const {participantId, userName, sessionId} = messageData.payload;
 
     mysqlClient.removeParticipantFromSession(participantId, sessionId, (err) => {
       if (err) {
         sendErrorToCaller('Unable to remove participant', err.message);
       } else {
-        getSessionState(sessionId, notifyClients);
+        getSessionStateForParticipantRemoved(sessionId, userName, notifyClients);
       }
     })
   };
