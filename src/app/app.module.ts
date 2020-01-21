@@ -17,7 +17,7 @@ import {
   MatSelectModule, MatSlideToggleModule,
   MatToolbarModule,
   MatDialogModule,
-  MatSnackBarModule, MatSidenavModule
+  MatSnackBarModule, MatSidenavModule, MatCheckboxModule
 } from '@angular/material';
 import { UserTileComponent } from './active-session/user-tile/user-tile.component';
 import { UserTilesComponent } from './active-session/user-tiles/user-tiles.component';
@@ -63,6 +63,7 @@ import {FormsModule} from "@angular/forms";
     DragDropModule,
     FormsModule,
     MatToolbarModule,
+    MatCheckboxModule,
     MatCardModule,
     MatIconModule,
     MatDialogModule,

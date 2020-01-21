@@ -1,4 +1,3 @@
-
 <div style="text-align: center;">
   <h1>{{getSessionName()}}</h1>
 </div>
@@ -6,15 +5,11 @@
 <div class="user-tiles">
   <user-tiles>
     <user-tile *ngFor="let participant of session.participants | participantFilter" [participant]="participant"
-      [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
-      [myCard]="isMyCard(participant.participantName)">
+               [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
+               [myCard]="isMyCard(participant.participantName)">
     </user-tile>
   </user-tiles>
 
-</div>
-
-<div class="errors">
-  <!--noop-->
 </div>
 
 <mat-toolbar color="secondary" class="action-bar">
@@ -22,50 +17,10 @@
   <control-panel
     (participantJoined)="joinSession($event)"
     (participantLeft)="leaveSession($event)"
-   [participant]="participant"
-  >
+    (pointVisibilityEvent)="changePointVisibility($event)"
+    (voteSubmitted)="voteHasChanged($event)"
+    [participant]="participant">
 
   </control-panel>
 
 </mat-toolbar>
-
-<!--<mat-toolbar color="secondary" class="action-bar">-->
-  <!--<mat-toolbar-row *ngIf="!lurker() && !youAreTheAdmin()">-->
-
-    <!--<mat-form-field>-->
-      <!--<mat-select (selectionChange)="voteHasChanged($event)">-->
-        <!--<mat-option *ngFor="let option of pointSelection.options" [value]="option">-->
-          <!--{{option}}-->
-        <!--</mat-option>-->
-      <!--</mat-select>-->
-    <!--</mat-form-field>-->
-
-    <!--<button name="smutButton" mat-stroked-button color="basic" (click)="submit()">Cast Vote</button>-->
-
-  <!--</mat-toolbar-row>-->
-
-
-  <!--<mat-toolbar-row *ngIf="canSeeControlPanel()" style="padding: 5px;">-->
-    <!--<span>-->
-      <!--<button (click)="resetPoints()" mat-fab color="warn">Reset</button>-->
-      <!--<button (click)="revealPoints()" mat-fab color="accent">Reveal</button>-->
-    <!--</span>-->
-  <!--</mat-toolbar-row>-->
-  <!--<mat-toolbar-row>-->
-    <!--<span>-->
-      <!--<ng-container *ngIf="lurker(); else leaveSessionTemplate">-->
-        <!--<mat-form-field>-->
-          <!--<input matInput #name placeholder="Your Name">-->
-        <!--</mat-form-field>-->
-        <!--<button (click)="joinSession(name.value)" mat-flat-button color="basic">Join Session</button>-->
-        <!--<button (click)="joinSession(name.value, true)" mat-flat-button color="accent">Join Session As Admin</button>-->
-      <!--</ng-container>-->
-      <!--<ng-template #leaveSessionTemplate>-->
-        <!--<button (click)="leaveSession(participant)" mat-stroked-button color="warn">Leave Session</button>-->
-      <!--</ng-template>-->
-    <!--</span>-->
-  <!--</mat-toolbar-row>-->
-
-<!--</mat-toolbar>-->
-
-

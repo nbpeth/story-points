@@ -1,25 +1,38 @@
-
-
-.options-container {
-  min-height: 200px;
-  height: 100%;
-  border: 0;
-
-}
-
-.options-content {
-  text-align: left;
-  flex-wrap: wrap;
+.container {
   display: flex;
-  flex-direction: column;
-  height: 100%;
-  align-items: flex-start;
-}
 
-.options-sidenav {
-  padding: 0px;
-}
+  .options-container {
+    min-height: 200px;
+    height: 100%;
+    border: 0;
 
-.mat-icon {
-  padding-right: 10px;
+  }
+
+  .options-content {
+    text-align: left;
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: flex-start;
+  }
+
+  .options-sidenav {
+    font-size: small;
+    padding: 5px;
+  }
+
+  .mat-icon {
+    padding-right: 10px;
+  }
+
+  .admin-console {
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: flex-start;
+    padding: 0;
+  }
+
 }

@@ -32,6 +32,7 @@ import {ThemeService} from '../services/theme.service';
 import {ParticipantFilterPipe} from '../pipe/participant-filter.pipe';
 import {DefaultPointSelection} from '../point-selection/point-selection';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
+import {PointVisibilityChange} from "../control-panel/control-panel.component";
 
 @Component({
   selector: 'app-active-session',
@@ -46,7 +47,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   participant: Participant;
 
   isDarkTheme: boolean;
-  pointSelection = new DefaultPointSelection();
+  // pointSelection = new DefaultPointSelection();
   session: StoryPointSession = new StoryPointSession();
 
   constructor(private route: ActivatedRoute,
@@ -103,8 +104,23 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   voteHasChanged = (vote: MatSelectChange) => {
+    console.log('vote!');
     this.participant.setPoint(vote.value);
+    this.submit();
   };
+
+  changePointVisibility = (state: PointVisibilityChange) => {
+    switch (state) {
+      case 'reset':
+        this.resetPoints();
+        break
+      case 'reveal':
+        this.revealPoints();
+        break;
+      default:
+        break;
+    }
+  }
 
   resetPoints = () => {
     this.socketService.send(new ResetPointsForSessionMessage(new ResetPointsForSessionPayload(this.session.sessionId)));
