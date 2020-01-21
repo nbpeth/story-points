@@ -10,7 +10,7 @@ initDB = (onComplete) => {
   });
 
   pool.on('error', (err) => {
-
+    console.log('error pool.on', err);
   });
 
   onComplete();
@@ -19,7 +19,9 @@ initDB = (onComplete) => {
 
 runQuery = (statement, onComplete) => {
   pool.getConnection((err, con) => {
+
     if (err) {
+      console.log('error getConnection to db', err);
     }
 
     con.query(statement, (err, results, fields) => {
