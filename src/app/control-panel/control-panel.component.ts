@@ -1,8 +1,8 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
-import {Participant} from '../active-session/model/session.model';
-import {MatDialog, MatDialogConfig} from "@angular/material";
-import {JoinSessionDialogComponent} from "../join-session-dialog/join-session-dialog.component";
-import {LOCAL_STORAGE, StorageService} from "ngx-webstorage-service";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Participant, StoryPointSession} from '../active-session/model/session.model';
+import {MatDialog, MatDialogConfig} from '@angular/material';
+import {JoinSessionDialogComponent} from '../join-session-dialog/join-session-dialog.component';
+import {LocalStorageService} from '../services/local-storage.service';
 
 @Component({
   selector: 'control-panel',
@@ -10,6 +10,7 @@ import {LOCAL_STORAGE, StorageService} from "ngx-webstorage-service";
   styleUrls: ['./control-panel.component.scss']
 })
 export class ControlPanelComponent implements OnInit {
+  @Input() sessionId: number;
   @Input() participant: Participant;
   @Output() participantJoined: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Output() participantLeft: EventEmitter<Participant> = new EventEmitter<Participant>();
@@ -19,11 +20,11 @@ export class ControlPanelComponent implements OnInit {
   showAdminConsole: boolean;
 
   constructor(private dialog: MatDialog,
-              @Inject(LOCAL_STORAGE) private storage: StorageService) {
+              private localStorage: LocalStorageService) {
   }
 
   ngOnInit(): void {
-    this.showAdminConsole = this.storage.get('showAdminConsole');
+    this.showAdminConsole = this.localStorage.getShowAdminConsole(String(this.sessionId));
   }
 
   joinSession = () => {
@@ -32,24 +33,23 @@ export class ControlPanelComponent implements OnInit {
     dialogRef.afterClosed().subscribe((participant: Participant) => {
       this.participantJoined.emit(participant);
     });
-  }
+  };
 
   leaveSession = () => {
     this.participantLeft.emit(this.participant);
-  }
+  };
 
   changePointVisibility = (state: PointVisibilityChange) => {
     this.pointVisibilityEvent.emit(state);
-  }
+  };
 
   submitVote = (vote) => {
     this.voteSubmitted.emit(vote);
-  }
+  };
 
   settingChanged = (event) => {
-    console.log(event)
-    this.storage.set(event.source.id, event.source.checked)
-  }
+    this.localStorage.setShowAdminConsole(String(this.sessionId), event.checked);
+  };
 
   private getDialogConfig = () => {
     const dialogConfig = new MatDialogConfig();
@@ -59,7 +59,7 @@ export class ControlPanelComponent implements OnInit {
       participant: 'Identify Yourself!'
     };
     return dialogConfig;
-  }
+  };
 }
 
 export declare type PointVisibilityChange = 'reset' | 'reveal' | 'hide';

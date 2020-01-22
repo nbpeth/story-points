@@ -1,8 +1,9 @@
 import {Component, Input} from '@angular/core';
-import {SocketService} from "../../../services/socket.service";
-import {TerminateSessionMessage, TerminateSessionPayload} from "../../model/events.model";
+import {SocketService} from '../../../services/socket.service';
+import {TerminateSessionMessage, TerminateSessionPayload} from '../../model/events.model';
 import {MatDialog, MatDialogConfig} from '@angular/material';
 import {ConfirmDialogComponent} from 'src/app/confirm-dialog/confirm-dialog.component';
+import {LocalStorageService} from '../../../services/local-storage.service';
 
 @Component({
   selector: 'active-session-tile',
@@ -11,7 +12,10 @@ import {ConfirmDialogComponent} from 'src/app/confirm-dialog/confirm-dialog.comp
 })
 export class ActiveSessionTileComponent {
   @Input() session: { id: number, sessionName: string };
-  constructor(private socketService: SocketService, private dialog: MatDialog) {
+
+  constructor(private socketService: SocketService,
+              private dialog: MatDialog,
+              private localStorage: LocalStorageService) {
   }
 
   closeSession = () => {
@@ -23,15 +27,16 @@ export class ActiveSessionTileComponent {
       sessionName: this.session.sessionName,
       message: 'Destroy Session - Be You Certain?'
     };
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig)
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(this.destroySessionIfItIsWilled);
-  }
+  };
 
   private destroySessionIfItIsWilled = (result: boolean) => {
     if (result) {
       const message = new TerminateSessionMessage(new TerminateSessionPayload(this.session.id));
       this.socketService.send(message);
+      this.localStorage.removeSession(String(this.session.id));
     }
-  }
+  };
 }
