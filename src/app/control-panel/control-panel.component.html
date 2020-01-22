@@ -2,7 +2,9 @@
 
   <mat-drawer-container class="options-container" autosize>
     <mat-drawer #menu class="options-sidenav" mode="side">
-      <mat-checkbox [(ngModel)]="showAdminConsole">Admin Console</mat-checkbox>
+      <mat-checkbox (change)="settingChanged($event)" id="showAdminConsole" [(ngModel)]="showAdminConsole">Admin
+        Console
+      </mat-checkbox>
     </mat-drawer>
 
     <div class="options-content">
@@ -23,27 +25,18 @@
           <mat-icon>close</mat-icon>
           Bail
         </button>
-
       </ng-template>
 
     </div>
-
   </mat-drawer-container>
+  <admin-controls *ngIf="showAdminConsole"
+    (pointVisibilityEvent)="changePointVisibility($event)">
+  </admin-controls>
 
-  <div class="admin-console" *ngIf="showAdminConsole">
-    <button (click)="changePointVisibility('reset')" mat-button color="warn">Reset</button>
-    <button (click)="changePointVisibility('reveal')" mat-button color="accent">Reveal</button>
-  </div>
+  <voting-booth *ngIf="participant"
+    (voteSubmitted)="submitVote($event)">
 
-  <div>
-    <mat-form-field>
-      <mat-select (selectionChange)="voteHasChanged($event)">
-        <mat-option *ngFor="let option of pointSelection.options" [value]="option">
-          {{option}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <button name="smutButton" mat-stroked-button color="basic" (click)="submitVote()">Cast Vote</button>
-  </div>
+  </voting-booth>
+
 
 </div>

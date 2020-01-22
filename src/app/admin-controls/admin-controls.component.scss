@@ -1,0 +1,13 @@
+.admin-console {
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: flex-start;
+  padding: 0;
+
+  button {
+    font-size: large;
+  }
+
+}

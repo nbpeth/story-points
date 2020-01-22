@@ -1,3 +1,7 @@
+:host {
+  width: 100%;
+}
+
 .container {
   display: flex;
 
@@ -26,13 +30,12 @@
     padding-right: 10px;
   }
 
-  .admin-console {
-    flex-wrap: wrap;
+
+
+  .content {
+    //width: 100%;
     display: flex;
-    flex-direction: column;
-    height: 100%;
-    align-items: flex-start;
-    padding: 0;
+    justify-content: space-between;
   }
 
 }

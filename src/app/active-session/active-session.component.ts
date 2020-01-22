@@ -30,7 +30,6 @@ import {
 import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
 import {ThemeService} from '../services/theme.service';
 import {ParticipantFilterPipe} from '../pipe/participant-filter.pipe';
-import {DefaultPointSelection} from '../point-selection/point-selection';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
 import {PointVisibilityChange} from "../control-panel/control-panel.component";
 
@@ -41,13 +40,11 @@ import {PointVisibilityChange} from "../control-panel/control-panel.component";
   providers: [ParticipantFilterPipe]
 })
 
-// admin that can also vote
-
 export class ActiveSessionComponent implements OnInit, OnDestroy {
   participant: Participant;
 
   isDarkTheme: boolean;
-  // pointSelection = new DefaultPointSelection();
+
   session: StoryPointSession = new StoryPointSession();
 
   constructor(private route: ActivatedRoute,
@@ -104,7 +101,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   voteHasChanged = (vote: MatSelectChange) => {
-    console.log('vote!');
     this.participant.setPoint(vote.value);
     this.submit();
   };
@@ -159,12 +155,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       )
     );
   };
-
-  lurker = (): boolean => !this.participant;
-
-  youAreTheAdmin = (): boolean => this.participant && this.participant.isAdmin;
-
-  canSeeControlPanel = (): boolean => !this.lurker() && this.youAreTheAdmin();
 
   isMyCard = (cardId: string) =>
     this.participant ? this.participant.participantName === cardId : false;

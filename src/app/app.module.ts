@@ -35,6 +35,8 @@ import { AlertSnackbarComponent } from './alert-snackbar/alert-snackbar.componen
 import { ControlPanelComponent } from './control-panel/control-panel.component';
 import {JoinSessionDialogComponent} from "./join-session-dialog/join-session-dialog.component";
 import {FormsModule} from "@angular/forms";
+import { AdminControlsComponent } from './admin-controls/admin-controls.component';
+import { VotingBoothComponent } from './voting-booth/voting-booth.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +57,8 @@ import {FormsModule} from "@angular/forms";
     AlertSnackbarComponent,
     ControlPanelComponent,
     JoinSessionDialogComponent,
+    AdminControlsComponent,
+    VotingBoothComponent,
   ],
   imports: [
     AppRoutingModule,

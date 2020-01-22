@@ -4,7 +4,7 @@
 
 <div class="user-tiles">
   <user-tiles>
-    <user-tile *ngFor="let participant of session.participants | participantFilter" [participant]="participant"
+    <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter" [participant]="participant"
                [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
                [myCard]="isMyCard(participant.participantName)">
     </user-tile>
