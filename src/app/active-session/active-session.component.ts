@@ -179,7 +179,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private setSessionIfNotInLocalStorage = () => {
-    // happens when session is created by another client
     if (!this.localStorage.getSession(this.session.sessionId)) {
       this.localStorage.setSession(this.session.sessionId, new Session({} as Participant, new SessionSettings(false)));
     }
@@ -187,7 +186,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   private setUserIfAlreadyJoined = () => {
     const user = this.localStorage.getUser(this.session.sessionId);
-    // happens when user joins a session and navigates away from session page
     if (user && user.participantName !== undefined) {
       this.participant =
         new Participant(user.participantName, user.participantId, user.point, user.hasVoted, user.isAdmin, user.pointsVisible);
@@ -198,6 +196,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
 
+    console.log('message', messageData)
     switch (eventType) {
       case Events.PARTICIPANT_JOINED:
         this.verifyPayloadAndUpdate(payload, this.participantJoined, messageData);
