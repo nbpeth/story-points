@@ -70,7 +70,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       )
       .pipe(
         filter(this.eventsOnlyForThisSession),
-        tap(this.setSessionIfNotExist),
+        tap(this.setSessionIfNotInLocalStorage),
         tap(this.setUserIfAlreadyJoined),
         map(this.handleEvents),
       )
@@ -178,7 +178,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     return this.session.sessionId === targetSession;
   };
 
-  private setSessionIfNotExist = () => {
+  private setSessionIfNotInLocalStorage = () => {
+    // happens when session is created by another client
     if (!this.localStorage.getSession(String(this.session.sessionId))) {
       this.localStorage.setSession(String(this.session.sessionId), new Session({} as Participant, new SessionSettings(false)));
     }
@@ -186,6 +187,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   private setUserIfAlreadyJoined = () => {
     const user = this.localStorage.getUser(String(this.session.sessionId));
+    // happens when user joins a session and navigates away from session page
     if (user && user.participantName !== undefined) {
       this.participant = user;
     }

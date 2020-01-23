@@ -25,6 +25,7 @@ export class ControlPanelComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // happens when session is created by another client
     if (!this.localStorage.getSession(String(this.sessionId))) {
       this.localStorage.setSession(String(this.sessionId), new Session({} as Participant, new SessionSettings(false)));
     }
