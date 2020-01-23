@@ -19,9 +19,10 @@ export class LocalStorageService {
     if (!appState) {
       const state = new AppState({} as Globals, {} as Sessions);
       this.storage.set(this.key, JSON.stringify(state));
+
       return state;
     }
-    return JSON.parse(appState);
+    return Object.assign(new AppState(null, null), JSON.parse(appState));
   };
 
   private setState = (state: AppState) => {
@@ -75,24 +76,39 @@ export class LocalStorageService {
 
   setUser = (sessionId: number, user: Participant) => {
     const appState: AppState = this.getState();
-    appState.sessions[sessionId].user = user;
+    const maybeSession = appState.getSessionBy(sessionId);
+    if (maybeSession) {
+      maybeSession.user = user;
+    }
     this.setState(appState);
   };
+
   removeUser = (sessionId: number) => {
     const appState: AppState = this.getState();
-    appState.sessions[sessionId].user = {} as Participant;
-    this.setState(appState);
+    const maybeSession = appState.getSessionBy(sessionId);
+    if (maybeSession) {
+      maybeSession.user = {} as Participant;
+      this.setState(appState);
+    }
   };
 
   getShowAdminConsole = (sessionId: number) => {
     const appState: AppState = this.getState();
-    return appState.sessions[sessionId].settings.showAdminConsole;
+    const maybeSession = appState.getSessionBy(sessionId);
+    if (maybeSession && maybeSession.settings) {
+      return maybeSession.settings.showAdminConsole;
+    }
+
+    return false;
   };
 
   setShowAdminConsole = (sessionId: number, showAdminConsole: boolean) => {
     const appState: AppState = this.getState();
-    appState.sessions[sessionId].settings.showAdminConsole = showAdminConsole;
-    this.setState(appState);
+    const maybeSession = appState.getSessionBy(sessionId);
+    if (maybeSession && maybeSession.settings) {
+      maybeSession.settings.showAdminConsole = showAdminConsole;
+      this.setState(appState);
+    }
   };
 }
 
