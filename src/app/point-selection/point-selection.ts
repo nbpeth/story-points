@@ -5,3 +5,7 @@ export interface PointSelection {
 export class DefaultPointSelection implements PointSelection {
     options = [0, 1, 2, 3, 5, 8, 13, 21, 34, 'Abstain'];
 }
+
+export class FistOfFivePointSelection implements PointSelection {
+  options = [0, 1, 2, 3, 4, 5];
+}

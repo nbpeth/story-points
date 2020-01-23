@@ -1,9 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Participant, StoryPointSession} from '../active-session/model/session.model';
-import {MatDialog, MatDialogConfig} from '@angular/material';
+import {MatDialog, MatDialogConfig, MatRadioChange} from '@angular/material';
 import {JoinSessionDialogComponent} from '../join-session-dialog/join-session-dialog.component';
 import {LocalStorageService} from '../services/local-storage.service';
-import {Session, SessionSettings} from '../services/local-storage.model';
 
 @Component({
   selector: 'control-panel',
@@ -19,6 +18,8 @@ export class ControlPanelComponent implements OnInit {
   @Output() voteSubmitted: EventEmitter<any> = new EventEmitter<any>();
 
   showAdminConsole: boolean;
+  votingSchemeOptions = [VotingScheme.Fibbonaci, VotingScheme.FistOfFive];
+  votingScheme: string = this.votingSchemeOptions[0].toString();
 
   constructor(private dialog: MatDialog,
               private localStorage: LocalStorageService) {
@@ -49,7 +50,12 @@ export class ControlPanelComponent implements OnInit {
   };
 
   settingChanged = (event) => {
+    console.log(event)
     this.localStorage.setShowAdminConsole(this.sessionId, event.checked);
+  };
+
+  votingSchemeChanged = (event: MatRadioChange) => {
+    this.votingScheme = event.value;
   };
 
   private getDialogConfig = () => {
@@ -64,3 +70,8 @@ export class ControlPanelComponent implements OnInit {
 }
 
 export declare type PointVisibilityChange = 'reset' | 'reveal' | 'hide';
+
+export enum VotingScheme {
+  Fibbonaci = 'Fibbonaci',
+  FistOfFive = 'FistOfFive'
+}

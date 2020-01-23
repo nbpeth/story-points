@@ -5,11 +5,11 @@
 
 .container {
   display: flex;
+  height: 110px;
 
   .options-container {
     height: 100%;
     border: 0;
-    position: absolute;
   }
 
   .options-content {
@@ -30,12 +30,14 @@
     padding-right: 10px;
   }
 
-
-
   .content {
     //width: 100%;
     display: flex;
     justify-content: space-between;
   }
 
+}
+
+.spacing {
+  margin-right: 5px;
 }
