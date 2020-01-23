@@ -196,7 +196,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
 
-    console.log('message', messageData)
     switch (eventType) {
       case Events.PARTICIPANT_JOINED:
         this.verifyPayloadAndUpdate(payload, this.participantJoined, messageData);
