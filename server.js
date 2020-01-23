@@ -242,7 +242,7 @@ const initHandlers = () => {
       if (err) {
         sendErrorToCaller('Unable to get sessions', err.message);
       } else {
-        notifyClients(formatMessage('session-created', {sessions: results}));
+        notifyClients(formatMessage('state-of-the-state', {sessions: results}));
       }
     }
 
