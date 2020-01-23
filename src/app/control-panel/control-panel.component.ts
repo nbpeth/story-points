@@ -18,7 +18,7 @@ export class ControlPanelComponent implements OnInit {
   @Output() voteSubmitted: EventEmitter<any> = new EventEmitter<any>();
 
   showAdminConsole: boolean;
-  votingSchemeOptions = [VotingScheme.Fibbonaci, VotingScheme.FistOfFive];
+  votingSchemeOptions = [VotingScheme.Fibbonaci, VotingScheme.FistOfFive, VotingScheme.Primes];
   votingScheme: string = this.votingSchemeOptions[0].toString();
 
   constructor(private dialog: MatDialog,
@@ -50,7 +50,6 @@ export class ControlPanelComponent implements OnInit {
   };
 
   settingChanged = (event) => {
-    console.log(event)
     this.localStorage.setShowAdminConsole(this.sessionId, event.checked);
   };
 
@@ -73,5 +72,6 @@ export declare type PointVisibilityChange = 'reset' | 'reveal' | 'hide';
 
 export enum VotingScheme {
   Fibbonaci = 'Fibbonaci',
-  FistOfFive = 'FistOfFive'
+  FistOfFive = 'FistOfFive',
+  Primes = 'Primes'
 }

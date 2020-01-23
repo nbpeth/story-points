@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {DefaultPointSelection, FistOfFivePointSelection, PointSelection} from '../point-selection/point-selection';
+import {DefaultPointSelection, FistOfFivePointSelection, PointSelection, PrimePointSelection} from '../point-selection/point-selection';
 import {VotingScheme} from '../control-panel/control-panel.component';
 
 @Component({
@@ -21,14 +21,7 @@ export class VotingBoothComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    switch (changes.votingScheme.currentValue) {
-      case VotingScheme.Fibbonaci.toString():
-        this.pointSelection = new DefaultPointSelection();
-        break;
-      case VotingScheme.FistOfFive.toString():
-        this.pointSelection = new FistOfFivePointSelection();
-        break;
-    }
+    this.pointSelection = this.makePointSelection(changes.votingScheme.currentValue);
   }
 
   voteHasChanged = (value: any) => {
@@ -37,5 +30,19 @@ export class VotingBoothComponent implements OnInit, OnChanges {
 
   submitVote = () => {
     this.voteSubmitted.emit(this.vote);
+  };
+
+  makePointSelection = (votingScheme: string): PointSelection => {
+    switch (votingScheme) {
+      case VotingScheme.Fibbonaci.toString():
+        return new DefaultPointSelection();
+        break;
+      case VotingScheme.FistOfFive.toString():
+        return new FistOfFivePointSelection();
+        break;
+      case VotingScheme.Primes.toString():
+        return new PrimePointSelection();
+        break;
+    }
   };
 }
