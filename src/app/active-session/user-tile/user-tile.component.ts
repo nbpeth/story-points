@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {SocketService} from '../../services/socket.service';
-import {ParticipantRemovedSessionMessage, ParticipantRemovedSessionPayload} from "../model/events.model";
+import {ParticipantRemovedSessionMessage, ParticipantRemovedSessionPayload} from '../model/events.model';
 import {Participant} from '../model/session.model';
 
 @Component({
@@ -28,5 +28,7 @@ export class UserTileComponent {
       )
     );
     this.socketService.send(message);
-  }
+  };
 }
+
+
