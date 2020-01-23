@@ -32,6 +32,7 @@ import {ThemeService} from '../services/theme.service';
 import {ParticipantFilterPipe} from '../pipe/participant-filter.pipe';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
 import {PointVisibilityChange} from "../control-panel/control-panel.component";
+import {Ballot} from "../vote-display/ballot-display.component";
 
 @Component({
   selector: 'app-active-session',
@@ -144,7 +145,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     }
   };
 
-  leaveSession = (participant: Participant) => {
+  leaveSession = (_: Participant) => {
     this.socketService.send(
       new ParticipantRemovedSessionMessage(
         new ParticipantRemovedSessionPayload(
@@ -158,6 +159,9 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   isMyCard = (cardId: string) =>
     this.participant ? this.participant.participantName === cardId : false;
+
+  collectBallots = (): Ballot[] =>
+    this.session.participants.map((p: Participant) => p.point);
 
   private requestInitialStateOfSessionBy = (id: number): void => {
     this.socketService.send(

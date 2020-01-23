@@ -37,7 +37,7 @@ import {JoinSessionDialogComponent} from "./join-session-dialog/join-session-dia
 import {FormsModule} from "@angular/forms";
 import {AdminControlsComponent} from './admin-controls/admin-controls.component';
 import {VotingBoothComponent} from './voting-booth/voting-booth.component';
-import { VoteDisplayComponent } from './vote-display/vote-display.component';
+import { BallotDisplayComponent } from './vote-display/ballot-display.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +60,7 @@ import { VoteDisplayComponent } from './vote-display/vote-display.component';
     JoinSessionDialogComponent,
     AdminControlsComponent,
     VotingBoothComponent,
-    VoteDisplayComponent,
+    BallotDisplayComponent,
   ],
   imports: [
     AppRoutingModule,
