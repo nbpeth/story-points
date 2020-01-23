@@ -29,7 +29,7 @@ export class ThemeService {
     this.setDarkTheme(isDarkThemeFromStorage);
 
     const dynamicDarkValueFromStorage = this.localStorage.getDarkValue();
-    this.setDarkValue(dynamicDarkValueFromStorage ? dynamicDarkValueFromStorage : 50);
+    this.setDarkValue(dynamicDarkValueFromStorage >= 0 ? dynamicDarkValueFromStorage : 50);
   };
 
 }
