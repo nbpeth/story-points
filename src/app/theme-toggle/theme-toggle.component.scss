@@ -1,0 +1,22 @@
+.items {
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .item {
+    padding-left: 10px;
+
+    mat-slider {
+      width: 90px;
+      min-width: 50px;
+    }
+
+  }
+
+  .toppad {
+    padding-top: 5px;
+  }
+}
+
+

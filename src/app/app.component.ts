@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
     this.themeService.dynamicDarkValue.subscribe((value: number) => {
 
       this.isDarkTheme = value <= 50;
-      this.nighttime = value <= 10;
+      this.nighttime = value <= 20;
 
       const brightness = (value / 100) * 255;
 

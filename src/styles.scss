@@ -14,7 +14,7 @@ body {
     background-position: -1000px -500px;
   }
   100% {
-    background-position: 1500px 800px;
+    background-position: 3000px 800px;
   }
 }
 
@@ -26,6 +26,6 @@ body {
   background-size: 1000px 1000px;
   z-index: 100;
 
-  animation: move-background 125s linear infinite;
+  animation: move-background 150s linear infinite;
 
 }

@@ -1,6 +1,13 @@
-<mat-icon>brightness_2</mat-icon>
-<mat-slider
-  [(ngModel)]="sliderValue"
-  (change)="sliderChanged($event)">
+<div class="items">
+  <div class="item toppad">
+    <mat-icon>brightness_2</mat-icon>
+  </div>
+  <div class="item">
 
-</mat-slider>
+    <mat-slider
+      [(ngModel)]="sliderValue"
+      (change)="sliderChanged($event)">
+
+    </mat-slider>
+  </div>
+</div>

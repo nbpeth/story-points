@@ -6,7 +6,8 @@ import {MatSliderChange} from "@angular/material";
 @Component({
   selector: 'app-theme-toggle',
   templateUrl: './theme-toggle.component.html',
-  styleUrls: ['./theme-toggle.component.scss']
+  styleUrls: ['./theme-toggle.component.scss'],
+
 })
 export class ThemeToggleComponent implements OnInit {
   isDarkTheme: Observable<boolean>;
@@ -26,3 +27,4 @@ export class ThemeToggleComponent implements OnInit {
     this.themeService.setDarkValue(event.value);
   }
 }
+
