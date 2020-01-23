@@ -3,6 +3,10 @@ import {Participant} from '../active-session/model/session.model';
 export class AppState {
   constructor(public globals: Globals, public sessions: Sessions) {
   }
+
+  getSessionBy(id): Session | undefined {
+    return this.sessions[id];
+  }
 }
 
 export class Globals {
