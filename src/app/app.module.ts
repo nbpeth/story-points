@@ -17,7 +17,7 @@ import {
   MatSelectModule, MatSlideToggleModule,
   MatToolbarModule,
   MatDialogModule,
-  MatSnackBarModule, MatSidenavModule, MatCheckboxModule
+  MatSnackBarModule, MatSidenavModule, MatCheckboxModule, MatSliderModule
 } from '@angular/material';
 import { UserTileComponent } from './active-session/user-tile/user-tile.component';
 import { UserTilesComponent } from './active-session/user-tiles/user-tiles.component';
@@ -78,6 +78,7 @@ import { VotingBoothComponent } from './voting-booth/voting-booth.component';
     MatSlideToggleModule,
     MatSnackBarModule,
     MatSidenavModule,
+    MatSliderModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

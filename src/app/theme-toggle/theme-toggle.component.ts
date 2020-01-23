@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ThemeService } from '../services/theme.service';
-import { Observable } from 'rxjs';
+import {Component, OnInit} from '@angular/core';
+import {ThemeService} from '../services/theme.service';
+import {Observable} from 'rxjs';
+import {MatSliderChange} from "@angular/material";
 
 @Component({
   selector: 'app-theme-toggle',
@@ -9,13 +10,19 @@ import { Observable } from 'rxjs';
 })
 export class ThemeToggleComponent implements OnInit {
   isDarkTheme: Observable<boolean>;
-  constructor(private themeService: ThemeService) { }
+  sliderValue: number;
+
+  constructor(private themeService: ThemeService) {
+  }
 
   ngOnInit() {
     this.isDarkTheme = this.themeService.isDarkTheme;
+    this.themeService.dynamicDarkValue.subscribe(value => {
+      this.sliderValue = value;
+    })
   }
 
-  toggleDarkTheme = (checked: boolean) => {
-    this.themeService.setDarkTheme(checked);
+  sliderChanged = (event: MatSliderChange) => {
+    this.themeService.setDarkValue(event.value);
   }
 }

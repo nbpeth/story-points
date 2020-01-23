@@ -8,3 +8,24 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+@keyframes move-background {
+  0% {
+    background-position: -1000px -500px;
+  }
+  100% {
+    background-position: 1500px 800px;
+  }
+}
+
+.moon {
+  background:
+    url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/moon2.png) no-repeat,
+    url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/stars.png) repeat;
+
+  background-size: 1000px 1000px;
+  z-index: 100;
+
+  animation: move-background 125s linear infinite;
+
+}
