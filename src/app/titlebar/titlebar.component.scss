@@ -1,5 +1,7 @@
 .items {
   display: flex;
+  justify-content: center;
+  align-items: center;
 
   span {
     padding: 10px;
@@ -7,6 +9,7 @@
 }
 
 .icons {
+
   width: 100%;
   justify-content: flex-end;
 }
