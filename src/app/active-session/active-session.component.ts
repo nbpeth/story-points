@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SocketService} from '../services/socket.service';
-import {filter, flatMap, map} from 'rxjs/operators';
+import {filter, flatMap, map, tap} from 'rxjs/operators';
 import {Events} from './enum/events';
 import {
   GetSessionNameMessage,
@@ -27,6 +27,7 @@ import {ParticipantFilterPipe} from '../pipe/participant-filter.pipe';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
 import {PointVisibilityChange} from '../control-panel/control-panel.component';
 import {LocalStorageService} from '../services/local-storage.service';
+import {Session, SessionSettings} from '../services/local-storage.model';
 
 @Component({
   selector: 'app-active-session',
@@ -69,6 +70,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       )
       .pipe(
         filter(this.eventsOnlyForThisSession),
+        tap(this.setSessionIfNotExist),
+        tap(this.setUserIfAlreadyJoined),
         map(this.handleEvents),
       )
       .subscribe();
@@ -175,6 +178,19 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     return this.session.sessionId === targetSession;
   };
 
+  private setSessionIfNotExist = () => {
+    if (!this.localStorage.getSession(String(this.session.sessionId))) {
+      this.localStorage.setSession(String(this.session.sessionId), new Session({} as Participant, new SessionSettings(false)));
+    }
+  };
+
+  private setUserIfAlreadyJoined = () => {
+    const user = this.localStorage.getUser(String(this.session.sessionId));
+    if (user && user.participantName !== undefined) {
+      this.participant = user;
+    }
+  };
+
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
@@ -223,6 +239,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     const message = itWasMe ? `You joined as ${userName}` : `${userName} joined.`;
 
     this.showInfoBar(message, 'happy');
+    this.localStorage.setUser(String(this.session.sessionId), this.participant);
     this.updateSession(messageData);
   };
 
@@ -236,12 +253,12 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     }
 
     this.showInfoBar(message, 'warn');
+    this.localStorage.removeUser(String(this.session.sessionId));
     this.updateSession(messageData);
   };
 
   private wasItMe = (userName: string): boolean => {
     const yourName = this.participant ? this.participant.participantName : '';
-
     return yourName === userName;
   };
 
@@ -257,7 +274,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     const participants = session.participants;
     this.setParticipantsInSession(participants);
     this.ensureYouAreStillActive(participants);
-    this.localStorage.updateUsers(String(session.sessionId), participants);
   };
 
   private setParticipantsInSession = (participants: Participant[]) => {

@@ -43,7 +43,7 @@ export class LocalStorageService {
 
   setSession = (sessionId: string, session: Session) => {
     const appState: AppState = this.getState();
-    appState.sessions[sessionId] = new Session(session.users, session.settings);
+    appState.sessions[sessionId] = new Session(session.user, session.settings);
     this.setState(appState);
   };
 
@@ -53,9 +53,19 @@ export class LocalStorageService {
     this.setState(appState);
   };
 
-  updateUsers = (sessionId: string, users: Participant[]) => {
+  getUser = (sessionId: string): Participant => {
     const appState: AppState = this.getState();
-    appState.sessions[sessionId].users = users;
+    return appState.sessions[sessionId].user;
+  };
+
+  setUser = (sessionId: string, user: Participant) => {
+    const appState: AppState = this.getState();
+    appState.sessions[sessionId].user = user;
+    this.setState(appState);
+  };
+  removeUser = (sessionId: string) => {
+    const appState: AppState = this.getState();
+    appState.sessions[sessionId].user = {} as Participant;
     this.setState(appState);
   };
 

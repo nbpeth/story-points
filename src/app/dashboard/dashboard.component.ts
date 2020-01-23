@@ -10,7 +10,7 @@ import {
 } from '../active-session/model/events.model';
 import {LocalStorageService} from '../services/local-storage.service';
 import {Session, SessionSettings} from '../services/local-storage.model';
-import {StoryPointSession} from '../active-session/model/session.model';
+import {Participant} from '../active-session/model/session.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -65,7 +65,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
-
     switch (eventType) {
       case Events.COMPLETE_STATE:
         this.setSessionsFrom(payload as GetCompleteStatePayload);
@@ -78,11 +77,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private setSessionsFrom = (payload: GetCompleteStatePayload) => {
     this.activeSessions = payload.sessions;
-    this.activeSessions.forEach(
-      (activeSession) => {
-        this.localStorage.setSession(String(activeSession.id), new Session([], new SessionSettings(false)));
-      }
-    );
     this.applySearchFilter();
   };
 
@@ -90,6 +84,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (payload) {
       this.activeSessions = payload.sessions;
     }
+    this.activeSessions.forEach(activeSession => {
+      this.localStorage.setSession(String(activeSession.id), new Session({} as Participant, new SessionSettings(false)));
+    });
     this.applySearchFilter();
   };
 }

@@ -3,6 +3,7 @@ import {Participant, StoryPointSession} from '../active-session/model/session.mo
 import {MatDialog, MatDialogConfig} from '@angular/material';
 import {JoinSessionDialogComponent} from '../join-session-dialog/join-session-dialog.component';
 import {LocalStorageService} from '../services/local-storage.service';
+import {Session, SessionSettings} from '../services/local-storage.model';
 
 @Component({
   selector: 'control-panel',
@@ -24,6 +25,9 @@ export class ControlPanelComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (!this.localStorage.getSession(String(this.sessionId))) {
+      this.localStorage.setSession(String(this.sessionId), new Session({} as Participant, new SessionSettings(false)));
+    }
     this.showAdminConsole = this.localStorage.getShowAdminConsole(String(this.sessionId));
   }
 
