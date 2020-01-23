@@ -14,7 +14,7 @@ services:
       - SPPASSWORD=password
       - SPPORT=3306
       - SPDB=storypoints
-    command: ["npm", "run", "start-server"]
+    command: ["/go/bin/story-points"]
     restart: always
   db:
     image: mysql:5.7

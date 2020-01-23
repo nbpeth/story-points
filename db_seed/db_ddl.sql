@@ -6,7 +6,7 @@ create table storypoints.sessions
     AUTO_INCREMENT,
 	session_name varchar
     (200) NOT NULL,
-    points_visible boolean,
+    points_visible boolean default false NOT NULL,
     PRIMARY KEY
     (id)
 );
@@ -20,8 +20,8 @@ create table storypoints.sessions
         (200) NOT NULL,
     point varchar
         (100) NOT NULL,
-    has_voted bool default false,
-    is_admin bool,
+    has_voted bool default false NOT NULL,
+    is_admin bool default false NOT NULL,
     FOREIGN KEY
         (session_id)
         REFERENCES storypoints.sessions
