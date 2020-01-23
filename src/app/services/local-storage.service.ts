@@ -15,7 +15,11 @@ export class LocalStorageService {
 
   private getState = (): AppState => {
     const appState = this.storage.get(this.key);
-    return JSON.parse(appState);
+    if (appState) {
+      return JSON.parse(appState);
+    } else {
+      return new AppState( new Globals(true, '50'), {} as Sessions);
+    }
   };
 
   private setState = (state: AppState) => {
