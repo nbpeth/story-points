@@ -26,10 +26,10 @@ export class ControlPanelComponent implements OnInit {
 
   ngOnInit(): void {
     // happens when session is created by another client
-    if (!this.localStorage.getSession(String(this.sessionId))) {
-      this.localStorage.setSession(String(this.sessionId), new Session({} as Participant, new SessionSettings(false)));
+    if (!this.localStorage.getSession(this.sessionId)) {
+      this.localStorage.setSession(this.sessionId, new Session({} as Participant, new SessionSettings(false)));
     }
-    this.showAdminConsole = this.localStorage.getShowAdminConsole(String(this.sessionId));
+    this.showAdminConsole = this.localStorage.getShowAdminConsole(this.sessionId);
   }
 
   joinSession = () => {
@@ -53,7 +53,7 @@ export class ControlPanelComponent implements OnInit {
   };
 
   settingChanged = (event) => {
-    this.localStorage.setShowAdminConsole(String(this.sessionId), event.checked);
+    this.localStorage.setShowAdminConsole(this.sessionId, event.checked);
   };
 
   private getDialogConfig = () => {

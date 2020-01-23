@@ -36,7 +36,7 @@ export class ActiveSessionTileComponent {
     if (result) {
       const message = new TerminateSessionMessage(new TerminateSessionPayload(this.session.id));
       this.socketService.send(message);
-      this.localStorage.removeSession(String(this.session.id));
+      this.localStorage.removeSession(this.session.id);
     }
   };
 }

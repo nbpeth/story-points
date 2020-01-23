@@ -6,14 +6,13 @@ import {LocalStorageService} from './local-storage.service';
   providedIn: 'root'
 })
 export class ThemeService {
-  private dynamicDarkStorageKey = 'dynamicDarkRating';
   private darkTheme = new ReplaySubject<boolean>(1);
   private dynamicDark = new ReplaySubject<number>(1);
   isDarkTheme = this.darkTheme.asObservable();
   dynamicDarkValue = this.dynamicDark.asObservable();
 
-  constructor(private localStorage: LocalStorageService,
-              @Inject(LOCAL_STORAGE) private storage: StorageService) {
+  constructor(private localStorage: LocalStorageService) {
+  }
 
   setDarkTheme(isDarkTheme: boolean): void {
     this.darkTheme.next(isDarkTheme);
@@ -22,15 +21,15 @@ export class ThemeService {
 
   setDarkValue = (value: number) => {
     this.dynamicDark.next(value);
-    this.storage.set(this.dynamicDarkStorageKey, value);
-  }
+    this.localStorage.setDarkValue(value);
+  };
 
   loadState = (): void => {
-    const isDarkThemeFromStorage = this.storage.get(this.darkThemeStorageKey);
+    const isDarkThemeFromStorage = this.localStorage.getTheme();
     this.setDarkTheme(isDarkThemeFromStorage);
 
-    const dynamicDarkValueFromStorage = this.storage.get(this.dynamicDarkStorageKey);
+    const dynamicDarkValueFromStorage = this.localStorage.getDarkValue();
     this.setDarkValue(dynamicDarkValueFromStorage ? dynamicDarkValueFromStorage : 50);
-  }
+  };
 
 }

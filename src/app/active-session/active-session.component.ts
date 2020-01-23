@@ -180,16 +180,17 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   private setSessionIfNotInLocalStorage = () => {
     // happens when session is created by another client
-    if (!this.localStorage.getSession(String(this.session.sessionId))) {
-      this.localStorage.setSession(String(this.session.sessionId), new Session({} as Participant, new SessionSettings(false)));
+    if (!this.localStorage.getSession(this.session.sessionId)) {
+      this.localStorage.setSession(this.session.sessionId, new Session({} as Participant, new SessionSettings(false)));
     }
   };
 
   private setUserIfAlreadyJoined = () => {
-    const user = this.localStorage.getUser(String(this.session.sessionId));
+    const user = this.localStorage.getUser(this.session.sessionId);
     // happens when user joins a session and navigates away from session page
     if (user && user.participantName !== undefined) {
-      this.participant = user;
+      this.participant =
+        new Participant(user.participantName, user.participantId, user.point, user.hasVoted, user.isAdmin, user.pointsVisible);
     }
   };
 
@@ -241,7 +242,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     const message = itWasMe ? `You joined as ${userName}` : `${userName} joined.`;
 
     this.showInfoBar(message, 'happy');
-    this.localStorage.setUser(String(this.session.sessionId), this.participant);
+    this.localStorage.setUser(this.session.sessionId, this.participant);
     this.updateSession(messageData);
   };
 
@@ -255,7 +256,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     }
 
     this.showInfoBar(message, 'warn');
-    this.localStorage.removeUser(String(this.session.sessionId));
+    this.localStorage.removeUser(this.session.sessionId);
     this.updateSession(messageData);
   };
 
@@ -265,7 +266,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private recoverUser = (session: StoryPointSession): void => {
-    const maybeRecoveredUserEntry = this.localStorage.getSession(String(session.sessionId));
+    const maybeRecoveredUserEntry = this.localStorage.getSession(session.sessionId);
 
     if (maybeRecoveredUserEntry) {
       this.participant = Object.assign(new Participant(), maybeRecoveredUserEntry);

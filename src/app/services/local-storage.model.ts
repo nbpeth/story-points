@@ -6,12 +6,12 @@ export class AppState {
 }
 
 export class Globals {
-  constructor(public isDarkTheme: boolean) {
+  constructor(public isDarkTheme: boolean, public darkValue: string) {
   }
 }
 
 export class Sessions {
-  [sessionId: string]: Session;
+  [sessionId: number]: Session;
 }
 
 export class Session {

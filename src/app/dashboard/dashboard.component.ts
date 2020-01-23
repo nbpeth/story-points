@@ -85,7 +85,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.activeSessions = payload.sessions;
     }
     this.activeSessions.forEach(activeSession => {
-      this.localStorage.setSession(String(activeSession.id), new Session({} as Participant, new SessionSettings(false)));
+      this.localStorage.setSession(activeSession.id, new Session({} as Participant, new SessionSettings(false)));
     });
     this.applySearchFilter();
   };

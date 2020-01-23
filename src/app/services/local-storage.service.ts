@@ -11,8 +11,6 @@ export class LocalStorageService {
   key = 'appState';
 
   constructor(@Inject(LOCAL_STORAGE) private storage: StorageService) {
-    const appState = new AppState(new Globals(false), {});
-    this.setState(appState);
   }
 
   private getState = (): AppState => {
@@ -36,45 +34,56 @@ export class LocalStorageService {
     this.setState(appState);
   };
 
-  getSession = (sessionId: string): Session => {
+  getDarkValue = (): number => {
+    const appState: AppState = this.getState();
+    return Number(appState.globals.darkValue);
+  };
+
+  setDarkValue = (darkValue: number) => {
+    const appState: AppState = this.getState();
+    appState.globals.darkValue = String(darkValue);
+    this.setState(appState);
+  };
+
+  getSession = (sessionId: number): Session => {
     const appState: AppState = this.getState();
     return appState.sessions[sessionId];
   };
 
-  setSession = (sessionId: string, session: Session) => {
+  setSession = (sessionId: number, session: Session) => {
     const appState: AppState = this.getState();
     appState.sessions[sessionId] = new Session(session.user, session.settings);
     this.setState(appState);
   };
 
-  removeSession = (sessionId: string) => {
+  removeSession = (sessionId: number) => {
     const appState: AppState = this.getState();
     delete appState.sessions[sessionId];
     this.setState(appState);
   };
 
-  getUser = (sessionId: string): Participant => {
+  getUser = (sessionId: number): Participant => {
     const appState: AppState = this.getState();
     return appState.sessions[sessionId].user;
   };
 
-  setUser = (sessionId: string, user: Participant) => {
+  setUser = (sessionId: number, user: Participant) => {
     const appState: AppState = this.getState();
     appState.sessions[sessionId].user = user;
     this.setState(appState);
   };
-  removeUser = (sessionId: string) => {
+  removeUser = (sessionId: number) => {
     const appState: AppState = this.getState();
     appState.sessions[sessionId].user = {} as Participant;
     this.setState(appState);
   };
 
-  getShowAdminConsole = (sessionId: string) => {
+  getShowAdminConsole = (sessionId: number) => {
     const appState: AppState = this.getState();
     return appState.sessions[sessionId].settings.showAdminConsole;
   };
 
-  setShowAdminConsole = (sessionId: string, showAdminConsole: boolean) => {
+  setShowAdminConsole = (sessionId: number, showAdminConsole: boolean) => {
     const appState: AppState = this.getState();
     appState.sessions[sessionId].settings.showAdminConsole = showAdminConsole;
     this.setState(appState);
