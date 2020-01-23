@@ -1,5 +1,6 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import * as Highcharts from 'highcharts';
+import {ThemeService} from "../services/theme.service";
 
 @Component({
   selector: 'vote-display',
@@ -16,7 +17,12 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
       plotBorderWidth: null,
       plotShadow: false,
       type: 'column',
-      height: 200,
+      height: 250,
+      backgroundColor: 'transparent',
+      style: {
+        fontFamily: '\'Unica One\', sans-serif'
+      },
+      plotBorderColor: '#606063'
     },
     legend: {enabled: false},
     title: {
@@ -32,20 +38,38 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
         data: [],
       },
     ],
+    tooltip: {enabled: false},
+
     plotOptions: {},
     xAxis: {
       id: 'cat',
       categories: [],
-      crosshair: true
+      crosshair: true,
+      labels: {
+        style: {
+          color: '#666666',
+          cursor: 'default',
+          fontSize: '25px',
+        }
+      }
     },
     yAxis: {
       title: undefined,
+      labels: {
+        enabled: false,
+      }
     },
 
 
   }
 
   constructor() {
+    // colors by theme
+    // fonts
+    // series color
+
+    // fit chart to window
+    // react to inout
   }
 
   ngOnInit() {
@@ -56,7 +80,7 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
     this.options.series[0].data = distribution;
 
     this.chart = Highcharts.chart('chart', this.options);
-    }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
 

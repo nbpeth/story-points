@@ -1,20 +1,31 @@
 
-.container {
 
-  .title {
-    text-align: center;
-  }
 
   .content {
     display: flex;
     flex-direction: column;
     justify-content: center;
 
+    .title {
+      text-align: center;
+    }
+
     .user-tiles {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       vertical-align: bottom;
+    }
+
+    .chart-container {
+      height: auto;
+      min-height: 200px;
+      max-height: 300px;
+    }
+
+
+    .mat-toolbar-single-row {
+      padding: 0 0;
     }
   }
 
@@ -25,4 +36,4 @@
     bottom: 0;
   }
 
-}
+
