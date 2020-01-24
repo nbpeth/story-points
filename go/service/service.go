@@ -41,8 +41,7 @@ func (s *Service) reader(ctx context.Context) {
 			return
 		}
 
-		payload, err := s.Route(ctx, msg.EventType, b)
-		if err != nil {
+		if err := s.Route(ctx, msg.EventType, b); err != nil {
 			log.Println("error routing:", err)
 			if err := conn.WriteJSON(models.SpReplyMessage{
 				EventType: models.EventTypeError,
@@ -52,28 +51,6 @@ func (s *Service) reader(ctx context.Context) {
 				return
 			}
 			return
-		}
-
-		// TODO: this is a hack. unhack it
-		if payload != nil {
-			var targetSessionID interface{}
-			if v, ok := payload.(map[string]interface{}); ok {
-				if sessionID, ok := v["sessionId"]; ok {
-					targetSessionID = sessionID
-					log.Println("yup:", targetSessionID)
-				}
-			}
-
-			respMsg := models.SpReplyMessage{
-				EventType:     msg.EventType,
-				Payload:       payload,
-				TargetSession: targetSessionID,
-			}
-
-			if err := conn.WriteJSON(respMsg); err != nil {
-				log.Println("error writing json to client:", err)
-				return
-			}
 		}
 	}
 }
