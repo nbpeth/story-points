@@ -165,7 +165,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.participant ? this.participant.participantName === cardId : false;
 
   collectBallots = (): Ballot[] =>
-    this.session.participants.map((p: Participant) => p.point);
+    this.session.participants.filter((p: Participant) => p.hasVoted).map((p: Participant) => p.point);
 
 
   pointSelectionChanged = (pointSelection: PointSelection) => {
