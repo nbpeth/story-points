@@ -124,6 +124,9 @@ const initHandlers = () => {
       case 'get-session-name':
         getSessionNameFor(messageData);
         break;
+      case 'voting-scheme':
+        votingSchemeChange(messageData);
+        break;
     }
   };
 
@@ -140,6 +143,14 @@ const initHandlers = () => {
     }
 
     mysqlClient.terminateSession(requestedSession, callback);
+  };
+
+  votingSchemeChange = (messageData) => {
+    const payload = messageData.payload;
+    const requestedSession = payload.sessionId;
+    const votingSchema = payload.votingScheme;
+    const message = formatMessage('voting-scheme', {sessionId: requestedSession, votingScheme: votingSchema}, requestedSession);
+    notifyClients(message);
   };
 
   revealPoints = (messageData) => {

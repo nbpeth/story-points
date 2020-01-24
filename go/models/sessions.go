@@ -13,6 +13,7 @@ const (
 	EventTypePointSubmitted               = "point-submitted"
 	EventTypePointsReset                  = "points-reset"
 	EventTypePointsRevealed               = "points-revealed"
+	EventVotingSchemeChanged              = "voting-scheme"
 	EventTypeError                        = "error"
 )
 
@@ -115,6 +116,13 @@ type SpReqPayloadPointsReset struct {
 	Payload struct {
 		SessionID string `json:"sessionId"`
 	} `json:"payload"`
+}
+
+type SpReqPayloadVotingSchemeChanged struct {
+  Payload struct {
+    SessionID string `json:"sessionId"`
+    VotingScheme string `json:"votingScheme"`
+  } `json:"payload"`
 }
 
 type SpMessagePayload struct {

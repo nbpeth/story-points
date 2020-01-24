@@ -1,8 +1,14 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Participant, StoryPointSession} from '../active-session/model/session.model';
+import {Participant} from '../active-session/model/session.model';
 import {MatDialog, MatDialogConfig, MatRadioChange} from '@angular/material';
 import {JoinSessionDialogComponent} from '../join-session-dialog/join-session-dialog.component';
 import {LocalStorageService} from '../services/local-storage.service';
+import {VotingSchemeService} from '../services/voting-scheme.service';
+import {VotingScheme} from '../voting-booth/voting.model';
+import {SpMessage, VotingSchemeChangedPayload, VotingSchemeMessgae} from '../active-session/model/events.model';
+import {SocketService} from '../services/socket.service';
+import {map} from 'rxjs/operators';
+import {Events} from '../active-session/enum/events';
 
 @Component({
   selector: 'control-panel',
@@ -22,12 +28,36 @@ export class ControlPanelComponent implements OnInit {
   votingScheme: string = this.votingSchemeOptions[0].toString();
 
   constructor(private dialog: MatDialog,
+              private votingService: VotingSchemeService,
+              private socketService: SocketService,
               private localStorage: LocalStorageService) {
   }
 
   ngOnInit(): void {
     this.showAdminConsole = this.localStorage.getShowAdminConsole(this.sessionId);
+
+    this.votingScheme = this.votingService.loadState(this.sessionId);
+    this.votingService.votingSchemeValue.subscribe(value => {
+      if (value) {
+        this.votingScheme = value.toString();
+      }
+    });
+
+    this.socketService.messages().pipe(
+      map(this.handleEvents)
+    ).subscribe();
   }
+
+  handleEvents = (messageData: SpMessage) => {
+    const eventType = messageData.eventType;
+    const payload = messageData.payload as VotingSchemeChangedPayload;
+
+    switch (eventType) {
+      case Events.VOTING_SCHEME:
+        this.votingService.setVoteScheme(this.sessionId, payload.votingScheme);
+        break;
+    }
+  };
 
   joinSession = () => {
     const dialogRef = this.dialog.open(JoinSessionDialogComponent, this.getDialogConfig());
@@ -54,7 +84,14 @@ export class ControlPanelComponent implements OnInit {
   };
 
   votingSchemeChanged = (event: MatRadioChange) => {
-    this.votingScheme = event.value;
+    this.socketService.send(
+      new VotingSchemeMessgae(
+        new VotingSchemeChangedPayload(
+          this.sessionId,
+          event.value
+        )
+      )
+    );
   };
 
   private getDialogConfig = () => {
@@ -69,9 +106,3 @@ export class ControlPanelComponent implements OnInit {
 }
 
 export declare type PointVisibilityChange = 'reset' | 'reveal' | 'hide';
-
-export enum VotingScheme {
-  Fibbonaci = 'Fibbonaci',
-  FistOfFive = 'FistOfFive',
-  Primes = 'Primes'
-}

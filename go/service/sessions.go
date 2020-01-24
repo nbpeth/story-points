@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/ReturnPath/story-points/models"
+  "github.com/ReturnPath/story-points/models"
 )
 
 func (s *Service) GetStateOfTheState() (*models.State, error) {
@@ -205,4 +205,23 @@ func (s *Service) TerminateSession(req models.SpReqPayloadTerminateSession) erro
 	}
 
 	return nil
+}
+
+func (s *Service) VotingSchemeChanged(req models.SpReqPayloadVotingSchemeChanged) error {
+  respMsg := models.SpReplyMessage{
+    EventType: models.EventVotingSchemeChanged,
+    Payload:   struct {
+      SessionID string `json:"sessionId"`
+      VotingScheme string `json:"votingScheme"`
+    }{
+      req.Payload.SessionID,
+      req.Payload.VotingScheme,
+    },
+  }
+
+  if err := s.shareWithClients(s.clients, respMsg); err != nil {
+    return err
+  }
+
+  return nil
 }

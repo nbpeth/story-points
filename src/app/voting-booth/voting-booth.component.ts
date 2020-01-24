@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {DefaultPointSelection, FistOfFivePointSelection, PointSelection, PrimePointSelection} from '../point-selection/point-selection';
-import {VotingScheme} from '../control-panel/control-panel.component';
+import {VotingScheme} from './voting.model';
+import {VotingSchemeService} from '../services/voting-scheme.service';
 
 @Component({
   selector: 'voting-booth',
@@ -8,6 +9,7 @@ import {VotingScheme} from '../control-panel/control-panel.component';
   styleUrls: ['./voting-booth.component.scss']
 })
 export class VotingBoothComponent implements OnInit, OnChanges {
+  @Input() sessionId: number;
   @Input() votingScheme: string;
   @Output() voteSubmitted: EventEmitter<any> = new EventEmitter<any>();
 
@@ -31,6 +33,7 @@ export class VotingBoothComponent implements OnInit, OnChanges {
   submitVote = () => {
     this.voteSubmitted.emit(this.vote);
   };
+
 
   makePointSelection = (votingScheme: string): PointSelection => {
     switch (votingScheme) {

@@ -28,6 +28,7 @@ import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component
 import {PointVisibilityChange} from '../control-panel/control-panel.component';
 import {LocalStorageService} from '../services/local-storage.service';
 import {Session, SessionSettings} from '../services/local-storage.model';
+import {VotingScheme} from '../voting-booth/voting.model';
 
 @Component({
   selector: 'app-active-session',
@@ -75,7 +76,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         map(this.handleEvents),
       )
       .subscribe();
-
 
     this.themeService.isDarkTheme.subscribe(isIt => this.isDarkTheme = isIt);
   }
@@ -180,7 +180,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   private setSessionIfNotInLocalStorage = () => {
     if (!this.localStorage.getSession(this.session.sessionId)) {
-      this.localStorage.setSession(this.session.sessionId, new Session({} as Participant, new SessionSettings(false)));
+      this.localStorage.setSession(this.session.sessionId,
+        new Session({} as Participant, new SessionSettings(false, VotingScheme.Fibbonaci.toString())));
     }
   };
 

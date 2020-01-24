@@ -1,5 +1,3 @@
-import {VotingScheme} from '../control-panel/control-panel.component';
-
 export class PointSelection {
   options: any[];
 }

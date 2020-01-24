@@ -1,10 +1,9 @@
 package service
 
 import (
-	"encoding/json"
-	"fmt"
-
-	"github.com/ReturnPath/story-points/models"
+  "encoding/json"
+  "fmt"
+  "github.com/ReturnPath/story-points/models"
 )
 
 func (s *Service) Route(eventType models.EventType, b []byte) (interface{}, error) {
@@ -65,6 +64,12 @@ func (s *Service) Route(eventType models.EventType, b []byte) (interface{}, erro
 			return nil, err
 		}
 		return nil, s.ResetPoints(req)
+  case models.EventVotingSchemeChanged:
+    var req models.SpReqPayloadVotingSchemeChanged
+    if err := json.Unmarshal(b, &req); err != nil {
+      return nil, err
+    }
+    return nil, s.VotingSchemeChanged(req)
 	}
 
 	return nil, fmt.Errorf("unexpected eventType: %s", eventType)
