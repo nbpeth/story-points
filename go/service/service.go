@@ -1,8 +1,10 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/ReturnPath/story-points/ctxaccess"
 	"log"
 	"net/http"
 
@@ -19,7 +21,9 @@ type Service struct {
 	clients  map[*websocket.Conn]struct{}
 }
 
-func (s *Service) reader(conn *websocket.Conn) {
+func (s *Service) reader(ctx context.Context) {
+	conn := ctxaccess.MustGetClientConn(ctx)
+
 	for {
 		mType, b, err := conn.ReadMessage()
 		if err != nil {
@@ -29,6 +33,7 @@ func (s *Service) reader(conn *websocket.Conn) {
 			}
 			return
 		}
+		log.Println(string(b))
 
 		var msg models.SpReqMessage
 		if err := json.Unmarshal(b, &msg); err != nil {
@@ -36,7 +41,7 @@ func (s *Service) reader(conn *websocket.Conn) {
 			return
 		}
 
-		payload, err := s.Route(msg.EventType, b)
+		payload, err := s.Route(ctx, msg.EventType, b)
 		if err != nil {
 			log.Println("error routing:", err)
 			if err := conn.WriteJSON(models.SpReplyMessage{
@@ -82,17 +87,22 @@ func (s *Service) Connect(w http.ResponseWriter, r *http.Request) {
 
 	s.addClient(conn)
 
-	conn.SetPingHandler(func(appData string) error {
-		log.Println("ping received!", appData)
-		return nil
-	})
-
 	conn.SetCloseHandler(func(code int, text string) error {
-		log.Println(code, text)
+		log.Printf("close handler called with code: %v, text: %v", code, text)
 		return nil
 	})
 
-	s.reader(conn)
+	ctx := ctxaccess.WithClientConn(r.Context(), conn)
+
+	s.reader(ctx)
+}
+
+func (s *Service) Health(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write([]byte("A-OK")); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func New(s store.Store) *Service {

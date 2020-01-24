@@ -25,7 +25,8 @@ import {MatSelectChange, MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBar
 import {ThemeService} from '../services/theme.service';
 import {ParticipantFilterPipe} from '../pipe/participant-filter.pipe';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
-import {PointVisibilityChange} from '../control-panel/control-panel.component';
+import {PointVisibilityChange} from "../control-panel/control-panel.component";
+import {Ballot} from "../vote-display/ballot-display.component";
 import {LocalStorageService} from '../services/local-storage.service';
 import {Session, SessionSettings} from '../services/local-storage.model';
 import {VotingScheme} from '../voting-booth/voting.model';
@@ -38,6 +39,7 @@ import {VotingScheme} from '../voting-booth/voting.model';
 })
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
+  private ballots: Ballot[] = [];
   participant: Participant;
 
   isDarkTheme: boolean;
@@ -140,7 +142,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     }
   };
 
-  leaveSession = (participant: Participant) => {
+  leaveSession = (_: Participant) => {
     this.socketService.send(
       new ParticipantRemovedSessionMessage(
         new ParticipantRemovedSessionPayload(
@@ -154,6 +156,9 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   isMyCard = (cardId: string) =>
     this.participant ? this.participant.participantName === cardId : false;
+
+  collectBallots = (): Ballot[] =>
+    this.session.participants.map((p: Participant) => p.point);
 
   private requestInitialStateOfSessionBy = (id: number): void => {
     this.socketService.send(
@@ -220,6 +225,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       this.router.navigate(['/'], {queryParams: {error: 1}});
     } else {
       updateFunction(messageData);
+      this.ballots = this.collectBallots();
     }
   };
 
@@ -302,6 +308,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private clearLocalUserState = () => {
+    this.localStorage.removeUser(this.session.sessionId)
     this.participant = undefined;
   };
 

@@ -4,7 +4,7 @@ import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
 import {map} from 'rxjs/operators';
 import {SpMessage} from '../active-session/model/events.model';
-import {AlertSnackbarComponent} from "../alert-snackbar/alert-snackbar.component";
+import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
 
 @Injectable({
   providedIn: 'root'
@@ -46,12 +46,12 @@ export class SocketService {
         map((event: MessageEvent) => {
           const messageData = JSON.parse(event.data) as SpMessage;
           if (messageData.eventType === 'error') {
-            this.showErrorBar(messageData.payload['message'])
+            this.showErrorBar(messageData.payload['message']);
           }
           return messageData;
         })
       );
-  }
+  };
 
   showErrorBar = (message: string): void => {
     this.snackBar.openFromComponent(AlertSnackbarComponent, {
@@ -63,7 +63,7 @@ export class SocketService {
         labelClass: 'warn',
       }
     });
-  }
+  };
 
   send = (message: any): void => {
     this.socket.next(message);

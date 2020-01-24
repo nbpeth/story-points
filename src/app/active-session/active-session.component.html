@@ -1,26 +1,37 @@
-<div style="text-align: center;">
-  <h1>{{getSessionName()}}</h1>
+<div class="content">
+
+  <div class="title">
+    <h1>{{getSessionName()}}</h1>
+  </div>
+
+  <div class="user-tiles">
+    <user-tiles>
+      <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter"
+                 [participant]="participant"
+                 [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
+                 [myCard]="isMyCard(participant.participantName)">
+      </user-tile>
+    </user-tiles>
+
+  </div>
+  <div class="chart-container">
+    <vote-display *ngIf="session.pointsVisible"
+                  [ballots]="ballots"
+    ></vote-display>
+  </div>
+
+
+
 </div>
 
-<div class="user-tiles">
-  <user-tiles>
-    <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter" [participant]="participant"
-               [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
-               [myCard]="isMyCard(participant.participantName)">
-    </user-tile>
-  </user-tiles>
-
-</div>
-
-<mat-toolbar color="secondary" class="action-bar">
-
+<div class="toolbar">
   <control-panel
     (participantJoined)="joinSession($event)"
     (participantLeft)="leaveSession($event)"
     (pointVisibilityEvent)="changePointVisibility($event)"
     (voteSubmitted)="voteHasChanged($event)"
-    [participant]="participant"
-    [sessionId]="session.sessionId">
-  </control-panel>
+    [sessionId]="session.sessionId"
+    [participant]="participant">
 
-</mat-toolbar>
+  </control-panel>
+</div>

@@ -29,13 +29,14 @@ func main() {
 
 	dstore, err := store.New(dbConf)
 	if err != nil {
-		log.Fatal("could not create store:", err)
+		log.Fatal("could not create store: ", err)
 	}
 
 	svc := service.New(dstore)
 	router := mux.NewRouter()
 
 	router.HandleFunc("/socket", svc.Connect)
+	router.HandleFunc("/health", svc.Health)
 	router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		path, err := filepath.Abs(r.URL.Path)
 		if err != nil {
@@ -64,5 +65,6 @@ func main() {
 		WriteTimeout: 30 * time.Second,
 	}
 
+	log.Println("Listening...")
 	log.Fatal(server.ListenAndServe())
 }

@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
@@ -10,16 +11,16 @@ import (
 
 //go:generate mockgen -destination=./mocks/store_mock.go -package=mocks github.com/ReturnPath/story-points/store Store
 type Store interface {
-	GetStateOfTheState() (*models.State, error)
-	GetSessionName(sessionID string) (string, error)
-	GetSessionParticipants(sessionID string) ([]*models.SpMessageParticipant, error)
-	CreateSession(sessionName string) (int64, error)
-	TerminateSession(sessionID int) error
-	AddParticipant(sessionID string, name string, point int, isAdmin bool) error
-	RemoveParticipant(sessionID string, participantID int) error
-	SubmitPoint(value int, participantID int) error
-	RevealPoints(sessionID string) error
-	ResetPoints(sessionID string) error
+	GetStateOfTheState(ctx context.Context) (*models.State, error)
+	GetSessionName(ctx context.Context, sessionID string) (string, error)
+	GetSessionParticipants(ctx context.Context, sessionID string) ([]*models.SpMessageParticipant, error)
+	CreateSession(ctx context.Context, sessionName string) (int64, error)
+	TerminateSession(ctx context.Context, sessionID int) error
+	AddParticipant(ctx context.Context, sessionID string, name string, point int, isAdmin bool) error
+	RemoveParticipant(ctx context.Context, sessionID string, participantID int) error
+	SubmitPoint(ctx context.Context, value int, participantID int) error
+	RevealPoints(ctx context.Context, sessionID string) error
+	ResetPoints(ctx context.Context, sessionID string) error
 }
 
 type store struct {
@@ -53,8 +54,8 @@ func New(conf DBConf) (Store, error) {
 	return store, nil
 }
 
-func (s *store) GetStateOfTheState() (*models.State, error) {
-	rows, err := s.db.Query(`
+func (s *store) GetStateOfTheState(ctx context.Context) (*models.State, error) {
+	rows, err := s.db.QueryContext(ctx, `
 		SELECT
 			id,
 			session_name as sessionName
@@ -80,12 +81,23 @@ func (s *store) GetStateOfTheState() (*models.State, error) {
 	return &state, nil
 }
 
-func (s *store) GetSessionName(sessionID string) (string, error) {
-	return "BITTTZZZ", nil
+func (s *store) GetSessionName(ctx context.Context, sessionID string) (string, error) {
+	 row := s.db.QueryRowContext(ctx, `
+		SELECT
+			s.session_name as sessionName
+		FROM storypoints.sessions s
+		WHERE s.id = ?`, sessionID)
+
+	var sessionName string
+	 if err := row.Scan(&sessionName); err != nil {
+		return "", err
+	}
+
+	return sessionName, nil
 }
 
-func (s *store) GetSessionParticipants(sessionID string) ([]*models.SpMessageParticipant, error) {
-	rows, err := s.db.Query(`
+func (s *store) GetSessionParticipants(ctx context.Context, sessionID string) ([]*models.SpMessageParticipant, error) {
+	rows, err := s.db.QueryContext(ctx, `
 		SELECT
 			s.id, 
 			s.points_visible as pointsVisible,
@@ -127,8 +139,8 @@ func (s *store) GetSessionParticipants(sessionID string) ([]*models.SpMessagePar
 	return participants, nil
 }
 
-func (s *store) CreateSession(sessionName string) (int64, error) {
-	result, err := s.db.Exec(`
+func (s *store) CreateSession(ctx context.Context, sessionName string) (int64, error) {
+	result, err := s.db.ExecContext(ctx, `
 		INSERT INTO
 			storypoints.sessions (session_name)
 		VALUES (?)`, sessionName)
@@ -144,8 +156,8 @@ func (s *store) CreateSession(sessionName string) (int64, error) {
 	return sessionID, nil
 }
 
-func (s *store) AddParticipant(sessionID string, name string, point int, isAdmin bool) error {
-	_, err := s.db.Exec(`
+func (s *store) AddParticipant(ctx context.Context, sessionID string, name string, point int, isAdmin bool) error {
+	_, err := s.db.ExecContext(ctx, `
 		INSERT INTO
 		storypoints.participant
 			(session_id, participant_name, point, is_admin)
@@ -154,8 +166,8 @@ func (s *store) AddParticipant(sessionID string, name string, point int, isAdmin
 	return err
 }
 
-func (s *store) RemoveParticipant(sessionID string, participantID int) error {
-	_, err := s.db.Exec(`
+func (s *store) RemoveParticipant(ctx context.Context, sessionID string, participantID int) error {
+	_, err := s.db.ExecContext(ctx, `
 		DELETE FROM
 			storypoints.participant
 		WHERE id = ?
@@ -164,8 +176,8 @@ func (s *store) RemoveParticipant(sessionID string, participantID int) error {
 	return err
 }
 
-func (s *store) TerminateSession(sessionID int) error {
-	_, err := s.db.Exec(`
+func (s *store) TerminateSession(ctx context.Context, sessionID int) error {
+	_, err := s.db.ExecContext(ctx, `
 		DELETE FROM
 			storypoints.sessions
 		WHERE id = ?`, sessionID)
@@ -173,8 +185,8 @@ func (s *store) TerminateSession(sessionID int) error {
 	return err
 }
 
-func (s *store) SubmitPoint(value int, participantID int) error {
-	_, err := s.db.Exec(`
+func (s *store) SubmitPoint(ctx context.Context, value int, participantID int) error {
+	_, err := s.db.ExecContext(ctx, `
 		UPDATE storypoints.participant
 		SET point = ?,
 			has_voted = true
@@ -183,8 +195,8 @@ func (s *store) SubmitPoint(value int, participantID int) error {
 	return err
 }
 
-func (s *store) RevealPoints(sessionID string) error {
-	_, err := s.db.Exec(`
+func (s *store) RevealPoints(ctx context.Context, sessionID string) error {
+	_, err := s.db.ExecContext(ctx, `
 		UPDATE
 			storypoints.sessions
 		SET
@@ -194,8 +206,8 @@ func (s *store) RevealPoints(sessionID string) error {
 	return err
 }
 
-func (s *store) ResetPoints(sessionID string) error {
-	_, err := s.db.Exec(`
+func (s *store) ResetPoints(ctx context.Context, sessionID string) error {
+	_, err := s.db.ExecContext(ctx, `
 		UPDATE
 			storypoints.participant p,
 			storypoints.sessions s
