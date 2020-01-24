@@ -9,15 +9,21 @@ import {ActiveSessionTilesComponent} from './active-session/active-session-tiles
 import {ActiveSessionComponent} from './active-session/active-session.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
+  GestureConfig,
   MatBadgeModule,
   MatButtonModule,
   MatCardModule,
+  MatCheckboxModule,
+  MatDialogModule,
   MatIconModule,
   MatInputModule,
-  MatSelectModule, MatSlideToggleModule,
-  MatToolbarModule,
-  MatDialogModule,
-  MatSnackBarModule, MatSidenavModule, MatCheckboxModule, MatSliderModule, GestureConfig
+  MatRadioModule,
+  MatSelectModule,
+  MatSidenavModule,
+  MatSliderModule,
+  MatSlideToggleModule,
+  MatSnackBarModule,
+  MatToolbarModule
 } from '@angular/material';
 import {UserTileComponent} from './active-session/user-tile/user-tile.component';
 import {UserTilesComponent} from './active-session/user-tiles/user-tiles.component';
@@ -33,11 +39,12 @@ import {CreateSessionDialogComponent} from './create-session-dialog/create-sessi
 import {ParticipantFilterPipe} from './pipe/participant-filter.pipe';
 import {AlertSnackbarComponent} from './alert-snackbar/alert-snackbar.component';
 import {ControlPanelComponent} from './control-panel/control-panel.component';
-import {JoinSessionDialogComponent} from "./join-session-dialog/join-session-dialog.component";
-import {FormsModule} from "@angular/forms";
+import {JoinSessionDialogComponent} from './join-session-dialog/join-session-dialog.component';
+import {FormsModule} from '@angular/forms';
 import {AdminControlsComponent} from './admin-controls/admin-controls.component';
 import {VotingBoothComponent} from './voting-booth/voting-booth.component';
 import { BallotDisplayComponent } from './vote-display/ballot-display.component';
+import { TestComponent } from './test/test.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +68,7 @@ import { BallotDisplayComponent } from './vote-display/ballot-display.component'
     AdminControlsComponent,
     VotingBoothComponent,
     BallotDisplayComponent,
+    TestComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -77,6 +85,7 @@ import { BallotDisplayComponent } from './vote-display/ballot-display.component'
     MatSelectModule,
     MatInputModule,
     MatBadgeModule,
+    MatRadioModule,
     MatSlideToggleModule,
     MatSnackBarModule,
     MatSidenavModule,
@@ -101,5 +110,5 @@ export class AppModule {
 
     this.overlayContainer.getContainerElement().classList.remove(removeTheme);
     this.overlayContainer.getContainerElement().classList.add(theme);
-  }
+  };
 }

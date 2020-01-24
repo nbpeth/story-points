@@ -8,16 +8,19 @@ import {ThemeService} from "../services/theme.service";
   styleUrls: ['./ballot-display.component.scss']
 })
 export class BallotDisplayComponent implements OnInit, OnChanges {
+  private seriesId = 'dataSeries';
   @Input() ballots: Ballot[];
-  chart: any;
 
+  fontColor: string = 'white';
+
+
+  chart: any;
   options = {
     chart: {
       plotBackgroundColor: null,
       plotBorderWidth: null,
       plotShadow: false,
       type: 'column',
-      height: 250,
       backgroundColor: 'transparent',
       style: {
         fontFamily: '\'Unica One\', sans-serif'
@@ -34,8 +37,10 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
     },
     series: [
       {
-        id: 'dataSeries',
+        color: 'transparent',
+        id: this.seriesId,
         data: [],
+        borderWidth: 10,
       },
     ],
     tooltip: {enabled: false},
@@ -47,43 +52,50 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
       crosshair: true,
       labels: {
         style: {
-          color: '#666666',
+          color: this.fontColor,
           cursor: 'default',
           fontSize: '25px',
         }
       }
     },
     yAxis: {
+      visible: false,
       title: undefined,
       labels: {
         enabled: false,
       }
     },
-
-
   }
 
-  constructor() {
-    // colors by theme
-    // fonts
-    // series color
-
-    // fit chart to window
-    // react to inout
+  constructor(private themeService: ThemeService) {
   }
 
-  ngOnInit() {
-    const distribution = this.calculateDistribution(this.ballots);
-    const categories = this.getXAxisCategoriesFrom(distribution);
 
-    this.options.xAxis.categories = this.getXAxisCategoriesFrom(distribution);
-    this.options.series[0].data = distribution;
+  ngOnInit(): void {
+    this.drawChart();
 
-    this.chart = Highcharts.chart('chart', this.options);
+    this.themeService.isDarkTheme.subscribe((isDarkTheme: boolean) => {
+      this.options.xAxis.labels.style.color = isDarkTheme ? 'white' : 'black';
+
+      this.drawChart();
+
+    })
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty('ballots') && this.chart) {
+      this.drawChart();
+    }
+  }
 
+  private drawChart = () => {
+    const distribution = this.calculateDistribution(this.ballots);
+    this.options.xAxis.categories = this.getXAxisCategoriesFrom(distribution);
+    this.options.series[0].data = distribution;
+
+    Highcharts.chart('chart', this.options, (chart) => {
+      this.chart = chart;
+    });
   }
 
 
@@ -104,6 +116,7 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
 
   private getXAxisCategoriesFrom = (distribution: { y, name }[]) =>
     distribution.map(point => point.name);
+
 }
 
 export declare type Ballot = string | number | null | undefined;

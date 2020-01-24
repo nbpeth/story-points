@@ -5,6 +5,13 @@
       <mat-checkbox (change)="settingChanged($event)" id="showAdminConsole" [(ngModel)]="showAdminConsole">Admin
         Console
       </mat-checkbox>
+      <!--<div>Voting Scheme</div>-->
+      <!--<mat-radio-group-->
+        <!--[(ngModel)]="votingScheme">-->
+        <!--<mat-radio-button class="spacing" *ngFor="let votingSchemeOption of votingSchemeOptions"-->
+                          <!--[value]="votingSchemeOption"-->
+                          <!--(change)="votingSchemeChanged($event)">{{votingSchemeOption}}</mat-radio-button>-->
+      <!--</mat-radio-group>-->
     </mat-drawer>
 
     <div class="options-content">
@@ -30,11 +37,12 @@
     </div>
   </mat-drawer-container>
   <admin-controls *ngIf="showAdminConsole"
-    (pointVisibilityEvent)="changePointVisibility($event)">
+                  (pointVisibilityEvent)="changePointVisibility($event)">
   </admin-controls>
 
   <voting-booth *ngIf="participant"
-    (voteSubmitted)="submitVote($event)">
+                [votingScheme]="votingScheme"
+                (voteSubmitted)="submitVote($event)">
 
   </voting-booth>
 

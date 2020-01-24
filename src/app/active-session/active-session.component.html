@@ -16,23 +16,22 @@
   </div>
   <div class="chart-container">
     <vote-display *ngIf="session.pointsVisible"
-                  [ballots]="collectBallots()"
+                  [ballots]="ballots"
     ></vote-display>
   </div>
 
-  <div class="toolbar">
-    <mat-toolbar color="secondary" class="action-bar">
 
-      <control-panel
-        (participantJoined)="joinSession($event)"
-        (participantLeft)="leaveSession($event)"
-        (pointVisibilityEvent)="changePointVisibility($event)"
-        (voteSubmitted)="voteHasChanged($event)"
-        [participant]="participant">
 
-      </control-panel>
-
-    </mat-toolbar>
-  </div>
 </div>
 
+<div class="toolbar">
+  <control-panel
+    (participantJoined)="joinSession($event)"
+    (participantLeft)="leaveSession($event)"
+    (pointVisibilityEvent)="changePointVisibility($event)"
+    (voteSubmitted)="voteHasChanged($event)"
+    [sessionId]="session.sessionId"
+    [participant]="participant">
+
+  </control-panel>
+</div>

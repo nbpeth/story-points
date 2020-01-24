@@ -1,7 +1,7 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SocketService} from '../services/socket.service';
-import {filter, flatMap, map} from 'rxjs/operators';
+import {filter, flatMap, map, tap} from 'rxjs/operators';
 import {Events} from './enum/events';
 import {
   GetSessionNameMessage,
@@ -21,18 +21,14 @@ import {
   SpMessage
 } from './model/events.model';
 import {Participant, StoryPointSession} from './model/session.model';
-import {
-  MatSelectChange,
-  MatSnackBar,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition
-} from '@angular/material';
-import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
+import {MatSelectChange, MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
 import {ThemeService} from '../services/theme.service';
 import {ParticipantFilterPipe} from '../pipe/participant-filter.pipe';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
 import {PointVisibilityChange} from "../control-panel/control-panel.component";
 import {Ballot} from "../vote-display/ballot-display.component";
+import {LocalStorageService} from '../services/local-storage.service';
+import {Session, SessionSettings} from '../services/local-storage.model';
 
 @Component({
   selector: 'app-active-session',
@@ -42,6 +38,7 @@ import {Ballot} from "../vote-display/ballot-display.component";
 })
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
+  private ballots: Ballot[] = [];
   participant: Participant;
 
   isDarkTheme: boolean;
@@ -53,11 +50,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
               private socketService: SocketService,
               private themeService: ThemeService,
               private snackBar: MatSnackBar,
-              @Inject(LOCAL_STORAGE) private storage: StorageService) {
+              private localStorage: LocalStorageService) {
   }
 
   getSessionName = () =>
-    this.session.sessionName
+    this.session.sessionName;
 
   ngOnInit() {
     this.socketService.connect();
@@ -75,6 +72,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       )
       .pipe(
         filter(this.eventsOnlyForThisSession),
+        tap(this.setSessionIfNotInLocalStorage),
+        tap(this.setUserIfAlreadyJoined),
         map(this.handleEvents),
       )
       .subscribe();
@@ -110,14 +109,14 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     switch (state) {
       case 'reset':
         this.resetPoints();
-        break
+        break;
       case 'reveal':
         this.revealPoints();
         break;
       default:
         break;
     }
-  }
+  };
 
   resetPoints = () => {
     this.socketService.send(new ResetPointsForSessionMessage(new ResetPointsForSessionPayload(this.session.sessionId)));
@@ -130,8 +129,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   joinSession = (maybeNewParticipant: Participant, isAdmin: boolean = false) => {
     if (maybeNewParticipant) {
       this.participant = maybeNewParticipant;
-
-      this.storage.set(String(this.session.sessionId), JSON.stringify(this.participant));
 
       this.socketService.send(
         new ParticipantJoinedSessionMessage(
@@ -174,11 +171,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         new GetStateForSessionPayload(id)
       )
     );
-  }
+  };
 
   private setSessionName = (messageData: GetSessionNameMessage) => {
     this.session.sessionName = messageData.payload.sessionName;
-  }
+  };
 
   private eventsOnlyForThisSession = (message: SpMessage): boolean => {
     const targetSession = message.payload.sessionId;
@@ -186,11 +183,23 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     return this.session.sessionId === targetSession;
   };
 
+  private setSessionIfNotInLocalStorage = () => {
+    if (!this.localStorage.getSession(this.session.sessionId)) {
+      this.localStorage.setSession(this.session.sessionId, new Session({} as Participant, new SessionSettings(false)));
+    }
+  };
+
+  private setUserIfAlreadyJoined = () => {
+    const user = this.localStorage.getUser(this.session.sessionId);
+    if (user && user.participantName !== undefined) {
+      this.participant =
+        new Participant(user.participantName, user.participantId, user.point, user.hasVoted, user.isAdmin, user.pointsVisible);
+    }
+  };
+
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
-
-    console.log('messageData', messageData);
 
     switch (eventType) {
       case Events.PARTICIPANT_JOINED:
@@ -215,8 +224,9 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       this.router.navigate(['/'], {queryParams: {error: 1}});
     } else {
       updateFunction(messageData);
+      this.ballots = this.collectBallots();
     }
-  }
+  };
 
   private updateSession = (messageData: GetStateForSessionMessage | ParticipantJoinedSessionMessage) => {
     const session = Object.assign(new StoryPointSession(), messageData.payload);
@@ -236,6 +246,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     const message = itWasMe ? `You joined as ${userName}` : `${userName} joined.`;
 
     this.showInfoBar(message, 'happy');
+    this.localStorage.setUser(this.session.sessionId, this.participant);
     this.updateSession(messageData);
   };
 
@@ -249,22 +260,22 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     }
 
     this.showInfoBar(message, 'warn');
+    this.localStorage.removeUser(this.session.sessionId);
     this.updateSession(messageData);
   };
 
   private wasItMe = (userName: string): boolean => {
     const yourName = this.participant ? this.participant.participantName : '';
-
     return yourName === userName;
-  }
+  };
 
   private recoverUser = (session: StoryPointSession): void => {
-    const maybeRecoveredUserEntry = this.storage.get(String(session.sessionId));
+    const maybeRecoveredUserEntry = this.localStorage.getSession(session.sessionId);
 
     if (maybeRecoveredUserEntry) {
-      this.participant = Object.assign(new Participant(), JSON.parse(maybeRecoveredUserEntry));
+      this.participant = Object.assign(new Participant(), maybeRecoveredUserEntry);
     }
-  }
+  };
 
   private refreshParticipants = (session: StoryPointSession) => {
     const participants = session.participants;
@@ -275,7 +286,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private setParticipantsInSession = (participants: Participant[]) => {
     this.session.loadParticipants(participants);
     this.setIdForLocalUser(participants);
-  }
+  };
 
   private setIdForLocalUser = (participants: any[]) => {
     participants.forEach((p: { participantName: string, participantId: number }) => {
@@ -283,7 +294,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         this.participant.participantId = p.participantId;
       }
     });
-  }
+  };
 
   private ensureYouAreStillActive = (participants: any[]) => {
     const youAreStillHere = participants.find((participant: Participant) => {
@@ -293,10 +304,10 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     if (!youAreStillHere) {
       this.clearLocalUserState();
     }
-  }
+  };
 
   private clearLocalUserState = () => {
-    this.storage.remove(String(this.session.sessionId));
+    this.localStorage.removeUser(this.session.sessionId)
     this.participant = undefined;
   };
 
@@ -310,5 +321,5 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         labelClass
       }
     });
-  }
+  };
 }

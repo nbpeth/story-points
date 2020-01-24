@@ -1,39 +1,37 @@
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
-
-
-  .content {
+  .title {
     display: flex;
-    flex-direction: column;
     justify-content: center;
+    flex: 1;
+    max-height: 75px;
 
-    .title {
-      text-align: center;
-    }
-
-    .user-tiles {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      vertical-align: bottom;
-    }
-
-    .chart-container {
-      height: auto;
-      min-height: 200px;
-      max-height: 300px;
-    }
-
-
-    .mat-toolbar-single-row {
-      padding: 0 0;
-    }
   }
 
-  .action-bar {
-    min-height: 200px;
-    position: absolute;
-    width: 100%;
-    bottom: 0;
+  .user-tiles {
+    justify-content: center;
+    display: flex;
+    flex: 3;
+    flex-wrap: wrap;
+
   }
+
+  .chart-container {
+    flex: 1;
+  }
+
+
+}
+
+
+.toolbar {
+  position: absolute;
+  bottom: 0;
+
+}
 
 
