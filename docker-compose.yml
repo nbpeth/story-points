@@ -3,6 +3,7 @@ services:
   storypoints:
     build:
       context: .
+      target: storypointsbase
     container_name: story-points
     ports:
       - 8081:8081
@@ -14,7 +15,13 @@ services:
       - SPPASSWORD=password
       - SPPORT=3306
       - SPDB=storypoints
-    command: ["npm", "run", "start-server"]
+    command: ["/go/bin/story-points"]
+    labels:
+      - traefik.docker.network=traefik-proxy
+      - traefik.frontend.rule=Host:story-points.app.returnpath.dnet
+      - traefik.port=80
+    networks:
+      - traefik-proxy
     restart: always
   db:
     image: mysql:5.7
@@ -30,4 +37,8 @@ services:
     container_name: story-points-db
     volumes:
       - ./db_seed:/docker-entrypoint-initdb.d
-
+    networks:
+      - traefik-proxy
+networks:
+  traefik-proxy:
+    external: true
