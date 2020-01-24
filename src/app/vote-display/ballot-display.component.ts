@@ -1,6 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import * as Highcharts from 'highcharts';
 import {ThemeService} from "../services/theme.service";
+import {Options} from "highcharts";
 
 @Component({
   selector: 'vote-display',
@@ -93,7 +94,7 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
     this.options.xAxis.categories = this.getXAxisCategoriesFrom(distribution);
     this.options.series[0].data = distribution;
 
-    Highcharts.chart('chart', this.options, (chart) => {
+    Highcharts.chart('chart', this.options as Options, (chart) => {
       this.chart = chart;
     });
   }

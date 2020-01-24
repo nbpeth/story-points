@@ -44,7 +44,6 @@ import {FormsModule} from '@angular/forms';
 import {AdminControlsComponent} from './admin-controls/admin-controls.component';
 import {VotingBoothComponent} from './voting-booth/voting-booth.component';
 import { BallotDisplayComponent } from './vote-display/ballot-display.component';
-import { TestComponent } from './test/test.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +67,6 @@ import { TestComponent } from './test/test.component';
     AdminControlsComponent,
     VotingBoothComponent,
     BallotDisplayComponent,
-    TestComponent,
   ],
   imports: [
     AppRoutingModule,
