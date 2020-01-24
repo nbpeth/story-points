@@ -1,7 +1,7 @@
-<div [ngClass]="{'dark-theme': isDarkTheme}">
+<div style="height: 100%" [ngClass]="{'dark-theme': isDarkTheme}">
 
   <div class="mat-app-background"
-       [ngClass]="{'moon': nighttime}"
+       [ngClass]="{'moon': nighttime, 'sun': daytime}"
        [ngStyle]="{'background-color': bgColor}">
     <app-titlebar></app-titlebar>
     <router-outlet></router-outlet>

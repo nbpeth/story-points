@@ -10,7 +10,7 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-@keyframes move-background {
+@keyframes move-background-angle {
   0% {
     background-position: -1000px -500px;
   }
@@ -18,6 +18,16 @@ body {
     background-position: 3000px 800px;
   }
 }
+
+@keyframes move-background-side {
+  0% {
+    background-position: -1000px 0px;
+  }
+  100% {
+    background-position: 3000px 0px;
+  }
+}
+
 
 .moon {
   background:
@@ -27,6 +37,14 @@ body {
   background-size: 1000px 1000px;
   z-index: 100;
 
-  animation: move-background 150s linear infinite;
+  animation: move-background-angle 150s linear infinite;
+
+}
+
+.sun {
+  background-image: url('assets/clouds.jpg');
+  z-index: 100;
+
+  animation: move-background-side 150s linear infinite;
 
 }
