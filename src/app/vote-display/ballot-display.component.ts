@@ -97,7 +97,7 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
 
   private drawChart = () => {
     const distribution = this.calculateDistribution(this.ballots);
-    console.log(this.categories)
+
     this.options.xAxis.categories = this.categories;
     this.options.series[0].data = distribution;
 
@@ -109,13 +109,14 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
 
   private calculateDistribution = (ballots: Ballot[]) => {
 
-    const categories = this.categories.slice().reduce((result, next) => {
+    const categories: any[] = this.categories.slice().reduce((result, next) => {
       result.push({name: next, y: 0})
       return result;
     }, []);
 
+
     return ballots.reduce((result, next) => {
-      const maybe = result.find(it => it.name === next);
+      const maybe = result.find(it => it.name == next);
       if (maybe) {
         maybe.y += 1;
       } else {
@@ -123,11 +124,8 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
       }
       return result;
     }, categories);
-
   }
 
-  private getXAxisCategoriesFrom = (distribution: { y, name }[]) =>
-    distribution.map(point => point.name);
 
 }
 

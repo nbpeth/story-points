@@ -34,7 +34,7 @@ export class VotingBoothComponent implements OnInit, OnChanges {
 
   makePointSelection = (votingScheme: string): PointSelection => {
     switch (votingScheme) {
-      case VotingScheme.Fibbonaci as string:
+      case VotingScheme.Fibonaci as string:
         return new DefaultPointSelection();
       case VotingScheme.FistOfFive as string:
         return new FistOfFivePointSelection();
