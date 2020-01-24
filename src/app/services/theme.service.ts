@@ -1,36 +1,35 @@
-import {Inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ReplaySubject} from 'rxjs';
-import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
+import {LocalStorageService} from './local-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
-  private darkThemeStorageKey = 'isDarkTheme';
-  private dynamicDarkStorageKey = 'dynamicDarkRating';
   private darkTheme = new ReplaySubject<boolean>(1);
   private dynamicDark = new ReplaySubject<number>(1);
   isDarkTheme = this.darkTheme.asObservable();
   dynamicDarkValue = this.dynamicDark.asObservable();
 
-  constructor(@Inject(LOCAL_STORAGE) private storage: StorageService) {
+  constructor(private localStorage: LocalStorageService) {
   }
 
   setDarkTheme(isDarkTheme: boolean): void {
     this.darkTheme.next(isDarkTheme);
-    this.storage.set(this.darkThemeStorageKey, isDarkTheme);
+    this.localStorage.setTheme(isDarkTheme);
   }
 
   setDarkValue = (value: number) => {
     this.dynamicDark.next(value);
-    this.storage.set(this.dynamicDarkStorageKey, value);
-  }
+    this.localStorage.setDarkValue(value);
+  };
 
   loadState = (): void => {
-    const isDarkThemeFromStorage = this.storage.get(this.darkThemeStorageKey);
+    const isDarkThemeFromStorage = this.localStorage.getTheme();
     this.setDarkTheme(isDarkThemeFromStorage);
 
-    const dynamicDarkValueFromStorage = this.storage.get(this.dynamicDarkStorageKey);
-    this.setDarkValue(dynamicDarkValueFromStorage ? dynamicDarkValueFromStorage : 50);
-  }
+    const dynamicDarkValueFromStorage = this.localStorage.getDarkValue();
+    this.setDarkValue(dynamicDarkValueFromStorage >= 0 ? dynamicDarkValueFromStorage : 50);
+  };
+
 }

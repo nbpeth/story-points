@@ -1,25 +1,38 @@
-.big-text {
-  font-size: 40px;
-}
-
-.mat-fab {
-  margin: 10px;
-}
-
-.user-tiles {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.action-bar {
-  min-height: 200px;
-  position: absolute;
+.content {
   width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .title {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    max-height: 75px;
+
+  }
+
+  .user-tiles {
+    justify-content: center;
+    display: flex;
+    flex: 3;
+    flex-wrap: wrap;
+
+  }
+
+  .chart-container {
+    flex: 1;
+  }
+
+
+}
+
+
+.toolbar {
+  position: absolute;
   bottom: 0;
+
 }
 
 
-.mat-toolbar-single-row {
-  padding: 0 0 0 0;
-}

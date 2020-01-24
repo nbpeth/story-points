@@ -11,6 +11,7 @@ export class AppComponent implements OnInit {
   bgColor: string;
 
   nighttime: boolean;
+  daytime: boolean;
 
   constructor(private themeService: ThemeService) {
   }
@@ -21,6 +22,7 @@ export class AppComponent implements OnInit {
 
       this.isDarkTheme = value <= 50;
       this.nighttime = value <= 20;
+      this.daytime = value >= 99;
 
       const brightness = (value / 100) * 255;
 
