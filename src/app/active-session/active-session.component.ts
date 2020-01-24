@@ -30,7 +30,7 @@ import {
 import {ThemeService} from '../services/theme.service';
 import {ParticipantFilterPipe} from '../pipe/participant-filter.pipe';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
-import {PointVisibilityChange, VotingScheme} from "../control-panel/control-panel.component";
+import {PointVisibilityChange} from "../control-panel/control-panel.component";
 import {Ballot} from "../vote-display/ballot-display.component";
 import {LocalStorageService} from '../services/local-storage.service';
 import {Session, SessionSettings} from '../services/local-storage.model';
@@ -90,7 +90,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.socketService.unsubscribe();
+    // this.socketService.unsubscribe();
   }
 
   submit = () => {

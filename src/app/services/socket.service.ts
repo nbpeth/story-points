@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import {WebSocketSubjectConfig} from 'rxjs/src/internal/observable/dom/WebSocketSubject';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
@@ -9,12 +9,11 @@ import {AlertSnackbarComponent} from "../alert-snackbar/alert-snackbar.component
 @Injectable({
   providedIn: 'root'
 })
-export class SocketService {
+export class SocketService  {
   private socket: WebSocketSubject<any>;
 
   constructor(private snackBar: MatSnackBar) {
-
-
+    this.connect();
   }
 
   connect = () => {
@@ -68,5 +67,6 @@ export class SocketService {
     this.socket.next(message);
   };
 
-  unsubscribe = () => this.socket.unsubscribe();
+  // unsubscribe = () => this.socket.unsubscribe();
+
 }
