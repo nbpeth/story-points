@@ -1,8 +1,9 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Participant, StoryPointSession} from '../active-session/model/session.model';
+import {Participant} from '../active-session/model/session.model';
 import {MatDialog, MatDialogConfig, MatRadioChange} from '@angular/material';
 import {JoinSessionDialogComponent} from '../join-session-dialog/join-session-dialog.component';
 import {LocalStorageService} from '../services/local-storage.service';
+import {DefaultPointSelection, PointSelection} from "../point-selection/point-selection";
 
 @Component({
   selector: 'control-panel',
@@ -21,12 +22,16 @@ export class ControlPanelComponent implements OnInit {
   votingSchemeOptions = [VotingScheme.Fibbonaci, VotingScheme.FistOfFive, VotingScheme.Primes];
   votingScheme: string = this.votingSchemeOptions[0].toString();
 
+  @Output() pointSelectionChanged = new EventEmitter<PointSelection>();
+
   constructor(private dialog: MatDialog,
               private localStorage: LocalStorageService) {
   }
 
   ngOnInit(): void {
     this.showAdminConsole = this.localStorage.getShowAdminConsole(this.sessionId);
+
+    this.pointSelectionChanged.emit(new DefaultPointSelection());
   }
 
   joinSession = () => {
@@ -55,6 +60,7 @@ export class ControlPanelComponent implements OnInit {
 
   votingSchemeChanged = (event: MatRadioChange) => {
     this.votingScheme = event.value;
+    // this.pointSelectionChanged.emit(DefaultPointSelection);
   };
 
   private getDialogConfig = () => {

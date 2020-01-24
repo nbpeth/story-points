@@ -2,16 +2,29 @@
 
   <mat-drawer-container class="options-container" autosize>
     <mat-drawer #menu class="options-sidenav" mode="side">
-      <mat-checkbox (change)="settingChanged($event)" id="showAdminConsole" [(ngModel)]="showAdminConsole">Admin
-        Console
-      </mat-checkbox>
-      <!--<div>Voting Scheme</div>-->
-      <!--<mat-radio-group-->
-        <!--[(ngModel)]="votingScheme">-->
-        <!--<mat-radio-button class="spacing" *ngFor="let votingSchemeOption of votingSchemeOptions"-->
-                          <!--[value]="votingSchemeOption"-->
-                          <!--(change)="votingSchemeChanged($event)">{{votingSchemeOption}}</mat-radio-button>-->
-      <!--</mat-radio-group>-->
+      <div class="settings-items">
+
+        <div class="item">Point Controls</div>
+
+        <mat-checkbox class="item" (change)="settingChanged($event)" id="showAdminConsole" [(ngModel)]="showAdminConsole">
+          Enable
+        </mat-checkbox>
+
+        <div class="item">Voting Scheme</div>
+
+        <!--<mat-radio-group class="item"-->
+          <!--[(ngModel)]="votingScheme">-->
+          <div class="item" style="display: flex; flex-direction: row">
+          <mat-radio-button class="spacing"  [checked]="true" (change)="votingSchemeChanged($event)" value="Fibbonaci">Fibbonaci</mat-radio-button>
+          <mat-radio-button class="spacing" [disabled]="true" (change)="votingSchemeChanged($event)" value="FistOfFive">Fist of Five</mat-radio-button>
+          <mat-radio-button class="spacing" [disabled]="true" (change)="votingSchemeChanged($event)" value="Primes">Primes</mat-radio-button>
+          <!--<mat-radio-button class="spacing" *ngFor="let votingSchemeOption of votingSchemeOptions"-->
+                            <!--[value]="votingSchemeOption"-->
+                            <!--(change)="pointSelectionChanged($event)">{{votingSchemeOption}}-->
+          <!--</mat-radio-button>-->
+          </div>
+        <!--</mat-radio-group>-->
+      </div>
     </mat-drawer>
 
     <div class="options-content">
@@ -36,6 +49,8 @@
 
     </div>
   </mat-drawer-container>
+
+
   <admin-controls *ngIf="showAdminConsole"
                   (pointVisibilityEvent)="changePointVisibility($event)">
   </admin-controls>

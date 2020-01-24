@@ -21,14 +21,20 @@ import {
   SpMessage
 } from './model/events.model';
 import {Participant, StoryPointSession} from './model/session.model';
-import {MatSelectChange, MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
+import {
+  MatSelectChange,
+  MatSnackBar,
+  MatSnackBarHorizontalPosition,
+  MatSnackBarVerticalPosition
+} from '@angular/material';
 import {ThemeService} from '../services/theme.service';
 import {ParticipantFilterPipe} from '../pipe/participant-filter.pipe';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
-import {PointVisibilityChange} from "../control-panel/control-panel.component";
+import {PointVisibilityChange, VotingScheme} from "../control-panel/control-panel.component";
 import {Ballot} from "../vote-display/ballot-display.component";
 import {LocalStorageService} from '../services/local-storage.service';
 import {Session, SessionSettings} from '../services/local-storage.model';
+import {DefaultPointSelection, PointSelection} from "../point-selection/point-selection";
 
 @Component({
   selector: 'app-active-session',
@@ -38,9 +44,10 @@ import {Session, SessionSettings} from '../services/local-storage.model';
 })
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
-  private ballots: Ballot[] = [];
-  participant: Participant;
+  ballots: Ballot[] = [];
+  pointSelection: PointSelection = new DefaultPointSelection();
 
+  participant: Participant;
   isDarkTheme: boolean;
 
   session: StoryPointSession = new StoryPointSession();
@@ -160,6 +167,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   collectBallots = (): Ballot[] =>
     this.session.participants.map((p: Participant) => p.point);
 
+
+  pointSelectionChanged = (pointSelection: PointSelection) => {
+    this.pointSelection = pointSelection;
+  }
+
   private requestInitialStateOfSessionBy = (id: number): void => {
     this.socketService.send(
       new GetSessionNameMessage(
@@ -172,6 +184,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       )
     );
   };
+
 
   private setSessionName = (messageData: GetSessionNameMessage) => {
     this.session.sessionName = messageData.payload.sessionName;
