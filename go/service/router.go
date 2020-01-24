@@ -65,13 +65,13 @@ func (s *Service) Route(ctx context.Context, eventType models.EventType, b []byt
     if err := json.Unmarshal(b, &req); err != nil {
       return nil, err
     }
-    return nil, s.ResetPoints(req)
+    return nil, s.ResetPoints(ctx, req)
   case models.EventVotingSchemeChanged:
     var req models.SpReqPayloadVotingSchemeChanged
     if err := json.Unmarshal(b, &req); err != nil {
       return nil, err
     }
-    return nil, s.VotingSchemeChanged(req)
+    return nil, s.VotingSchemeChanged(ctx, req)
   }
 
   return nil, fmt.Errorf("unexpected eventType: %s", eventType)

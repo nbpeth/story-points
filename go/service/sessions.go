@@ -225,7 +225,7 @@ func (s *Service) TerminateSession(ctx context.Context, req models.SpReqPayloadT
 	return nil
 }
 
-func (s *Service) VotingSchemeChanged(req models.SpReqPayloadVotingSchemeChanged) error {
+func (s *Service) VotingSchemeChanged(ctx context.Context, req models.SpReqPayloadVotingSchemeChanged) error {
   respMsg := models.SpReplyMessage{
     EventType: models.EventVotingSchemeChanged,
     Payload:   struct {
