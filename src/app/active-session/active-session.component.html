@@ -19,8 +19,8 @@
     (participantLeft)="leaveSession($event)"
     (pointVisibilityEvent)="changePointVisibility($event)"
     (voteSubmitted)="voteHasChanged($event)"
-    [participant]="participant">
-
+    [participant]="participant"
+    [sessionId]="session.sessionId">
   </control-panel>
 
 </mat-toolbar>

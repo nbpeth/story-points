@@ -1,15 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { SocketService } from '../services/socket.service';
-import { Events } from '../active-session/enum/events';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {SocketService} from '../services/socket.service';
+import {Events} from '../active-session/enum/events';
 import {
-  GetCompleteStateMessage,
-  NewSessionPayload,
   CreateNewSessionMessage,
-  SpMessage,
-  GetCompleteStatePayload
+  GetCompleteStateMessage,
+  GetCompleteStatePayload,
+  NewSessionPayload,
+  SpMessage
 } from '../active-session/model/events.model';
-import { Observable } from 'rxjs';
-import { Subscription } from 'rxjs';
+import {LocalStorageService} from '../services/local-storage.service';
+import {Session, SessionSettings} from '../services/local-storage.model';
+import {Participant} from '../active-session/model/session.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,7 +24,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   visibleSessions = [];
   error: string;
 
-  constructor(private socketService: SocketService) {
+  constructor(private socketService: SocketService,
+              private localStorage: LocalStorageService) {
   }
 
   ngOnInit() {
@@ -42,29 +44,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   createNewSession = (newSessionName: string) => {
     const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));
-
     this.socketService.send(message);
   };
 
   searchBoxValueChanged = (value: string) => {
     this.sessionSearchTerm = value;
     this.applySearchFilter();
-  }
+  };
 
   private applySearchFilter = () => {
-    const sessions = this.activeSessions ? [...this.activeSessions] : []
+    const sessions = this.activeSessions ? [...this.activeSessions] : [];
 
     const matches = sessions.filter((session: { id: number, sessionName: string }) =>
       session.sessionName ? session.sessionName.includes(this.sessionSearchTerm) : false
     );
 
     this.visibleSessions = matches;
-  }
+  };
 
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
-
     switch (eventType) {
       case Events.COMPLETE_STATE:
         this.setSessionsFrom(payload as GetCompleteStatePayload);
