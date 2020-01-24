@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start-server": "node server.js",
-    "build": "ng build --verbose=true",
+    "build": "ng build --verbose=true --output-path=dist/story-points",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

@@ -11,8 +11,8 @@ const (
 	EventTypeParticipantJoined            = "participant-joined"
 	EventTypeParticipantRemoved           = "participant-removed"
 	EventTypePointSubmitted               = "point-submitted"
-	EventTypePointsReset                  = "points-reset"
 	EventTypePointsRevealed               = "points-revealed"
+	EventTypePointsReset                  = "points-reset"
 	EventTypeError                        = "error"
 )
 
@@ -42,6 +42,7 @@ type SpReqPayloadGetSessionName struct {
 }
 
 type SpReplyPayloadGetSessionName struct {
+	SessionID string `json:"sessionId"`
 	SessionName string `json:"sessionName"`
 }
 
@@ -103,6 +104,11 @@ type SpReqPayloadPointSubmitted struct {
 		ParticipantName string `json:"userName"`
 		Value           int    `json:"value"`
 	} `json:"payload"`
+}
+
+type SpReplyPayloadPointSubmitted struct {
+	SessionID    string                  `json:"sessionId"`
+	Participants []*SpMessageParticipant `json:"participants"`
 }
 
 type SpReqPayloadPointsRevealed struct {
