@@ -27,11 +27,13 @@ export class AppComponent implements OnInit {
     'KeyA',
   ];
   konamiCount = 0;
+  sound: any;
 
   constructor(private themeService: ThemeService) {
   }
 
   ngOnInit() {
+    this.sound = new Audio('assets/sounds/cheering.mp3');
     this.themeService.loadState();
     this.themeService.dynamicDarkValue.subscribe((value: number) => {
 
@@ -60,6 +62,7 @@ export class AppComponent implements OnInit {
 
     if (this.konamiCount === this.konami.length) {
       confetti.start(2500);
+      this.sound.play();
       this.konamiCount = 0;
     }
   }
