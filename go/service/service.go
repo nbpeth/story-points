@@ -65,8 +65,12 @@ func (s *Service) Connect(w http.ResponseWriter, r *http.Request) {
 	s.addClient(conn)
 
 	conn.SetCloseHandler(func(code int, text string) error {
+		err := s.removeClient(conn)
+		if err != nil {
+			log.Printf("error removing client: %s", err)
+		}
 		log.Printf("close handler called with code: %v, text: %v", code, text)
-		return nil
+		return err
 	})
 
 	ctx := ctxaccess.WithClientConn(r.Context(), conn)
@@ -102,7 +106,11 @@ func (s *Service) addClient(conn *websocket.Conn) {
 
 func (s *Service) removeClient(conn *websocket.Conn) error {
 	if err := conn.Close(); err != nil {
-		return err
+		return fmt.Errorf("error closing connection: %w", err)
+	}
+
+	if _, ok := s.clients[conn]; !ok {
+		log.Println("client connection didn't exist in clients collection")
 	}
 
 	delete(s.clients, conn)
