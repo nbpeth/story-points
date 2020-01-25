@@ -4,6 +4,7 @@ import {MatDialog, MatDialogConfig, MatRadioChange} from '@angular/material';
 import {JoinSessionDialogComponent} from '../join-session-dialog/join-session-dialog.component';
 import {LocalStorageService} from '../services/local-storage.service';
 import {DefaultPointSelection, PointSelection} from "../point-selection/point-selection";
+import {AppState} from "../services/local-storage.model";
 
 @Component({
   selector: 'control-panel',
@@ -13,12 +14,15 @@ import {DefaultPointSelection, PointSelection} from "../point-selection/point-se
 export class ControlPanelComponent implements OnInit {
   @Input() sessionId: number;
   @Input() participant: Participant;
+  @Input() logs: string[];
+  @Input() showLogs: boolean;
   @Output() participantJoined: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Output() participantLeft: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Output() pointVisibilityEvent: EventEmitter<PointVisibilityChange> = new EventEmitter<PointVisibilityChange>();
   @Output() voteSubmitted: EventEmitter<any> = new EventEmitter<any>();
 
   showAdminConsole: boolean;
+  showEventLog: boolean;
   votingSchemeOptions = [VotingScheme.Fibonaci, VotingScheme.FistOfFive, VotingScheme.Primes];
   votingScheme: string = this.votingSchemeOptions[0].toString();
 
@@ -29,7 +33,16 @@ export class ControlPanelComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.showAdminConsole = this.localStorage.getShowAdminConsole(this.sessionId);
+    this.localStorage.stateEventStream()
+      .subscribe((state: AppState) => {
+        const maybeSession = state.getSessionBy(this.sessionId);
+
+        if (maybeSession) {
+          this.showAdminConsole = maybeSession.settings.showAdminConsole;
+          this.showEventLog = maybeSession.settings.showEventLog;
+          console.log('!!!', this.showEventLog)
+        }
+      });
 
     this.pointSelectionChanged.emit(new DefaultPointSelection());
   }
@@ -54,8 +67,12 @@ export class ControlPanelComponent implements OnInit {
     this.voteSubmitted.emit(vote);
   };
 
-  settingChanged = (event) => {
+  setShowAdminConsole = (event) => {
     this.localStorage.setShowAdminConsole(this.sessionId, event.checked);
+  };
+
+  setShowEventLog = (event) => {
+    this.localStorage.setShowEventLog(this.sessionId, event.checked);
   };
 
   votingSchemeChanged = (event: MatRadioChange) => {

@@ -2,12 +2,13 @@ import {Inject, Injectable} from '@angular/core';
 import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
 import {Participant} from '../active-session/model/session.model';
 import {AppState, Globals, Session, Sessions} from './local-storage.model';
-
+import {Subject, ReplaySubject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocalStorageService {
+  private stateEvents: Subject<any> = new ReplaySubject<any>();
   key = 'appState';
 
   constructor(@Inject(LOCAL_STORAGE) private storage: StorageService) {
@@ -27,7 +28,11 @@ export class LocalStorageService {
   private setState = (state: AppState) => {
     const appState = JSON.stringify(state);
     this.storage.set(this.key, appState);
+    this.stateEvents.next(state);
   };
+
+  stateEventStream = () =>
+    this.stateEvents.asObservable();
 
   getTheme = (): boolean => {
     const appState: AppState = this.getState();
@@ -106,6 +111,15 @@ export class LocalStorageService {
     const maybeSession = appState.getSessionBy(sessionId);
     if (maybeSession && maybeSession.settings) {
       maybeSession.settings.showAdminConsole = showAdminConsole;
+      this.setState(appState);
+    }
+  };
+
+  setShowEventLog = (sessionId: number, showEventLog: boolean) => {
+    const appState: AppState = this.getState();
+    const maybeSession = appState.getSessionBy(sessionId);
+    if (maybeSession && maybeSession.settings) {
+      maybeSession.settings.showEventLog = showEventLog;
       this.setState(appState);
     }
   };

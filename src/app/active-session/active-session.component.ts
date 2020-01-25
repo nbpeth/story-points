@@ -33,7 +33,7 @@ import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component
 import {PointVisibilityChange} from "../control-panel/control-panel.component";
 import {Ballot} from "../vote-display/ballot-display.component";
 import {LocalStorageService} from '../services/local-storage.service';
-import {Session, SessionSettings} from '../services/local-storage.model';
+import {AppState, Session, SessionSettings} from '../services/local-storage.model';
 import {DefaultPointSelection, PointSelection} from "../point-selection/point-selection";
 
 @Component({
@@ -44,6 +44,8 @@ import {DefaultPointSelection, PointSelection} from "../point-selection/point-se
 })
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
+  logs: string[] = ['a','a','aaa','a','a','a','a','a','a'];
+  showLogs: boolean;
   ballots: Ballot[] = [];
   pointSelection: PointSelection = new DefaultPointSelection();
 
@@ -65,6 +67,14 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.socketService.connect();
+
+    this.localStorage.stateEventStream().subscribe((state: AppState) => {
+      const maybeSession = state.getSessionBy(this.session.sessionId);
+
+      if (maybeSession) {
+        this.showLogs = maybeSession.settings.showEventLog;
+      }
+    })
 
     this.route.paramMap
       .pipe(
@@ -198,7 +208,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   private setSessionIfNotInLocalStorage = () => {
     if (!this.localStorage.getSession(this.session.sessionId)) {
-      this.localStorage.setSession(this.session.sessionId, new Session({} as Participant, new SessionSettings(false)));
+      this.localStorage.setSession(this.session.sessionId, new Session({} as Participant, new SessionSettings()));
     }
   };
 
@@ -258,6 +268,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     const itWasMe = this.wasItMe(userName);
     const message = itWasMe ? `You joined as ${userName}` : `${userName} joined.`;
 
+    this.logs.unshift(message);
     this.showInfoBar(message, 'happy');
     this.localStorage.setUser(this.session.sessionId, this.participant);
     this.updateSession(messageData);
@@ -272,6 +283,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       this.clearLocalUserState();
     }
 
+    this.logs.unshift(message);
     this.showInfoBar(message, 'warn');
     this.localStorage.removeUser(this.session.sessionId);
     this.updateSession(messageData);
