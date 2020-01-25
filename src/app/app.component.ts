@@ -1,5 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {ThemeService} from './services/theme.service';
+declare const confetti: any;
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,20 @@ export class AppComponent implements OnInit {
 
   nighttime: boolean;
   daytime: boolean;
+
+  konami = [
+    'ArrowUp',
+    'ArrowUp',
+    'ArrowDown',
+    'ArrowDown',
+    'ArrowLeft',
+    'ArrowRight',
+    'ArrowLeft',
+    'ArrowRight',
+    'KeyB',
+    'KeyA',
+  ];
+  konamiCount = 0;
 
   constructor(private themeService: ThemeService) {
   }
@@ -30,6 +45,22 @@ export class AppComponent implements OnInit {
 
       this.themeService.setDarkTheme(this.isDarkTheme);
     });
+  }
 
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.code === this.konami[this.konamiCount]) {
+      this.konamiCount++;
+    } else {
+      if (this.konamiCount > this.konami.length - 3) {
+        window.alert('you were so close and then you disappointed everyone');
+      }
+      this.konamiCount = 0;
+    }
+
+    if (this.konamiCount === this.konami.length) {
+      confetti.start(2500);
+      this.konamiCount = 0;
+    }
   }
 }
