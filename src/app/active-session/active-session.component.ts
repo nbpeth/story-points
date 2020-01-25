@@ -44,7 +44,7 @@ import {DefaultPointSelection, PointSelection} from "../point-selection/point-se
 })
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
-  logs: string[] = ['a','a','aaa','a','a','a','a','a','a'];
+  logs: string[] = [];
   showLogs: boolean;
   ballots: Ballot[] = [];
   pointSelection: PointSelection = new DefaultPointSelection();
