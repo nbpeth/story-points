@@ -1,5 +1,6 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {ThemeService} from './services/theme.service';
+
 declare const confetti: any;
 
 @Component({
@@ -27,8 +28,10 @@ export class AppComponent implements OnInit {
     'KeyA',
   ];
   konamiCount = 0;
-  successSound: any;
-  failSound: any;
+  successSound: HTMLAudioElement;
+  failSound: HTMLAudioElement;
+
+  music: HTMLAudioElement;
 
   constructor(private themeService: ThemeService) {
   }
@@ -39,17 +42,33 @@ export class AppComponent implements OnInit {
 
     this.themeService.loadState();
     this.themeService.dynamicDarkValue.subscribe((value: number) => {
-
-      this.isDarkTheme = value <= 50;
-      this.nighttime = value <= 20;
-      this.daytime = value >= 99;
-
-      const brightness = (value / 100) * 255;
-
-      this.bgColor = `rgb(${brightness}, ${brightness}, ${brightness})`;
+      this.setThemeFrom(value);
 
       this.themeService.setDarkTheme(this.isDarkTheme);
     });
+  }
+
+  private setThemeFrom = (value: number) => {
+    this.isDarkTheme = value <= 50;
+    this.nighttime = value <= 20;
+    this.daytime = value >= 99;
+
+    this.bgColor = this.setBackgroundBrightnessFrom(value);
+
+    if (this.daytime) {
+      this.music = new Audio('assets/sounds/twochords_and_a_glockenspiel.mp3');
+      this.music.play();
+    } else {
+      if (this.music) {
+        this.music.pause();
+        this.music = undefined;
+      }
+    }
+  }
+
+  private setBackgroundBrightnessFrom = (value: number): string => {
+    const brightness = (value / 100) * 255;
+    return `rgb(${brightness}, ${brightness}, ${brightness})`;
   }
 
   @HostListener('document:keydown', ['$event'])
