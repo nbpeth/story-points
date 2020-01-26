@@ -57,11 +57,11 @@ export class AppComponent implements OnInit {
 
     if (this.daytime) {
       this.music = new Audio('assets/sounds/twochords_and_a_glockenspiel.mp3');
+      this.music.loop = true;
       this.music.play();
     } else {
       if (this.music) {
         this.music.pause();
-        this.music = undefined;
       }
     }
   }
