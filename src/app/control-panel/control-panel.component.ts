@@ -40,7 +40,6 @@ export class ControlPanelComponent implements OnInit {
         if (maybeSession) {
           this.showAdminConsole = maybeSession.settings.showAdminConsole;
           this.showEventLog = maybeSession.settings.showEventLog;
-          console.log('!!!', this.showEventLog)
         }
       });
 
