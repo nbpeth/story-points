@@ -3,8 +3,19 @@
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.2.1.
 
 ## Development server
-Run `dc up --build storypoints` for a dev server. 
-Navigate to `http://localhost:8081/`. The app will automatically reload if you change any of the source files.
+
+For reloading changes to UI (still requires refresh of browser):
+
+- `dc up -d db`
+- `ng build --watch=true`
+- `cd go/`
+- `SPHOST=localhost SPUSER=user SPPASSWORD=password SPPORT=3306 SPDB=storypoints go run main.go`
+- navigate to `http://localhost:8081`
+
+For easier build, but lacking auto rebuild:
+
+- `dc up --build storypoints` for a dev server. 
+- avigate to `https://story-points.app.returnpath.dnet/`.
 
 ## Code scaffolding
 
