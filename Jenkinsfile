@@ -20,7 +20,7 @@ deployNode {
         overrides = [
             'image.tag': tag
         ]
-        repoChart = "https://helm-charts.returnpath.net/charts/rp-standard-deployment-0.0.1.tgz"
+        repoChart = "https://helm-charts.returnpath.net/charts/rp-standard-deployment-0.0.9.tgz"
         secrets = [
             'secrets.data.db_user': "storypoints-rds-user-${environment}",
             'secrets.data.db_password': "storypoints-rds-password-${environment}"

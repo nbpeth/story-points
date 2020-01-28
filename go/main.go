@@ -19,20 +19,13 @@ func main() {
 	flag.StringVar(&port, "port", ":8081", "port on which to host server")
 	flag.Parse()
 
-	//dbConf := store.DBConf{
-	//	User:     os.Getenv("SPUSER"),
-	//	Name:     os.Getenv("SPDB"),
-	//	Host:     os.Getenv("SPHOST"),
-	//	Password: os.Getenv("SPPASSWORD"),
-	//	Port:     os.Getenv("SPPORT"),
-	//}
-  dbConf := store.DBConf{
-    User:     "user",
-    Name:     "storypoints",
-    Host:     "localhost",
-    Password: "password",
-    Port:     "3306",
-  }
+	dbConf := store.DBConf{
+		User:     os.Getenv("SPUSER"),
+		Name:     os.Getenv("SPDB"),
+		Host:     os.Getenv("SPHOST"),
+		Password: os.Getenv("SPPASSWORD"),
+		Port:     os.Getenv("SPPORT"),
+	}
 
 	dstore, err := store.New(dbConf)
 	if err != nil {
