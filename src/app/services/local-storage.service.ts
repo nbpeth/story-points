@@ -2,6 +2,7 @@ import {Inject, Injectable} from '@angular/core';
 import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
 import {Participant} from '../active-session/model/session.model';
 import {AppState, Globals, Session, Sessions} from './local-storage.model';
+import {Subject, ReplaySubject} from 'rxjs';
 import {VotingScheme} from '../voting-booth/voting.model';
 
 
@@ -9,6 +10,7 @@ import {VotingScheme} from '../voting-booth/voting.model';
   providedIn: 'root'
 })
 export class LocalStorageService {
+  private stateEvents: Subject<any> = new ReplaySubject<any>();
   key = 'appState';
 
   constructor(@Inject(LOCAL_STORAGE) private storage: StorageService) {
@@ -28,7 +30,11 @@ export class LocalStorageService {
   private setState = (state: AppState) => {
     const appState = JSON.stringify(state);
     this.storage.set(this.key, appState);
+    this.stateEvents.next(state);
   };
+
+  stateEventStream = () =>
+    this.stateEvents.asObservable();
 
   getTheme = (): boolean => {
     const appState: AppState = this.getState();
@@ -111,11 +117,20 @@ export class LocalStorageService {
     }
   };
 
+  setShowEventLog = (sessionId: number, showEventLog: boolean) => {
+    const appState: AppState = this.getState();
+    const maybeSession = appState.getSessionBy(sessionId);
+    if (maybeSession && maybeSession.settings) {
+      maybeSession.settings.showEventLog = showEventLog;
+      this.setState(appState);
+    }
+  };
+
   getVotingScheme = (sessionId: number): string => {
     const appState: AppState = this.getState();
     const maybeSession = appState.getSessionBy(sessionId);
     if (maybeSession && maybeSession.settings) {
-      return maybeSession.settings.votingScheme ? maybeSession.settings.votingScheme: VotingScheme.Fibbonaci;;
+      return maybeSession.settings.votingScheme ? maybeSession.settings.votingScheme : VotingScheme.Fibbonaci;
     }
     return VotingScheme.Fibbonaci;
   };

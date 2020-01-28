@@ -21,15 +21,21 @@ import {
   SpMessage
 } from './model/events.model';
 import {Participant, StoryPointSession} from './model/session.model';
-import {MatSelectChange, MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
+import {
+  MatSelectChange,
+  MatSnackBar,
+  MatSnackBarHorizontalPosition,
+  MatSnackBarVerticalPosition
+} from '@angular/material';
 import {ThemeService} from '../services/theme.service';
 import {ParticipantFilterPipe} from '../pipe/participant-filter.pipe';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
-import {PointVisibilityChange} from "../control-panel/control-panel.component";
-import {Ballot} from "../vote-display/ballot-display.component";
+import {PointVisibilityChange} from '../control-panel/control-panel.component';
+import {Ballot} from '../vote-display/ballot-display.component';
 import {LocalStorageService} from '../services/local-storage.service';
-import {Session, SessionSettings} from '../services/local-storage.model';
-import {VotingScheme} from '../voting-booth/voting.model';
+import {AppState, Session, SessionSettings} from '../services/local-storage.model';
+import {DefaultPointSelection, PointSelection} from '../point-selection/point-selection';
+
 
 @Component({
   selector: 'app-active-session',
@@ -39,9 +45,12 @@ import {VotingScheme} from '../voting-booth/voting.model';
 })
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
-  private ballots: Ballot[] = [];
-  participant: Participant;
+  logs: string[] = [];
+  showLogs: boolean;
+  ballots: Ballot[] = [];
+  pointSelection: PointSelection = new DefaultPointSelection();
 
+  participant: Participant;
   isDarkTheme: boolean;
 
   session: StoryPointSession = new StoryPointSession();
@@ -59,6 +68,14 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.socketService.connect();
+
+    this.localStorage.stateEventStream().subscribe((state: AppState) => {
+      const maybeSession = state.getSessionBy(this.session.sessionId);
+
+      if (maybeSession) {
+        this.showLogs = maybeSession.settings.showEventLog;
+      }
+    });
 
     this.route.paramMap
       .pipe(
@@ -83,7 +100,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.socketService.unsubscribe();
+    // this.socketService.unsubscribe();
   }
 
   submit = () => {
@@ -158,7 +175,15 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.participant ? this.participant.participantName === cardId : false;
 
   collectBallots = (): Ballot[] =>
-    this.session.participants.map((p: Participant) => p.point);
+    this.session.participants.filter((p: Participant) => p.hasVoted).map((p: Participant) => p.point);
+
+
+  pointSelectionChanged = (pointSelection: PointSelection) => {
+    this.pointSelection = pointSelection;
+    const message = `Voting Scheme changed to ${pointSelection.votingScheme}`;
+    this.logs.unshift(message);
+    this.showInfoBar(message, 'happy');
+  };
 
   private requestInitialStateOfSessionBy = (id: number): void => {
     this.socketService.send(
@@ -173,6 +198,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     );
   };
 
+
   private setSessionName = (messageData: GetSessionNameMessage) => {
     this.session.sessionName = messageData.payload.sessionName;
   };
@@ -185,8 +211,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   private setSessionIfNotInLocalStorage = () => {
     if (!this.localStorage.getSession(this.session.sessionId)) {
-      this.localStorage.setSession(this.session.sessionId,
-        new Session({} as Participant, new SessionSettings(false, VotingScheme.Fibbonaci.toString())));
+      this.localStorage.setSession(this.session.sessionId, new Session({} as Participant, new SessionSettings()));
     }
   };
 
@@ -246,6 +271,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     const itWasMe = this.wasItMe(userName);
     const message = itWasMe ? `You joined as ${userName}` : `${userName} joined.`;
 
+    this.logs.unshift(message);
     this.showInfoBar(message, 'happy');
     this.localStorage.setUser(this.session.sessionId, this.participant);
     this.updateSession(messageData);
@@ -260,6 +286,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       this.clearLocalUserState();
     }
 
+    this.logs.unshift(message);
     this.showInfoBar(message, 'warn');
     this.localStorage.removeUser(this.session.sessionId);
     this.updateSession(messageData);
@@ -308,7 +335,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private clearLocalUserState = () => {
-    this.localStorage.removeUser(this.session.sessionId)
+    this.localStorage.removeUser(this.session.sessionId);
     this.participant = undefined;
   };
 

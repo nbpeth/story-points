@@ -24,12 +24,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   visibleSessions = [];
   error: string;
 
-  constructor(private socketService: SocketService,
-              private localStorage: LocalStorageService) {
+  constructor(private socketService: SocketService) {
   }
 
   ngOnInit() {
-    this.socketService.connect();
+    // this.socketService.connect();
 
     this.socketService
       .messages()
@@ -39,7 +38,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.socketService.unsubscribe();
+    // this.socketService.unsubscribe();
   }
 
   createNewSession = (newSessionName: string) => {

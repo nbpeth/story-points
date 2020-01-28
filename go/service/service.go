@@ -41,8 +41,7 @@ func (s *Service) reader(ctx context.Context) {
 			return
 		}
 
-		payload, err := s.Route(ctx, msg.EventType, b)
-		if err != nil {
+		if err := s.Route(ctx, msg.EventType, b); err != nil {
 			log.Println("error routing:", err)
 			if err := conn.WriteJSON(models.SpReplyMessage{
 				EventType: models.EventTypeError,
@@ -52,28 +51,6 @@ func (s *Service) reader(ctx context.Context) {
 				return
 			}
 			return
-		}
-
-		// TODO: this is a hack. unhack it
-		if payload != nil {
-			var targetSessionID interface{}
-			if v, ok := payload.(map[string]interface{}); ok {
-				if sessionID, ok := v["sessionId"]; ok {
-					targetSessionID = sessionID
-					log.Println("yup:", targetSessionID)
-				}
-			}
-
-			respMsg := models.SpReplyMessage{
-				EventType:     msg.EventType,
-				Payload:       payload,
-				TargetSession: targetSessionID,
-			}
-
-			if err := conn.WriteJSON(respMsg); err != nil {
-				log.Println("error writing json to client:", err)
-				return
-			}
 		}
 	}
 }
@@ -88,8 +65,12 @@ func (s *Service) Connect(w http.ResponseWriter, r *http.Request) {
 	s.addClient(conn)
 
 	conn.SetCloseHandler(func(code int, text string) error {
+		err := s.removeClient(conn)
+		if err != nil {
+			log.Printf("error removing client: %s", err)
+		}
 		log.Printf("close handler called with code: %v, text: %v", code, text)
-		return nil
+		return err
 	})
 
 	ctx := ctxaccess.WithClientConn(r.Context(), conn)
@@ -125,7 +106,11 @@ func (s *Service) addClient(conn *websocket.Conn) {
 
 func (s *Service) removeClient(conn *websocket.Conn) error {
 	if err := conn.Close(); err != nil {
-		return err
+		return fmt.Errorf("error closing connection: %w", err)
+	}
+
+	if _, ok := s.clients[conn]; !ok {
+		log.Println("client connection didn't exist in clients collection")
 	}
 
 	delete(s.clients, conn)
@@ -141,6 +126,9 @@ func (s *Service) shareWithClients(clients map[*websocket.Conn]struct{}, msg int
 
 	for client := range clients {
 		if err := client.WriteMessage(websocket.TextMessage, b); err != nil {
+			if err := s.removeClient(client); err != nil {
+				log.Println("could not remove client: ", err)
+			}
 			return fmt.Errorf("failed writing to client: %w", err)
 		}
 	}

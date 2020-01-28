@@ -103,7 +103,7 @@ type SpReqPayloadPointSubmitted struct {
 		SessionID       string `json:"sessionId"`
 		ParticipantID   int    `json:"userId"`
 		ParticipantName string `json:"userName"`
-		Value           int    `json:"value"`
+		Value           string    `json:"value"`
 	} `json:"payload"`
 }
 
@@ -149,7 +149,7 @@ type SpMessageParticipant struct {
 	SessionName   string `json:"sessionName"`
 	Name          string `json:"participantName"`
 	ID            int    `json:"participantId"`
-	Point         int    `json:"point"`
+	Point         string    `json:"point"`
 	HasVoted      bool   `json:"hasVoted"`
 	IsAdmin       bool   `json:"isAdmin"`
 	PointsVisible bool   `json:"pointsVisible"`

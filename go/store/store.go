@@ -18,7 +18,7 @@ type Store interface {
 	TerminateSession(ctx context.Context, sessionID int) error
 	AddParticipant(ctx context.Context, sessionID string, name string, point int, isAdmin bool) error
 	RemoveParticipant(ctx context.Context, sessionID string, participantID int) error
-	SubmitPoint(ctx context.Context, value int, participantID int) error
+	SubmitPoint(ctx context.Context, value string, participantID int) error
 	RevealPoints(ctx context.Context, sessionID string) error
 	ResetPoints(ctx context.Context, sessionID string) error
 }
@@ -185,7 +185,7 @@ func (s *store) TerminateSession(ctx context.Context, sessionID int) error {
 	return err
 }
 
-func (s *store) SubmitPoint(ctx context.Context, value int, participantID int) error {
+func (s *store) SubmitPoint(ctx context.Context, value string, participantID int) error {
 	_, err := s.db.ExecContext(ctx, `
 		UPDATE storypoints.participant
 		SET point = ?,

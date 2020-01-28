@@ -7,13 +7,21 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (s *Service) GetStateOfTheState(ctx context.Context) (*models.State, error) {
+func (s *Service) GetStateOfTheState(ctx context.Context) error {
 	state, err := s.store.GetStateOfTheState(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return state, nil
+	respMsg := models.SpReplyMessage{
+		EventType: models.EventTypeStateOfTheState,
+		Payload: state,
+		TargetSession: nil,
+	}
+
+	return s.shareWithClients(map[*websocket.Conn]struct{}{
+		ctxaccess.MustGetClientConn(ctx): {},
+	}, respMsg)
 }
 
 func (s *Service) GetSessionName(ctx context.Context, req models.SpReqPayloadGetSessionName)  error {
@@ -31,23 +39,29 @@ func (s *Service) GetSessionName(ctx context.Context, req models.SpReqPayloadGet
 		TargetSession: req.Payload.SessionID,
 	}
 
-	clientConn := ctxaccess.MustGetClientConn(ctx)
-
 	return s.shareWithClients(map[*websocket.Conn]struct{}{
-		clientConn: {},
+		ctxaccess.MustGetClientConn(ctx): {},
 	}, respMsg)
 }
 
-func (s *Service) GetSessionState(ctx context.Context, req models.SpReqPayloadSessionState) (*models.SpReplyPayloadSessionState, error) {
+func (s *Service) GetSessionState(ctx context.Context, req models.SpReqPayloadSessionState) error {
 	participants, err := s.store.GetSessionParticipants(ctx, req.Payload.SessionID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &models.SpReplyPayloadSessionState{
-		SessionID:    req.Payload.SessionID,
-		Participants: participants,
-	}, nil
+	respMsg := models.SpReplyMessage{
+		EventType: models.EventTypeSessionState,
+		Payload: &models.SpReplyPayloadSessionState{
+			SessionID:    req.Payload.SessionID,
+			Participants: participants,
+		},
+		TargetSession: nil,
+	}
+
+	return s.shareWithClients(map[*websocket.Conn]struct{}{
+		ctxaccess.MustGetClientConn(ctx): {},
+	}, respMsg)
 }
 
 func (s *Service) CreateSession(ctx context.Context, req models.SpReqPayloadSessionCreated) error {
@@ -64,6 +78,7 @@ func (s *Service) CreateSession(ctx context.Context, req models.SpReqPayloadSess
 	respMsg := models.SpReplyMessage{
 		EventType: models.EventTypeStateOfTheState,
 		Payload:   state,
+		TargetSession: nil,
 	}
 
 	if err := s.shareWithClients(s.clients, respMsg); err != nil {
@@ -216,6 +231,7 @@ func (s *Service) TerminateSession(ctx context.Context, req models.SpReqPayloadT
 	respMsg := models.SpReplyMessage{
 		EventType: models.EventTypeStateOfTheState,
 		Payload:   state,
+		TargetSession: nil,
 	}
 
 	if err := s.shareWithClients(s.clients, respMsg); err != nil {

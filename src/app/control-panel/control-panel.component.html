@@ -2,16 +2,31 @@
 
   <mat-drawer-container class="options-container" autosize>
     <mat-drawer #menu class="options-sidenav" mode="side">
-      <mat-checkbox (change)="settingChanged($event)" id="showAdminConsole" [(ngModel)]="showAdminConsole">Admin
-        Console
-      </mat-checkbox>
-      <div class="voting-scheme">Voting Scheme</div>
-      <mat-radio-group
-        [(ngModel)]="votingScheme">
-        <mat-radio-button class="spacing" *ngFor="let votingSchemeOption of votingSchemeOptions"
-                          [value]="votingSchemeOption"
-                          (change)="votingSchemeChanged($event)">{{votingSchemeOption}}</mat-radio-button>
-      </mat-radio-group>
+      <div class="settings-items">
+
+        <!--<div class="item">Point Controls</div>-->
+        <div>
+          <mat-checkbox class="item" (change)="setShowAdminConsole($event)" id="showAdminConsole"
+                        [(ngModel)]="showAdminConsole">
+            Enable Point Controls
+          </mat-checkbox>
+        </div>
+        <div>
+          <mat-checkbox class="item" (change)="setShowEventLog($event)" id="eventLog" [(ngModel)]="showEventLog">
+            Event Log
+          </mat-checkbox>
+        </div>
+        <div class="item">Voting Scheme</div>
+
+        <mat-radio-group
+          class="item"
+          [(ngModel)]="votingScheme">
+          <mat-radio-button class="spacing" *ngFor="let votingSchemeOption of votingSchemeOptions"
+                            [value]="votingSchemeOption"
+                            (change)="votingSchemeChanged($event)">{{votingSchemeOption}}</mat-radio-button>
+        </mat-radio-group>
+
+      </div>
     </mat-drawer>
 
     <div class="options-content">
@@ -36,15 +51,25 @@
 
     </div>
   </mat-drawer-container>
-  <admin-controls *ngIf="showAdminConsole"
-                  (pointVisibilityEvent)="changePointVisibility($event)">
-  </admin-controls>
 
-  <voting-booth *ngIf="participant"
-                [votingScheme]="votingScheme"
-                (voteSubmitted)="submitVote($event)">
+  <div>
+    <admin-controls *ngIf="showAdminConsole"
+                    (pointVisibilityEvent)="changePointVisibility($event)">
+    </admin-controls>
+  </div>
+  <div class="center">
+    <voting-booth *ngIf="participant"
+                  [votingScheme]="votingScheme"
+                  (voteSubmitted)="submitVote($event)">
 
-  </voting-booth>
+    </voting-booth>
+  </div>
+  <div *ngIf="showEventLog" class="event-log">
+    <activity-log
+      [logs]="logs"
+    ></activity-log>
+
+  </div>
 
 
 </div>

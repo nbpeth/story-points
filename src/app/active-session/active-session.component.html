@@ -17,6 +17,7 @@
   <div class="chart-container">
     <vote-display *ngIf="session.pointsVisible"
                   [ballots]="ballots"
+                  [pointSelection]="pointSelection"
     ></vote-display>
   </div>
 
@@ -26,12 +27,15 @@
 
 <div class="toolbar">
   <control-panel
+    (pointSelectionChanged)="pointSelectionChanged($event)"
     (participantJoined)="joinSession($event)"
     (participantLeft)="leaveSession($event)"
     (pointVisibilityEvent)="changePointVisibility($event)"
     (voteSubmitted)="voteHasChanged($event)"
     [sessionId]="session.sessionId"
-    [participant]="participant">
-
+    [participant]="participant"
+    [logs]="logs"
+    [showLogs]="showLogs"
+  >
   </control-panel>
 </div>

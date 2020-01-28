@@ -2,6 +2,7 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core'
 import * as Highcharts from 'highcharts';
 import {ThemeService} from "../services/theme.service";
 import {Options} from "highcharts";
+import {PointSelection} from "../point-selection/point-selection";
 
 @Component({
   selector: 'vote-display',
@@ -11,6 +12,8 @@ import {Options} from "highcharts";
 export class BallotDisplayComponent implements OnInit, OnChanges {
   private seriesId = 'dataSeries';
   @Input() ballots: Ballot[];
+  @Input() pointSelection: PointSelection;
+  categories: any[];
 
   fontColor: string = 'white';
 
@@ -84,6 +87,9 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty('pointSelection')) {
+      this.categories = this.pointSelection.options.map(v => v.toString());
+    }
     if (changes.hasOwnProperty('ballots') && this.chart) {
       this.drawChart();
     }
@@ -91,7 +97,8 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
 
   private drawChart = () => {
     const distribution = this.calculateDistribution(this.ballots);
-    this.options.xAxis.categories = this.getXAxisCategoriesFrom(distribution);
+
+    this.options.xAxis.categories = this.categories;
     this.options.series[0].data = distribution;
 
     Highcharts.chart('chart', this.options as Options, (chart) => {
@@ -101,22 +108,24 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
 
 
   private calculateDistribution = (ballots: Ballot[]) => {
-    return ballots.reduce((result, next) => {
-      const maybe = result.find(it => it.name === next);
 
+    const categories: any[] = this.categories.slice().reduce((result, next) => {
+      result.push({name: next, y: 0})
+      return result;
+    }, []);
+
+
+    return ballots.reduce((result, next) => {
+      const maybe = result.find(it => it.name == next);
       if (maybe) {
         maybe.y += 1;
       } else {
         result.push({name: next, y: 1});
       }
-
       return result;
-    }, []);
-
+    }, categories);
   }
 
-  private getXAxisCategoriesFrom = (distribution: { y, name }[]) =>
-    distribution.map(point => point.name);
 
 }
 

@@ -9,12 +9,11 @@ import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component
 @Injectable({
   providedIn: 'root'
 })
-export class SocketService {
+export class SocketService  {
   private socket: WebSocketSubject<any>;
 
   constructor(private snackBar: MatSnackBar) {
-
-
+    this.connect();
   }
 
   connect = () => {
@@ -22,8 +21,8 @@ export class SocketService {
     const wsProtocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
 
     const config = {
-      // url: `${wsProtocol}://localhost:8081/socket`,
-      url: `${wsProtocol}://${host}/socket`,
+      url: `${wsProtocol}://localhost:8081/socket`,
+      // url: `${wsProtocol}://${host}/socket`,
       deserializer: (data) => data,
       openObserver: {
         next: () => {
@@ -69,5 +68,6 @@ export class SocketService {
     this.socket.next(message);
   };
 
-  unsubscribe = () => this.socket.unsubscribe();
+  // unsubscribe = () => this.socket.unsubscribe();
+
 }

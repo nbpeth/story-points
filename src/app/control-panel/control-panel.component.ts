@@ -7,8 +7,11 @@ import {VotingSchemeService} from '../services/voting-scheme.service';
 import {VotingScheme} from '../voting-booth/voting.model';
 import {SpMessage, VotingSchemeChangedPayload, VotingSchemeMessgae} from '../active-session/model/events.model';
 import {SocketService} from '../services/socket.service';
-import {map} from 'rxjs/operators';
 import {Events} from '../active-session/enum/events';
+import {AppState} from '../services/local-storage.model';
+import {map} from 'rxjs/operators';
+import {makePointSelection, PointSelection} from '../point-selection/point-selection';
+
 
 @Component({
   selector: 'control-panel',
@@ -18,12 +21,16 @@ import {Events} from '../active-session/enum/events';
 export class ControlPanelComponent implements OnInit {
   @Input() sessionId: number;
   @Input() participant: Participant;
+  @Input() logs: string[];
+  @Input() showLogs: boolean;
   @Output() participantJoined: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Output() participantLeft: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Output() pointVisibilityEvent: EventEmitter<PointVisibilityChange> = new EventEmitter<PointVisibilityChange>();
   @Output() voteSubmitted: EventEmitter<any> = new EventEmitter<any>();
+  @Output() pointSelectionChanged = new EventEmitter<PointSelection>();
 
   showAdminConsole: boolean;
+  showEventLog: boolean;
   votingSchemeOptions = [VotingScheme.Fibbonaci, VotingScheme.FistOfFive, VotingScheme.Primes];
   votingScheme: string = this.votingSchemeOptions[0].toString();
 
@@ -34,14 +41,23 @@ export class ControlPanelComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.showAdminConsole = this.localStorage.getShowAdminConsole(this.sessionId);
+    this.localStorage.stateEventStream()
+      .subscribe((state: AppState) => {
+        const maybeSession = state.getSessionBy(this.sessionId);
 
-    this.votingScheme = this.votingService.loadState(this.sessionId);
+        if (maybeSession) {
+          this.showAdminConsole = maybeSession.settings.showAdminConsole;
+          this.showEventLog = maybeSession.settings.showEventLog;
+          this.votingScheme = maybeSession.settings.votingScheme;
+        }
+      });
+
     this.votingService.votingSchemeValue.subscribe(value => {
       if (value) {
         this.votingScheme = value.toString();
       }
     });
+    this.pointSelectionChanged.emit(makePointSelection(this.votingScheme));
 
     this.socketService.messages().pipe(
       map(this.handleEvents)
@@ -54,7 +70,11 @@ export class ControlPanelComponent implements OnInit {
 
     switch (eventType) {
       case Events.VOTING_SCHEME:
+        console.log('here');
         this.votingService.setVoteScheme(this.sessionId, payload.votingScheme);
+        this.pointSelectionChanged.emit(makePointSelection(payload.votingScheme));
+        // const message = `Voting Scheme changed to ${payload.votingScheme}`;
+        // this.logs.unshift(message);
         break;
     }
   };
@@ -79,8 +99,12 @@ export class ControlPanelComponent implements OnInit {
     this.voteSubmitted.emit(vote);
   };
 
-  settingChanged = (event) => {
+  setShowAdminConsole = (event) => {
     this.localStorage.setShowAdminConsole(this.sessionId, event.checked);
+  };
+
+  setShowEventLog = (event) => {
+    this.localStorage.setShowEventLog(this.sessionId, event.checked);
   };
 
   votingSchemeChanged = (event: MatRadioChange) => {
@@ -106,3 +130,4 @@ export class ControlPanelComponent implements OnInit {
 }
 
 export declare type PointVisibilityChange = 'reset' | 'reveal' | 'hide';
+
