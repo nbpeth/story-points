@@ -132,14 +132,16 @@ func (s *Service) shareWithClients(clients map[*websocket.Conn]struct{}, msg int
 	}
 
 	for client := range clients {
-		if err := client.WriteMessage(websocket.TextMessage, b); err != nil {
+    if err := client.WriteMessage(websocket.TextMessage, b); err != nil {
 			if err := s.removeClient(client); err != nil {
 				log.Println("could not remove client: ", err)
 			}
 			if err := s.removeClient(client); err != nil {
 				log.Println(err)
 			}
-			return fmt.Errorf("failed writing to client: %w", err)
+			//return log.Println("failed writing to client: %w", err)
+			fmt.Println("failed writing to client: %w", err)
+      return nil
 		}
 	}
 
