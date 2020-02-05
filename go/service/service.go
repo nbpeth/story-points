@@ -141,7 +141,6 @@ func (s *Service) shareWithClients(clients map[*websocket.Conn]struct{}, msg int
 			}
 			//return log.Println("failed writing to client: %w", err)
 			fmt.Println("failed writing to client: %w", err)
-      return nil
 		}
 	}
 
