@@ -1,20 +1,19 @@
 package service
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"log"
-	"net/http"
-	"time"
+  "context"
+  "encoding/json"
+  "log"
+  "net/http"
+  "time"
 
-	"github.com/ReturnPath/story-points/ctxaccess"
+  "github.com/ReturnPath/story-points/ctxaccess"
 
-	"github.com/ReturnPath/story-points/models"
+  "github.com/ReturnPath/story-points/models"
 
-	"github.com/gorilla/websocket"
+  "github.com/gorilla/websocket"
 
-	"github.com/ReturnPath/story-points/store"
+  "github.com/ReturnPath/story-points/store"
 )
 
 type Service struct {
