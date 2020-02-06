@@ -1,11 +1,10 @@
-<mat-toolbar color="primary" class="mat-elevation-z8">
-  <mat-toolbar-row>
-    <span>
-        <a [routerLink]="['']">
-          <mat-icon>home</mat-icon>
-        </a>
-    </span>
-  </mat-toolbar-row>
-</mat-toolbar>
+<div style="height: 100%" [ngClass]="{'dark-theme': isDarkTheme}">
 
-<router-outlet></router-outlet>
+  <div class="mat-app-background"
+       [ngClass]="{'moon': nighttime, 'sun': daytime}"
+       [ngStyle]="{'background-color': bgColor}">
+    <app-titlebar></app-titlebar>
+    <router-outlet></router-outlet>
+  </div>
+
+</div>

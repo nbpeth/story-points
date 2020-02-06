@@ -1,18 +1,35 @@
 export class Participant {
   constructor(
-    public name: string,
-    public point: number | string,
-    public hasVoted: boolean = false,
-    public isAdmin: boolean = false,
+    public participantName?: string,
+    public participantId?: number,
+    public point?: number | string,
+    public hasVoted?: boolean,
+    public isAdmin?: boolean,
+    public pointsVisible?: boolean,
   ) {
-    if (!name) {
-      this.name = `Lurker ${Math.random()}`;
+    if (!participantName) {
+      this.participantName = `Lurker${Math.floor(Math.random() * 1000000)}`;
     }
+  }
+
+  setPoint = (point: any) => {
+    this.point = point;
   }
 }
 
 export class StoryPointSession {
-  participants: {
-    [name: string]: Participant
+  participants: Participant[] = [];
+  sessionId: number;
+  sessionName: string;
+  pointsVisible: boolean;
+
+  setName = (name: string) => {
+    this.sessionName = name;
+  };
+
+  loadParticipants = (participants: Participant[]): void => {
+    this.participants = participants;
+    const first = participants.find(p => p);
+    this.pointsVisible = first ? !!first.pointsVisible : false;
   };
 }

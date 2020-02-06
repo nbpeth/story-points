@@ -7,4 +7,7 @@ export enum Events {
   SESSION_STATE = 'session-state',
   POINTS_RESET = 'points-reset',
   POINTS_REVEALED = 'points-revealed',
+  TERMINATE_SESSION = 'terminate-session',
+  GET_SESSION_NAME = 'get-session-name',
+  ERROR = 'error',
 }

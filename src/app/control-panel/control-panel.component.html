@@ -1,0 +1,85 @@
+<div class="container">
+
+  <mat-drawer-container class="options-container" autosize>
+    <mat-drawer #menu class="options-sidenav" mode="side">
+      <div class="settings-items">
+
+        <!--<div class="item">Point Controls</div>-->
+        <div>
+          <mat-checkbox class="item" (change)="setShowAdminConsole($event)" id="showAdminConsole"
+                        [(ngModel)]="showAdminConsole">
+            Enable Point Controls
+          </mat-checkbox>
+        </div>
+        <div>
+          <mat-checkbox class="item" (change)="setShowEventLog($event)" id="eventLog" [(ngModel)]="showEventLog">
+            Event Log
+          </mat-checkbox>
+        </div>
+        <div class="item">Voting Scheme</div>
+
+        <!--<mat-radio-group class="item"-->
+        <!--[(ngModel)]="votingScheme">-->
+        <div class="item" style="display: flex; flex-direction: row">
+          <mat-radio-button class="spacing" [checked]="true" (change)="votingSchemeChanged($event)" value="Fibbonaci">
+            Fibbonaci
+          </mat-radio-button>
+          <mat-radio-button class="spacing" [disabled]="true" (change)="votingSchemeChanged($event)" value="FistOfFive">
+            Fist of Five
+          </mat-radio-button>
+          <mat-radio-button class="spacing" [disabled]="true" (change)="votingSchemeChanged($event)" value="Primes">
+            Primes
+          </mat-radio-button>
+          <!--<mat-radio-button class="spacing" *ngFor="let votingSchemeOption of votingSchemeOptions"-->
+          <!--[value]="votingSchemeOption"-->
+          <!--(change)="pointSelectionChanged($event)">{{votingSchemeOption}}-->
+          <!--</mat-radio-button>-->
+        </div>
+        <!--</mat-radio-group>-->
+      </div>
+    </mat-drawer>
+
+    <div class="options-content">
+      <button type="button" mat-button (click)="menu.toggle()">
+        <mat-icon>settings</mat-icon>
+        Settings
+      </button>
+
+      <ng-container *ngIf="!participant; else leaveSessionButton">
+        <button type="button" mat-button (click)="joinSession()">
+          <mat-icon>add</mat-icon>
+          Join
+        </button>
+      </ng-container>
+
+      <ng-template #leaveSessionButton>
+        <button type="button" mat-button (click)="leaveSession()">
+          <mat-icon>close</mat-icon>
+          Bail
+        </button>
+      </ng-template>
+
+    </div>
+  </mat-drawer-container>
+
+  <div>
+    <admin-controls *ngIf="showAdminConsole"
+                    (pointVisibilityEvent)="changePointVisibility($event)">
+    </admin-controls>
+  </div>
+  <div>
+    <voting-booth *ngIf="participant"
+                  [votingScheme]="votingScheme"
+                  (voteSubmitted)="submitVote($event)">
+
+    </voting-booth>
+  </div>
+  <div *ngIf="showEventLog" class="event-log">
+    <activity-log
+      [logs]="logs"
+    ></activity-log>
+
+  </div>
+
+
+</div>

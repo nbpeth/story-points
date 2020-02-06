@@ -1,36 +1,40 @@
-.mat-card {
-    margin: 10px;
-    text-align: center;
-    min-width: 150px;
-}
+.content {
+  width: 100%;
 
-.mat-card-title {
-    font-size: 45px;
-}
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
-.action-bar {
-    min-height: 200px;
-    position: absolute;
-    bottom: 0;
-}
-
-.mat-toolbar-row {
+  .title {
+    display: flex;
     justify-content: center;
+    flex: 1;
+    max-height: 75px;
+
+  }
+
+  .user-tiles {
+    justify-content: center;
+    display: flex;
+    flex: 3;
+    flex-wrap: wrap;
+
+  }
+
+  .chart-container {
+    flex: 1;
+  }
+
+
 }
 
-.big-text {
-    font-size: 40px;
+
+.toolbar {
+  width: 100%;
+  height: 150px;
+  position: absolute;
+  bottom: 0;
+
 }
 
-.mat-fab {
-    margin: 10px;
-}
 
-.my-card {
-    background-color: #DDDDDD;
-}
-
-.voted {
-  background-color: mediumslateblue;
-  color: white;
-}

@@ -1,0 +1,23 @@
+.items {
+    display: flex;
+    align-items: inherit;
+    width: 100%;
+
+    span {
+      padding: 10px;
+    }
+  }
+  
+  .icons {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  mat-icon {
+    line-height: inherit;
+    cursor: pointer;
+  }
+
+  h1 {
+    font-size: large;
+  }

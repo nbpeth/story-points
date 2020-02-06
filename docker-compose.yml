@@ -1,19 +1,44 @@
-version: '3.5'
-
-services: 
-    story-points: 
-      container_name: story-points  
-      build: . 
-      volumes:
-        - './:/usr/src/app' 
-      ports: 
-        - '8080:8080'
-      command: > 
-        bash -c "npm install && ng serve --host 0.0.0.0 --port 8080"
-    story-points-server:
-      container_name: server
-      build: ./server
-      ports:
-        - '8999:8999'
-      command: > 
-        bash -c "npm install && node server.js"
+version: "3.5"
+services:
+  storypoints:
+    build:
+      context: .
+      target: storypointsbase
+    container_name: story-points
+    ports:
+      - 8081:8081
+    links:
+      - db
+    environment:
+      - SPHOST=db
+      - SPUSER=user
+      - SPPASSWORD=password
+      - SPPORT=3306
+      - SPDB=storypoints
+    command: ["/go/bin/story-points"]
+    labels:
+      - traefik.docker.network=traefik-proxy
+      - traefik.frontend.rule=Host:story-points.app.returnpath.dnet
+      - traefik.port=80
+    networks:
+      - traefik-proxy
+    restart: always
+  db:
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=example
+      - MYSQL_DATABASE=storypoints
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+    ports:
+      - 3306:3306
+    container_name: story-points-db
+    volumes:
+      - ./db_seed:/docker-entrypoint-initdb.d
+    networks:
+      - traefik-proxy
+networks:
+  traefik-proxy:
+    external: true

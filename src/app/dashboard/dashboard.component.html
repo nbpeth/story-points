@@ -1,19 +1,15 @@
-<mat-form-field style="padding-right: 15px;">
-    <input matInput #name placeholder="Session Name">
-</mat-form-field>
-<button (click)="createNewSession(name.value)" mat-flat-button color="primary">Create New</button>
+<app-dashboard-header (createSession)="createNewSession($event)" (searchBoxValue)="searchBoxValueChanged($event)">
+</app-dashboard-header>
 
-
-
-<hr>
-<h1>Active Sessions</h1>
-<hr>
-
-<div *ngIf="error" style="background-color: #FFAAAA">
+<div class="body-container">
+  <div *ngIf="error" style="background-color: #FFAAAA">
     {{error}}
-</div>
+  </div>
 
-<active-session-tiles>
-    <active-session-tile *ngFor="let tile of activeSessions | keyvalue" [id]="tile.key">
+  <active-session-tiles>
+    <active-session-tile cdkDrag *ngFor="let tile of visibleSessions" [session]="tile">
+
     </active-session-tile>
-</active-session-tiles>
+  </active-session-tiles>
+
+</div>

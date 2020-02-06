@@ -1,0 +1,13 @@
+<mat-dialog-content>
+    Start a New Session
+</mat-dialog-content>
+
+
+<mat-form-field>
+    <input matInput #name placeholder="Session Name">
+</mat-form-field>
+
+<mat-dialog-actions>
+    <button class="mat-raised-button" (click)="cancel()">Cancel</button>
+    <button (click)="create(name.value)" mat-flat-button color="accent">Create</button>
+</mat-dialog-actions>

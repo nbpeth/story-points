@@ -1,57 +1,69 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SocketService} from '../services/socket.service';
 import {Events} from '../active-session/enum/events';
 import {
-  GetCompleteStateMessage,
-  NewSessionPayload,
   CreateNewSessionMessage,
-  SpMessage,
-  GetCompleteStatePayload
+  GetCompleteStateMessage,
+  GetCompleteStatePayload,
+  NewSessionPayload,
+  SpMessage
 } from '../active-session/model/events.model';
+import {LocalStorageService} from '../services/local-storage.service';
+import {Session, SessionSettings} from '../services/local-storage.model';
+import {Participant} from '../active-session/model/session.model';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
+
+  private sessionSearchTerm = '';
+  private activeSessions = [];
+  visibleSessions = [];
   error: string;
-  activeSessions = {};
 
   constructor(private socketService: SocketService) {
   }
 
   ngOnInit() {
+    // this.socketService.connect();
+
     this.socketService
-      .getSocket()
+      .messages()
       .subscribe(this.handleEvents);
 
-    // this.socketService.send({[Events.COMPLETE_STATE]: 'undefined'});
     this.socketService.send(new GetCompleteStateMessage());
   }
 
-  createNewSession = (name: string) => {
-    // const maybeExistsAlready = this.activeSessions.find(session => session.id === name);
-    //
-    // if (maybeExistsAlready) {
-    //   this.error = 'Session Name Already Exists';
-    //   return;
-    // }
+  ngOnDestroy(): void {
+    // this.socketService.unsubscribe();
+  }
 
-    const defaultName = `Session${Math.floor(Math.random() * 100000)}`;
-    const newSessionName = name ? name : defaultName;
-
+  createNewSession = (newSessionName: string) => {
     const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));
-
     this.socketService.send(message);
-
   };
 
-  private handleEvents = (message: MessageEvent) => {
-    const messageData = JSON.parse(message.data) as SpMessage;
+  searchBoxValueChanged = (value: string) => {
+    this.sessionSearchTerm = value;
+    this.applySearchFilter();
+  };
+
+  private applySearchFilter = () => {
+    const sessions = this.activeSessions ? [...this.activeSessions] : [];
+
+    const matches = sessions.filter((session: { id: number, sessionName: string }) =>
+      session.sessionName ? session.sessionName.includes(this.sessionSearchTerm) : false
+    );
+
+    this.visibleSessions = matches;
+  };
+
+  private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
-
     switch (eventType) {
       case Events.COMPLETE_STATE:
         this.setSessionsFrom(payload as GetCompleteStatePayload);
@@ -64,12 +76,14 @@ export class DashboardComponent implements OnInit {
 
   private setSessionsFrom = (payload: GetCompleteStatePayload) => {
     this.activeSessions = payload.sessions;
+    this.applySearchFilter();
   };
 
   private newSessionWasCreated = (payload: NewSessionPayload | undefined) => {
     if (payload) {
-      this.activeSessions = {...this.activeSessions, ...payload.sessions};
+      this.activeSessions = payload.sessions;
     }
+    this.applySearchFilter();
   };
 }
 

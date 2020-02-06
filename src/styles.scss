@@ -1,5 +1,50 @@
-@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import './styles/material-theme';
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+@keyframes move-background-angle {
+  0% {
+    background-position: -1000px -500px;
+  }
+  100% {
+    background-position: 3000px 800px;
+  }
+}
+
+@keyframes move-background-side {
+  0% {
+    background-position: -1000px 0px;
+  }
+  100% {
+    background-position: 3000px 0px;
+  }
+}
 
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.moon {
+  background:
+    url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/moon2.png) no-repeat,
+    url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/stars.png) repeat;
+
+  background-size: 1000px 1000px;
+  z-index: 100;
+
+  animation: move-background-angle 150s linear infinite;
+
+}
+
+.sun {
+  background-image: url('assets/clouds.jpg');
+  z-index: 100;
+
+  animation: move-background-side 150s linear infinite;
+
+}

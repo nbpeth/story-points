@@ -1,0 +1,100 @@
+namespace: partnerdevelopment
+labels:
+  name: story-points
+  app: story-points
+
+image:
+  tag: JenkinsOverride
+
+deployment:
+  metadata:
+    name: story-points
+  spec:
+    replicas: 1
+    template:
+      spec:
+        containers:
+          - name: story-points
+            env:
+              - name: SPHOST
+                value: "storypointsrelease.ch3aslfv4t7y.us-east-1.rds.amazonaws.com"
+              - name: SPPORT
+                value: "3306"
+              - name: SPDB
+                value: "storypoints"
+              - name: SPUSER
+                valueFrom:
+                  secretKeyRef:
+                    name: story-points
+                    key: db_user
+              - name: SPPASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: story-points
+                    key: db_password
+            image: 596297932419.dkr.ecr.us-east-1.amazonaws.com/rp-story-points
+            ports:
+              - containerPort: 80
+                protocol: TCP
+            livenessProbe:
+              httpGet:
+                path: /health.html?source=k8s
+                port: 8081
+                scheme: HTTP
+              initialDelaySeconds: 3
+              periodSeconds: 30
+            readinessProbe:
+              httpGet:
+                path: /health.html?source=k8s
+                port: 8081
+                scheme: HTTP
+              initialDelaySeconds: 3
+              periodSeconds: 30
+            resources:
+              requests:
+                cpu: 50m
+                memory: 50Mi
+              limits:
+                cpu: 500m
+                memory: 500Mi
+
+services:
+  - name: story-points
+    spec:
+      ports:
+        - name: http
+          port: 80
+          protocol: TCP
+          targetPort: 8081
+
+ingresses:
+  - name: story-points
+    metadata:
+      annotations:
+        alb.ingress.kubernetes.io/alb-name: test-stock-web-rp-ext
+        alb.ingress.kubernetes.io/healthcheck-path: /health.html?source=k8s
+        kubernetes.io/ingress.class: rpalb
+    spec:
+      rules:
+        - host: story-points.app.tst.returnpath.net
+          http:
+            paths:
+              - backend:
+                  serviceName: story-points
+                  servicePort: 80
+                path: /
+
+dnsendpoints:
+  - name: story-points.app.tst.returnpath.net
+    spec:
+      endpoints:
+        - dnsName: story-points.app.tst.returnpath.net
+          recordType: CNAME
+          targets:
+            - test-stock-web-rp-ext-1216837820.us-east-1.elb.amazonaws.com
+
+secrets:
+  name: story-points
+  data:
+    db_password: JenkinsOverride
+    db_user: JenkinsOverride
