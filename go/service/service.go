@@ -1,20 +1,19 @@
 package service
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"log"
-	"net/http"
-	"time"
+  "context"
+  "encoding/json"
+  "log"
+  "net/http"
+  "time"
 
-	"github.com/ReturnPath/story-points/ctxaccess"
+  "github.com/ReturnPath/story-points/ctxaccess"
 
-	"github.com/ReturnPath/story-points/models"
+  "github.com/ReturnPath/story-points/models"
 
-	"github.com/gorilla/websocket"
+  "github.com/gorilla/websocket"
 
-	"github.com/ReturnPath/story-points/store"
+  "github.com/ReturnPath/story-points/store"
 )
 
 type Service struct {
@@ -132,14 +131,15 @@ func (s *Service) shareWithClients(clients map[*websocket.Conn]struct{}, msg int
 	}
 
 	for client := range clients {
-		if err := client.WriteMessage(websocket.TextMessage, b); err != nil {
+    if err := client.WriteMessage(websocket.TextMessage, b); err != nil {
 			if err := s.removeClient(client); err != nil {
 				log.Println("could not remove client: ", err)
 			}
 			if err := s.removeClient(client); err != nil {
 				log.Println(err)
 			}
-			return fmt.Errorf("failed writing to client: %w", err)
+
+      log.Printf("failed writing to client: %w", err)
 		}
 	}
 
