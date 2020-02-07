@@ -11,6 +11,34 @@
                  [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
                  [myCard]="isMyCard(participant.participantName)">
       </user-tile>
+      <div *ngIf="reeberoniTime">
+        <mat-card
+          [ngClass]="{'my-card': myCard && !isDarkTheme, 'my-card-dark': myCard && isDarkTheme, 'voted': participant.hasVoted && !isDarkTheme, 'voted-dark': participant.hasVoted && isDarkTheme}">
+
+          <mat-card-content>
+            Reeberoni
+            <div class="container">
+              <div class="crust">
+                <div class="pep"></div>
+                <div class="face">
+                  <div class="eye"></div>
+                  <div class="mouth"></div>
+                </div>
+              </div>
+              <div class="text"> Reeberoni </div>
+              <div class="melt"></div>
+            </div>
+          </mat-card-content>
+
+          <mat-card-footer>
+            <div class="actions">
+              <button (click)="removeReberoni()" mat-button>
+                <mat-icon>delete_forever</mat-icon>
+              </button>
+            </div>
+          </mat-card-footer>
+        </mat-card>
+      </div>
     </user-tiles>
 
   </div>
@@ -27,7 +55,7 @@
 
 <div class="toolbar mat-app-background ">
   <control-panel
-    (votingSchemeChangedEvent)="pointSelectionChanged($event)"
+    (pointSelectionChanged)="pointSelectionChanged($event)"
     (participantJoined)="joinSession($event)"
     (participantLeft)="leaveSession($event)"
     (pointVisibilityEvent)="changePointVisibility($event)"

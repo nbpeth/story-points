@@ -3,8 +3,15 @@ import {Participant} from '../active-session/model/session.model';
 import {MatDialog, MatDialogConfig, MatRadioChange} from '@angular/material';
 import {JoinSessionDialogComponent} from '../join-session-dialog/join-session-dialog.component';
 import {LocalStorageService} from '../services/local-storage.service';
-import {DefaultPointSelection, PointSelection} from "../point-selection/point-selection";
-import {AppState} from "../services/local-storage.model";
+import {VotingSchemeService} from '../services/voting-scheme.service';
+import {VotingScheme} from '../voting-booth/voting.model';
+import {SpMessage, VotingSchemeChangedPayload, VotingSchemeMessgae} from '../active-session/model/events.model';
+import {SocketService} from '../services/socket.service';
+import {Events} from '../active-session/enum/events';
+import {AppState} from '../services/local-storage.model';
+import {map} from 'rxjs/operators';
+import {makePointSelection, PointSelection} from '../point-selection/point-selection';
+
 
 @Component({
   selector: 'control-panel',
@@ -20,15 +27,16 @@ export class ControlPanelComponent implements OnInit {
   @Output() participantLeft: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Output() pointVisibilityEvent: EventEmitter<PointVisibilityChange> = new EventEmitter<PointVisibilityChange>();
   @Output() voteSubmitted: EventEmitter<any> = new EventEmitter<any>();
+  @Output() pointSelectionChanged = new EventEmitter<PointSelection>();
 
   showAdminConsole: boolean;
   showEventLog: boolean;
-  votingSchemeOptions = [VotingScheme.Fibonaci, VotingScheme.FistOfFive, VotingScheme.Primes];
+  votingSchemeOptions = [VotingScheme.Fibbonaci, VotingScheme.FistOfFive, VotingScheme.Primes];
   votingScheme: string = this.votingSchemeOptions[0].toString();
 
-  @Output() pointSelectionChanged = new EventEmitter<PointSelection>();
-
   constructor(private dialog: MatDialog,
+              private votingService: VotingSchemeService,
+              private socketService: SocketService,
               private localStorage: LocalStorageService) {
   }
 
@@ -40,11 +48,34 @@ export class ControlPanelComponent implements OnInit {
         if (maybeSession) {
           this.showAdminConsole = maybeSession.settings.showAdminConsole;
           this.showEventLog = maybeSession.settings.showEventLog;
+          this.votingScheme = maybeSession.settings.votingScheme;
         }
       });
 
-    this.pointSelectionChanged.emit(new DefaultPointSelection());
+    this.votingService.votingSchemeValue.subscribe(value => {
+      if (value) {
+        this.votingScheme = value.toString();
+      }
+    });
+
+    this.pointSelectionChanged.emit(makePointSelection(this.votingScheme));
+
+    this.socketService.messages().pipe(
+      map(this.handleEvents)
+    ).subscribe();
   }
+
+  handleEvents = (messageData: SpMessage) => {
+    const eventType = messageData.eventType;
+    const payload = messageData.payload as VotingSchemeChangedPayload;
+
+    switch (eventType) {
+      case Events.VOTING_SCHEME:
+        this.votingService.setVoteScheme(this.sessionId, payload.votingScheme);
+        this.pointSelectionChanged.emit(makePointSelection(payload.votingScheme));
+        break;
+    }
+  };
 
   joinSession = () => {
     const dialogRef = this.dialog.open(JoinSessionDialogComponent, this.getDialogConfig());
@@ -75,8 +106,14 @@ export class ControlPanelComponent implements OnInit {
   };
 
   votingSchemeChanged = (event: MatRadioChange) => {
-    this.votingScheme = event.value;
-    // this.pointSelectionChanged.emit(DefaultPointSelection);
+    this.socketService.send(
+      new VotingSchemeMessgae(
+        new VotingSchemeChangedPayload(
+          this.sessionId,
+          event.value
+        )
+      )
+    );
   };
 
   private getDialogConfig = () => {
@@ -92,8 +129,3 @@ export class ControlPanelComponent implements OnInit {
 
 export declare type PointVisibilityChange = 'reset' | 'reveal' | 'hide';
 
-export enum VotingScheme {
-  Fibonaci = 'Fibonaci',
-  FistOfFive = 'FistOfFive',
-  Primes = 'Primes'
-}

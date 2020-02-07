@@ -24,6 +24,6 @@ export class Session {
 }
 
 export class SessionSettings {
-  constructor(public showAdminConsole?: boolean, public showEventLog?: boolean) {
+  constructor(public showAdminConsole?: boolean, public showEventLog?: boolean, public votingScheme?: string) {
   }
 }

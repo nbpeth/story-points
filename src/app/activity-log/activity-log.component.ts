@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ThemeService} from "../services/theme.service";
+import {ThemeService} from '../services/theme.service';
 
 @Component({
   selector: 'activity-log',
@@ -9,6 +9,7 @@ import {ThemeService} from "../services/theme.service";
 export class ActivityLogComponent implements OnInit {
   @Input() logs: string[];
   isDarkTheme: boolean;
+
   constructor(private themeService: ThemeService) {
   }
 
@@ -17,5 +18,4 @@ export class ActivityLogComponent implements OnInit {
       this.isDarkTheme = isIt;
     });
   }
-
 }

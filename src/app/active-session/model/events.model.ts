@@ -67,6 +67,12 @@ export class PointSubmittedForParticipantPayload extends SpMessagePayload {
   }
 }
 
+export class VotingSchemeChangedPayload extends SpMessagePayload {
+  constructor(public sessionId: number, public votingScheme: string) {
+    super();
+  }
+}
+
 
 export class GetSessionNamePayload extends SpMessagePayload {
   constructor(public sessionId: number, public sessionName?: string) {
@@ -141,5 +147,12 @@ export class TerminateSessionMessage extends SpMessage {
   constructor(public payload: TerminateSessionPayload) {
     super(payload);
     this.eventType = Events.TERMINATE_SESSION as string;
+  }
+}
+
+export class VotingSchemeMessgae extends SpMessage {
+  constructor(public payload: VotingSchemeChangedPayload) {
+    super(payload);
+    this.eventType = Events.VOTING_SCHEME as string;
   }
 }

@@ -240,3 +240,22 @@ func (s *Service) TerminateSession(ctx context.Context, req models.SpReqPayloadT
 
 	return nil
 }
+
+func (s *Service) VotingSchemeChanged(ctx context.Context, req models.SpReqPayloadVotingSchemeChanged) error {
+  respMsg := models.SpReplyMessage{
+    EventType: models.EventVotingSchemeChanged,
+    Payload:   struct {
+      SessionID string `json:"sessionId"`
+      VotingScheme string `json:"votingScheme"`
+    }{
+      req.Payload.SessionID,
+      req.Payload.VotingScheme,
+    },
+  }
+
+  if err := s.shareWithClients(s.clients, respMsg); err != nil {
+    return err
+  }
+
+  return nil
+}

@@ -8,6 +8,7 @@ export enum Events {
   POINTS_RESET = 'points-reset',
   POINTS_REVEALED = 'points-revealed',
   TERMINATE_SESSION = 'terminate-session',
+  VOTING_SCHEME = 'voting-scheme',
   GET_SESSION_NAME = 'get-session-name',
   ERROR = 'error',
 }

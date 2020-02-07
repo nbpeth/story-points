@@ -3,6 +3,8 @@ import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
 import {Participant} from '../active-session/model/session.model';
 import {AppState, Globals, Session, Sessions} from './local-storage.model';
 import {Subject, ReplaySubject} from 'rxjs';
+import {VotingScheme} from '../voting-booth/voting.model';
+
 
 @Injectable({
   providedIn: 'root'
@@ -120,6 +122,24 @@ export class LocalStorageService {
     const maybeSession = appState.getSessionBy(sessionId);
     if (maybeSession && maybeSession.settings) {
       maybeSession.settings.showEventLog = showEventLog;
+      this.setState(appState);
+    }
+  };
+
+  getVotingScheme = (sessionId: number): string => {
+    const appState: AppState = this.getState();
+    const maybeSession = appState.getSessionBy(sessionId);
+    if (maybeSession && maybeSession.settings) {
+      return maybeSession.settings.votingScheme ? maybeSession.settings.votingScheme : VotingScheme.Fibbonaci;
+    }
+    return VotingScheme.Fibbonaci;
+  };
+
+  setVotingScheme = (sessionId: number, votingScheme: string) => {
+    const appState: AppState = this.getState();
+    const maybeSession = appState.getSessionBy(sessionId);
+    if (maybeSession && maybeSession.settings) {
+      maybeSession.settings.votingScheme = votingScheme;
       this.setState(appState);
     }
   };

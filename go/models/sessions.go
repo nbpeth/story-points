@@ -12,6 +12,7 @@ const (
 	EventTypeParticipantRemoved           = "participant-removed"
 	EventTypePointSubmitted               = "point-submitted"
 	EventTypePointsRevealed               = "points-revealed"
+	EventVotingSchemeChanged              = "voting-scheme"
 	EventTypePointsReset                  = "points-reset"
 	EventTypeError                        = "error"
 )
@@ -121,6 +122,26 @@ type SpReqPayloadPointsReset struct {
 	Payload struct {
 		SessionID string `json:"sessionId"`
 	} `json:"payload"`
+}
+
+type SpReqPayloadVotingSchemeChanged struct {
+  Payload struct {
+    SessionID string `json:"sessionId"`
+    VotingScheme string `json:"votingScheme"`
+  } `json:"payload"`
+}
+
+type SpMessagePayload struct {
+	SessionId     int                    `json:"sessionId"`
+	SessionName   string                 `json:"sessionName"`
+	PointsVisible bool                   `json:"pointsVisible"`
+	Username      string                 `json:"userName"`
+	UserID        int                    `json:"userId"`
+	Value         string                 `json:"value"`
+	IsAdmin       bool                   `json:"isAdmin"`
+	ParticipantID int                    `json:"participantId"`
+	Participants  []SpMessageParticipant `json:"participants"`
+	Sessions      []*Session             `json:"sessions"`
 }
 
 type SpMessageParticipant struct {
