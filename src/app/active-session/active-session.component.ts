@@ -186,10 +186,12 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
 
   pointSelectionChanged = (pointSelection: PointSelection) => {
-    this.pointSelection = pointSelection;
-    const message = `Voting Scheme changed to ${pointSelection.votingScheme}`;
-    this.logs.unshift(message);
-    this.showInfoBar(message, 'happy');
+    if (pointSelection) {
+      this.pointSelection = pointSelection;
+      const message = `Voting Scheme changed to ${pointSelection.votingScheme}`;
+      this.logs.unshift(message);
+      this.showInfoBar(message, 'happy');
+    }
   };
 
   private requestInitialStateOfSessionBy = (id: number): void => {

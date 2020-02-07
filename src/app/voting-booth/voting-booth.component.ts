@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {makePointSelection, PointSelection} from '../point-selection/point-selection';
+import {VotingScheme} from './voting.model';
 
 @Component({
   selector: 'voting-booth',
@@ -11,7 +12,7 @@ export class VotingBoothComponent implements OnInit, OnChanges {
   @Input() votingScheme: string;
   @Output() voteSubmitted: EventEmitter<any> = new EventEmitter<any>();
 
-  pointSelection: PointSelection;
+  pointSelection: PointSelection = makePointSelection(this.votingScheme);
   vote: any;
 
   constructor() {
@@ -21,7 +22,9 @@ export class VotingBoothComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.pointSelection = makePointSelection(changes.votingScheme.currentValue);
+    if (changes && changes.votingScheme.currentValue) {
+      this.pointSelection = makePointSelection(changes.votingScheme.currentValue);
+    }
   }
 
   voteHasChanged = (value: any) => {

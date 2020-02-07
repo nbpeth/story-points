@@ -57,6 +57,7 @@ export class ControlPanelComponent implements OnInit {
         this.votingScheme = value.toString();
       }
     });
+
     this.pointSelectionChanged.emit(makePointSelection(this.votingScheme));
 
     this.socketService.messages().pipe(
@@ -70,11 +71,8 @@ export class ControlPanelComponent implements OnInit {
 
     switch (eventType) {
       case Events.VOTING_SCHEME:
-        console.log('here');
         this.votingService.setVoteScheme(this.sessionId, payload.votingScheme);
         this.pointSelectionChanged.emit(makePointSelection(payload.votingScheme));
-        // const message = `Voting Scheme changed to ${payload.votingScheme}`;
-        // this.logs.unshift(message);
         break;
     }
   };
