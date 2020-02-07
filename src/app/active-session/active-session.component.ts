@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SocketService} from '../services/socket.service';
 import {filter, flatMap, map, tap} from 'rxjs/operators';
@@ -358,5 +358,30 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         labelClass
       }
     });
+  };
+
+  reeberoniTime: boolean;
+  reeberoniCode = [
+    'ArrowUp',
+    'ArrowDown',
+    'ArrowLeft',
+    'ArrowRight'
+  ];
+  reeberoniCount = 0;
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.code === this.reeberoniCode[this.reeberoniCount]) {
+      this.reeberoniCount++;
+    }
+
+    if (this.reeberoniCount === this.reeberoniCode.length) {
+      this.reeberoniTime = true;
+    }
+  }
+
+  removeReberoni = () => {
+    this.reeberoniTime = false;
+    this.reeberoniCount = 0;
   };
 }

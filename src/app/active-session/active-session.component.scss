@@ -37,3 +37,182 @@
 }
 
 
+///// PIZZA
+.container {
+  position: absolute;
+  margin: 0;
+  //top: 0;
+  //left: 380px;
+  //right: 0;
+  //bottom: 0;
+  //width: 50px;
+  //height: 100px;
+  transform: rotate(190deg) scale(2.5);
+}
+
+.crust {
+  z-index: 300;
+  width: 0;
+  height: 0;
+  border-left: 50px solid transparent;
+  border-right: 50px solid transparent;
+  border-bottom: 100px solid #d6934d;
+  border-radius: 0 0 80px 80px;
+}
+
+.crust:before,
+.crust:after {
+  position: absolute;
+  content: "";
+  width: 0;
+  height: 0;
+}
+
+.crust:before {
+  z-index: 200;
+  left: 7px;
+  top: 0;
+  border-left: 43px solid transparent;
+  border-right: 43px solid transparent;
+  border-bottom: 86px solid #fcc61a;
+  border-radius: 0 0 80px 80px;
+}
+
+.crust:after {
+  z-index: 100;
+  left: 4px;
+  top: 4px;
+  border-left: 46px solid transparent;
+  border-right: 46px solid transparent;
+  border-bottom: 86px solid #a82b2b;
+  border-radius: 0 0 80px 80px;
+}
+
+.text {
+  z-index: 500;
+  position: absolute;
+  top: 41px;
+  left: 38px;
+  font-size: 5px;
+  transform: rotate(180deg);
+}
+
+.pep {
+  z-index: 500;
+  position: absolute;
+  top: 20px;
+  left: 39px;
+  width: 20px;
+  height: 20px;
+  background: #dc644a;
+  border-radius: 100%;
+}
+
+.pep:before,
+.pep:after {
+  position: absolute;
+  content: "";
+  background: #dc644a;
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+}
+
+.pep:before {
+  top: 39px;
+  left: -17px;
+  border-radius: 100%;
+}
+
+.pep:after {
+  top: 34px;
+  left: 19px;
+  border-radius: 100%;
+}
+
+.face {
+  z-index: 700;
+  position: absolute;
+}
+
+.eye {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  top: 50px;
+  left: 7px;
+  background: #555;
+  border-radius: 100%;
+}
+
+.eye:before {
+  position: absolute;
+  content: "";
+  width: 4px;
+  height: 4px;
+  left: -18px;
+  background: #555;
+  border-radius: 100%;
+}
+
+.mouth {
+  position: absolute;
+  top: 48px;
+  left: -3px;
+  width: 3px;
+  height: 3px;
+  background: none;
+  border-radius: 100%;
+  border: 1px solid;
+  border-color: transparent transparent #555 #555;
+  transform: rotate(130deg);
+}
+
+.melt {
+  position: absolute;
+  top: 10px;
+  left: 60px;
+  background: #fcc61a;
+  width: 4px;
+  height: 40px;
+  border-radius: 10px 10px 0 0;
+  animation: melting 5s infinite ease;
+}
+
+.melt:before,
+.melt:after {
+  position: absolute;
+  content: "";
+  background: #fcc61a;
+  border-radius: 10px 10px 0 0;
+}
+
+.melt:before {
+  top: 10px;
+  left: -28px;
+  width: 4px;
+  height: 40px;
+}
+
+.melt:after {
+  top: -20px;
+  left: -12px;
+  width: 4px;
+  height: 40px;
+}
+
+.mat-card {
+  margin: 10px;
+  text-align: center;
+  min-width: 150px;
+}
+
+.mat-icon {
+  opacity: 80%;
+}
+
+@keyframes melting {
+  100% {
+    transform: translateY(-20px);
+  }
+}
