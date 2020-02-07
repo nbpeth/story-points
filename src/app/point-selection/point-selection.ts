@@ -31,5 +31,7 @@ export function makePointSelection(votingScheme: string): PointSelection {
       return new FistOfFivePointSelection();
     case VotingScheme.Primes as string:
       return new PrimePointSelection();
+    case undefined:
+      return new DefaultPointSelection();
   }
 }
