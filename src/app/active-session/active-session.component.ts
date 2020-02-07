@@ -52,6 +52,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   participant: Participant;
   isDarkTheme: boolean;
+  successSound: HTMLAudioElement;
 
   session: StoryPointSession = new StoryPointSession();
 
@@ -68,6 +69,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.socketService.connect();
+
+    this.successSound = new Audio('assets/sounds/ohyeah.mp3');
 
     this.localStorage.stateEventStream().subscribe((state: AppState) => {
       const maybeSession = state.getSessionBy(this.session.sessionId);
@@ -141,6 +144,10 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   revealPoints = () => {
     this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.session.sessionId)));
+    const points = this.session.participants.map(p => p.point);
+    if (points.length > 1 && points.every(point => point === points[0])) {
+      this.successSound.play();
+    }
   };
 
   joinSession = (maybeNewParticipant: Participant, isAdmin: boolean = false) => {
