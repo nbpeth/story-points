@@ -365,7 +365,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     'ArrowUp',
     'ArrowDown',
     'ArrowLeft',
-    'ArrowRight'
+    'ArrowRight',
+    'KeyR'
   ];
   reeberoniCount = 0;
 
