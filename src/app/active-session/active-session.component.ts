@@ -13,12 +13,12 @@ import {
   ParticipantRemovedSessionMessage,
   ParticipantRemovedSessionPayload,
   PointSubmittedForParticipantMessage,
-  PointSubmittedForParticipantPayload,
+  PointSubmittedForParticipantPayload, ReberoniMessage, ReberoniPayload,
   ResetPointsForSessionMessage,
   ResetPointsForSessionPayload,
   RevealPointsForSessionMessage,
   RevealPointsForSessionPayload,
-  SpMessage
+  SpMessage, VotingSchemeChangedPayload, VotingSchemeMessgae
 } from './model/events.model';
 import {Participant, StoryPointSession} from './model/session.model';
 import {
@@ -40,7 +40,7 @@ import {DefaultPointSelection, PointSelection} from '../point-selection/point-se
 @Component({
   selector: 'app-active-session',
   templateUrl: './active-session.component.html',
-  styleUrls: ['./active-session.component.scss'],
+  styleUrls: ['./active-session.component.scss', './reberoni.scss'],
   providers: [ParticipantFilterPipe]
 })
 
@@ -249,9 +249,17 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       case Events.GET_SESSION_NAME:
         this.setSessionName(messageData as GetStateForSessionMessage);
         break;
+      case Events.REBERONI:
+        this.setReberoni(messageData as ReberoniMessage);
+        break;
       default:
         console.log('not matched', eventType);
     }
+  };
+
+  private setReberoni = (messageData: ReberoniMessage) => {
+    this.reeberoniTime = messageData.payload.showReberoni;
+    this.reeberoniCount = 0;
   };
 
   private verifyPayloadAndUpdate = (payload: any, updateFunction: any, messageData: any) => {
@@ -378,11 +386,27 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
     if (this.reeberoniCount === this.reeberoniCode.length) {
       this.reeberoniTime = true;
+      this.socketService.send(
+        new ReberoniMessage(
+          new ReberoniPayload(
+            this.session.sessionId,
+            this.reeberoniTime
+          )
+        )
+      );
     }
   }
 
   removeReberoni = () => {
     this.reeberoniTime = false;
     this.reeberoniCount = 0;
+    this.socketService.send(
+      new ReberoniMessage(
+        new ReberoniPayload(
+          this.session.sessionId,
+          this.reeberoniTime
+        )
+      )
+    );
   };
 }

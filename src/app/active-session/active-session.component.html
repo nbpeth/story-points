@@ -11,10 +11,8 @@
                  [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
                  [myCard]="isMyCard(participant.participantName)">
       </user-tile>
-      <div *ngIf="reeberoniTime">
-        <mat-card
-          [ngClass]="{'my-card': myCard && !isDarkTheme, 'my-card-dark': myCard && isDarkTheme, 'voted': participant.hasVoted && !isDarkTheme, 'voted-dark': participant.hasVoted && isDarkTheme}">
-
+      <!--<div cdkDrag *ngIf="reeberoniTime">-->
+        <mat-card cdkDrag *ngIf="reeberoniTime">
           <mat-card-content>
             Reeberoni
             <div class="container">
@@ -38,7 +36,7 @@
             </div>
           </mat-card-footer>
         </mat-card>
-      </div>
+      <!--</div>-->
     </user-tiles>
 
   </div>

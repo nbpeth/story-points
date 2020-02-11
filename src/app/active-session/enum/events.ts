@@ -10,5 +10,6 @@ export enum Events {
   TERMINATE_SESSION = 'terminate-session',
   VOTING_SCHEME = 'voting-scheme',
   GET_SESSION_NAME = 'get-session-name',
+  REBERONI = 'reberoni',
   ERROR = 'error',
 }
