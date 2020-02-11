@@ -259,3 +259,22 @@ func (s *Service) VotingSchemeChanged(ctx context.Context, req models.SpReqPaylo
 
   return nil
 }
+
+func (s *Service) ReberoniChanged(ctx context.Context, req models.SpReqPayloadReberoniChanged) error {
+  respMsg := models.SpReplyMessage{
+    EventType: models.EventReberoniChanged,
+    Payload:   struct {
+      SessionID string `json:"sessionId"`
+      ShowReberoni bool `json:"showReberoni"`
+    }{
+      req.Payload.SessionID,
+      req.Payload.ShowReberoni,
+    },
+  }
+
+  if err := s.shareWithClients(s.clients, respMsg); err != nil {
+    return err
+  }
+
+  return nil
+}

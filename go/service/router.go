@@ -72,6 +72,12 @@ func (s *Service) Route(ctx context.Context, eventType models.EventType, b []byt
       return err
     }
     return s.VotingSchemeChanged(ctx, req)
+  case models.EventReberoniChanged:
+    var req models.SpReqPayloadReberoniChanged
+    if err := json.Unmarshal(b, &req); err != nil {
+      return err
+    }
+    return s.ReberoniChanged(ctx, req)
 	}
 
 	return fmt.Errorf("unexpected eventType: %s", eventType)
