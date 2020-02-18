@@ -58,8 +58,6 @@ export class ControlPanelComponent implements OnInit {
       }
     });
 
-    this.pointSelectionChanged.emit(makePointSelection(this.votingScheme));
-
     this.socketService.messages().pipe(
       map(this.handleEvents)
     ).subscribe();

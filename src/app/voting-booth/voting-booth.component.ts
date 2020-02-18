@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {makePointSelection, PointSelection} from '../point-selection/point-selection';
-import {VotingScheme} from './voting.model';
 
 @Component({
   selector: 'voting-booth',
