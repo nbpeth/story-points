@@ -64,8 +64,9 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
               private localStorage: LocalStorageService) {
   }
 
-  getSessionName = () =>
-    this.session.sessionName;
+  getSessionName() {
+    return this.session.sessionName;
+  }
 
   ngOnInit() {
     this.socketService.connect();

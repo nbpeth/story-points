@@ -13,7 +13,7 @@ deployNode {
         imageTag = tag
     }
 
-  if (BRANCH_NAME == 'master') {
+  //if (BRANCH_NAME == 'master') {
     deployWithHelm {
       deployCluster = cluster
       deployName = 'story-points'
@@ -27,5 +27,5 @@ deployNode {
         'secrets.data.db_password': "storypoints-rds-password-${environment}"
       ]
     }
-  }
+  //}
 }
