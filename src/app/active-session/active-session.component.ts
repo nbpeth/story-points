@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SocketService} from '../services/socket.service';
 import {filter, flatMap, map, tap} from 'rxjs/operators';
@@ -13,12 +13,14 @@ import {
   ParticipantRemovedSessionMessage,
   ParticipantRemovedSessionPayload,
   PointSubmittedForParticipantMessage,
-  PointSubmittedForParticipantPayload, ReberoniMessage, ReberoniPayload,
+  PointSubmittedForParticipantPayload,
+  ReberoniMessage,
+  ReberoniPayload,
   ResetPointsForSessionMessage,
   ResetPointsForSessionPayload,
   RevealPointsForSessionMessage,
   RevealPointsForSessionPayload,
-  SpMessage, VotingSchemeChangedPayload, VotingSchemeMessgae
+  SpMessage
 } from './model/events.model';
 import {Participant, StoryPointSession} from './model/session.model';
 import {
@@ -44,7 +46,7 @@ import {DefaultPointSelection, PointSelection} from '../point-selection/point-se
   providers: [ParticipantFilterPipe]
 })
 
-export class ActiveSessionComponent implements OnInit, OnDestroy {
+export class ActiveSessionComponent implements OnInit {
   logs: string[] = [];
   showLogs: boolean;
   ballots: Ballot[] = [];
@@ -65,7 +67,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   getSessionName = () =>
-    this.session.sessionName;
+    this.session.sessionName
 
   ngOnInit() {
     this.socketService.connect();
@@ -100,10 +102,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       .subscribe();
 
     this.themeService.isDarkTheme.subscribe(isIt => this.isDarkTheme = isIt);
-  }
-
-  ngOnDestroy(): void {
-    // this.socketService.unsubscribe();
   }
 
   submit = () => {

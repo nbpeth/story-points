@@ -24,7 +24,7 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
       plotBackgroundColor: null,
       plotBorderWidth: null,
       plotShadow: false,
-      type: 'column',
+      type: 'bar',
       backgroundColor: 'transparent',
       style: {
         fontFamily: '\'Unica One\', sans-serif'

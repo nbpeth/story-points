@@ -9,7 +9,7 @@ import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component
 @Injectable({
   providedIn: 'root'
 })
-export class SocketService  {
+export class SocketService {
   private socket: WebSocketSubject<any>;
 
   constructor(private snackBar: MatSnackBar) {

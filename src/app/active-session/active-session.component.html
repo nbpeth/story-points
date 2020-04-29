@@ -1,54 +1,27 @@
 <div class="content">
 
   <div class="title">
-    <h1>{{getSessionName()}}</h1>
+    <h1>{{session.sessionName}}</h1>
   </div>
 
-  <div class="user-tiles">
-    <user-tiles>
-      <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter"
-                 [participant]="participant"
-                 [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
-                 [myCard]="isMyCard(participant.participantName)">
-      </user-tile>
-      <!--<div cdkDrag *ngIf="reeberoniTime">-->
-        <mat-card cdkDrag *ngIf="reeberoniTime">
-          <mat-card-content>
-            Reeberoni
-            <div class="container">
-              <div class="crust">
-                <div class="pep"></div>
-                <div class="face">
-                  <div class="eye"></div>
-                  <div class="mouth"></div>
-                </div>
-              </div>
-              <div class="text"> Reeberoni </div>
-              <div class="melt"></div>
-            </div>
-          </mat-card-content>
+  <div class="session-body">
+      <vote-display *ngIf="session.pointsVisible"
+                    [ballots]="ballots"
+                    [pointSelection]="pointSelection"
+      ></vote-display>
 
-          <mat-card-footer>
-            <div class="actions">
-              <button (click)="removeReberoni()" mat-button>
-                <mat-icon>delete_forever</mat-icon>
-              </button>
-            </div>
-          </mat-card-footer>
-        </mat-card>
-      <!--</div>-->
-    </user-tiles>
+    <div class="user-tiles">
+      <user-tiles>
+        <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter"
+                   [participant]="participant"
+                   [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
+                   [myCard]="isMyCard(participant.participantName)">
+        </user-tile>
+
+      </user-tiles>
+    </div>
 
   </div>
-  <div class="chart-container">
-    <vote-display *ngIf="session.pointsVisible"
-                  [ballots]="ballots"
-                  [pointSelection]="pointSelection"
-    ></vote-display>
-  </div>
-
-
-
 </div>
 
 <div class="toolbar mat-app-background ">
@@ -61,7 +34,6 @@
     [sessionId]="session.sessionId"
     [participant]="participant"
     [logs]="logs"
-    [showLogs]="showLogs"
-  >
+    [showLogs]="showLogs">
   </control-panel>
 </div>

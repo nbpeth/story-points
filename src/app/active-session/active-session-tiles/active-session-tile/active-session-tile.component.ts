@@ -25,12 +25,17 @@ export class ActiveSessionTileComponent {
     dialogConfig.data = {
       id: this.session.id,
       sessionName: this.session.sessionName,
-      message: 'Destroy Session - Be You Certain?'
+      message: `Destroy Session? This could really mess up someone's day if they're in there`
     };
     const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(this.destroySessionIfItIsWilled);
-  };
+  }
+
+  isPartnerForever() {
+    console.log('isPartnerForever', this.session.id, this.session.sessionName, this.session.id === 1 || this.session.sessionName)
+    return this.session.id === 29;
+  }
 
   private destroySessionIfItIsWilled = (result: boolean) => {
     if (result) {
@@ -38,5 +43,5 @@ export class ActiveSessionTileComponent {
       this.socketService.send(message);
       this.localStorage.removeSession(this.session.id);
     }
-  };
+  }
 }
