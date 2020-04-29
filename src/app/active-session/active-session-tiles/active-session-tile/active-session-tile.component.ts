@@ -33,7 +33,6 @@ export class ActiveSessionTileComponent {
   }
 
   isPartnerForever() {
-    console.log('isPartnerForever', this.session.id, this.session.sessionName, this.session.id === 1 || this.session.sessionName)
     return this.session.id === 29;
   }
 
