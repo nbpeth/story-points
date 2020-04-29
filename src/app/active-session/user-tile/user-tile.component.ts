@@ -29,6 +29,10 @@ export class UserTileComponent {
     );
     this.socketService.send(message);
   };
+
+  isPartnerForeverProtected() {
+    return this.sessionId === 29;
+  }
 }
 
 

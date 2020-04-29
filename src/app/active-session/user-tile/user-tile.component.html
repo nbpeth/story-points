@@ -9,7 +9,7 @@
     {{participant.participantName}}
   </mat-card-content>
 
-  <mat-card-footer>
+  <mat-card-footer *ngIf="!isPartnerForeverProtected()">
     <div class="actions">
       <button (click)="removeUser()" mat-button>
         <mat-icon>delete_forever</mat-icon>
