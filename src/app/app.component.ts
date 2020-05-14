@@ -55,20 +55,20 @@ export class AppComponent implements OnInit {
 
     this.bgColor = this.setBackgroundBrightnessFrom(value);
 
-    if (this.daytime) {
-      this.music = new Audio('assets/sounds/twochords_and_a_glockenspiel.mp3');
-      this.music.loop = true;
-      this.music.play();
-    } else if (this.nighttime) {
-      this.music = new Audio('assets/sounds/nighttime.mp3');
-      this.music.loop = true;
-      this.music.play();
-    } else {
-      if (this.music) {
-        this.music.loop = false;
-        this.music.pause();
-      }
-    }
+    // if (this.daytime) {
+    //   this.music = new Audio('assets/sounds/twochords_and_a_glockenspiel.mp3');
+    //   this.music.loop = true;
+    //   this.music.play();
+    // } else if (this.nighttime) {
+    //   this.music = new Audio('assets/sounds/nighttime.mp3');
+    //   this.music.loop = true;
+    //   this.music.play();
+    // } else {
+    //   if (this.music) {
+    //     this.music.loop = false;
+    //     this.music.pause();
+    //   }
+    // }
   }
 
   private setBackgroundBrightnessFrom = (value: number): string => {

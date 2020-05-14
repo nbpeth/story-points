@@ -17,7 +17,7 @@ export class SocketService  {
   }
 
   connect = () => {
-    const host = document.location.host;
+    const host = 'localhost:8081'//document.location.host;
     const wsProtocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
 
     const config = {
