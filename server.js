@@ -17,6 +17,8 @@ const serveStaticUIContent = () => {
   app.get('/*', (_, res) => {
     res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
   });
+
+  app.listen(process.env.PORT || 8080);
 }
 
 const initHandlers = () => {

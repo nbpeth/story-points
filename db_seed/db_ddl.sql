@@ -1,6 +1,6 @@
 ALTER DATABASE storypoints CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin;
 
-create table storypoints.sessions
+create table sessions
 (
     id MEDIUMINT NOT NULL
     AUTO_INCREMENT,
@@ -11,7 +11,7 @@ create table storypoints.sessions
     (id)
 );
 
-    create table storypoints.participant
+    create table participant
     (
         id MEDIUMINT NOT NULL
         AUTO_INCREMENT,
@@ -24,12 +24,12 @@ create table storypoints.sessions
     is_admin bool default false NOT NULL,
     FOREIGN KEY
         (session_id)
-        REFERENCES storypoints.sessions
+        REFERENCES sessions
         (id)
         ON
         DELETE CASCADE,
     PRIMARY KEY (id)
         );
 
-ALTER TABLE storypoints.sessions CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
-ALTER TABLE storypoints.participant CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+ALTER TABLE sessions CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+ALTER TABLE participant CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
