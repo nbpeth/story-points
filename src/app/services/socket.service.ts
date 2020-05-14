@@ -17,11 +17,11 @@ export class SocketService  {
   }
 
   connect = () => {
-    const host = document.location.host;
+    const host = document.location.host.split(':')[0];
     const wsProtocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
 
     const config = {
-      url: `${wsProtocol}://${host}/socket`,
+      url: `${wsProtocol}://${host}:8081/socket`,
       deserializer: (data) => data,
       openObserver: {
         next: () => {
