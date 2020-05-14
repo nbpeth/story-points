@@ -28,6 +28,14 @@ const initHandlers = () => {
   app.use(bodyParser.json());
   app.use(cors);
 
+  app.use(express.static(__dirname + '/dist/story-points'));
+
+  app.get('/*', (_, res) => {
+    res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
+  });
+
+  // app.listen(process.env.PORT || 8080);
+
   const server = http.createServer(app);
   const wss = new WebSocketServer({server: server, path: "/socket"});
 
@@ -287,7 +295,7 @@ const initHandlers = () => {
 
   wss.on('connection', handleNewClients);
 
-  server.listen(process.env.PORT || 8081, () => {
+  server.listen(process.env.PORT || 8080, () => {
     console.log(`Server (${server.address().address}) running on port ${server.address().port}`);
   });
 }
@@ -297,7 +305,7 @@ const connectedToDB = (err) => {
     throw Error(`Could not connect to DB: ${err.message}`);
   }
 
-  serveStaticUIContent();
+  // serveStaticUIContent();
   initHandlers();
 }
 

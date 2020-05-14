@@ -21,7 +21,7 @@ export class SocketService  {
     const wsProtocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
 
     const config = {
-      url: `${wsProtocol}://${host}:8081/socket`,
+      url: `${wsProtocol}://${host}:8080/socket`,
       deserializer: (data) => data,
       openObserver: {
         next: () => {
