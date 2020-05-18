@@ -9,17 +9,17 @@ const http = require('http');
 
 let _ws;
 
-const serveStaticUIContent = () => {
-  console.log('Serving static content over server.');
+// const serveStaticUIContent = () => {
+//   console.log('Serving static content over server.');
 
-  app.use(express.static(__dirname + '/dist/story-points'));
+//   // app.use(express.static(__dirname + '/dist/story-points'));
 
-  app.get('/*', (_, res) => {
-    res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
-  });
+//   // app.get('/*', (_, res) => {
+//   //   res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
+//   // });
 
-  app.listen(process.env.PORT || 8080);
-}
+//   app.listen(process.env.PORT || 8080);
+// }
 
 const initHandlers = () => {
   console.log('Initializing server and setting up handlers.');
@@ -294,6 +294,12 @@ const initHandlers = () => {
   };
 
   wss.on('connection', handleNewClients);
+
+  app.use(express.static(__dirname + '/dist/story-points'));
+
+  app.get('/*', (_, res) => {
+    res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
+  });
 
   server.listen(process.env.PORT || 8080, () => {
     console.log(`Server (${server.address().address}) running on port ${server.address().port}`);
