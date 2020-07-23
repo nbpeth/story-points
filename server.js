@@ -1,54 +1,31 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const path = require('path');
-const cors = require('cors');
-const app = express();
+
 const WebSocketServer = require("ws").Server;
 const mysqlClient = require('./mysqlClient')
-const http = require('http');
 
-let _ws;
+const startServer = () => {
+  const server = require('http').createServer();
+  const app = require('./http-server');
 
-// const serveStaticUIContent = () => {
-//   console.log('Serving static content over server.');
-
-//   // app.use(express.static(__dirname + '/dist/story-points'));
-
-//   // app.get('/*', (_, res) => {
-//   //   res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
-//   // });
-
-//   app.listen(process.env.PORT || 8080);
-// }
-
-const initHandlers = () => {
-  console.log('Initializing server and setting up handlers.');
-
-  app.use(bodyParser.urlencoded({extended: false}));
-  app.use(bodyParser.json());
-  app.use(cors);
-
-  app.use(express.static(__dirname + '/dist/story-points'));
-
-  app.get('/*', (_, res) => {
-    res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
+  const wss = new WebSocketServer({
+    server: server
   });
 
-  // app.listen(process.env.PORT || 8080);
+  server.on('request', app);
+  wss.on('connection', handleNewClients);
 
-  const server = http.createServer(app);
-  const wss = new WebSocketServer({server: server, path: "/socket"});
+  server.listen(8080, function() {
+    console.log(`listening on 8080`);
+  });
 
-  wss.on('error', (err) => {
-    console.log('Error: ', err.message)
-  })
+  return wss;
+}
 
+const handleNewClients = (ws) => {
+  ws.on('message', handleIncomingMessages);
+};
 
-  handleNewClients = (ws) => {
-    _ws = ws;
-
-    ws.on('message', handleIncomingMessages);
-  };
+const initHandlers = () => {
+  const wss = startServer();
 
   getStateOfTheAppForCaller = () => {
     const getAllSessionsCallback = (err, results) => {
@@ -287,23 +264,11 @@ const initHandlers = () => {
   notifyCaller = (message) => {
     wss.clients
       .forEach(client => {
-        if (client === _ws) {
+        // if (client === _ws) {
           client.send(JSON.stringify(message));
-        }
+        // }
       });
   };
-
-  wss.on('connection', handleNewClients);
-
-  app.use(express.static(__dirname + '/dist/story-points'));
-
-  app.get('/*', (_, res) => {
-    res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
-  });
-
-  server.listen(process.env.PORT || 8080, () => {
-    console.log(`Server (${server.address().address}) running on port ${server.address().port}`);
-  });
 }
 
 const connectedToDB = (err) => {
@@ -311,7 +276,6 @@ const connectedToDB = (err) => {
     throw Error(`Could not connect to DB: ${err.message}`);
   }
 
-  // serveStaticUIContent();
   initHandlers();
 }
 
