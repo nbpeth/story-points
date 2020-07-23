@@ -5,10 +5,7 @@ const mysqlClient = require('./mysqlClient')
 const startServer = () => {
   const server = require('http').createServer();
   const app = require('./http-server');
-
-  const wss = new WebSocketServer({
-    server: server
-  });
+  const wss = new WebSocketServer({server: server, path: '/socket'});
 
   server.on('request', app);
   wss.on('connection', handleNewClients);

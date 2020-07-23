@@ -5,6 +5,7 @@ import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition}
 import {map} from 'rxjs/operators';
 import {SpMessage} from '../active-session/model/events.model';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
+import {HttpClient} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component
 export class SocketService  {
   private socket: WebSocketSubject<any>;
 
-  constructor(private snackBar: MatSnackBar) {
+  constructor(private snackBar: MatSnackBar, private http: HttpClient) {
     this.connect();
   }
 
@@ -20,8 +21,10 @@ export class SocketService  {
     const host = document.location.host.split(':')[0];
     const wsProtocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
 
+    // this.http.get(`${wsProtocol}://${host}:8080/socket`)
+    console.log('!', `${wsProtocol}://${host}/socket`)
     const config = {
-      url: `${wsProtocol}://${host}:8080/socket`,
+      url: `${wsProtocol}://${host}/socket`,
       deserializer: (data) => data,
       openObserver: {
         next: () => {
