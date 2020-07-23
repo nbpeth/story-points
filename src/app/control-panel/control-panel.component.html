@@ -16,26 +16,8 @@
             Event Log
           </mat-checkbox>
         </div>
-        <div class="item">Voting Scheme</div>
 
-        <!--<mat-radio-group class="item"-->
-        <!--[(ngModel)]="votingScheme">-->
-        <div class="item" style="display: flex; flex-direction: row">
-          <mat-radio-button class="spacing" [checked]="true" (change)="votingSchemeChanged($event)" value="Fibbonaci">
-            Fibbonaci
-          </mat-radio-button>
-          <mat-radio-button class="spacing" [disabled]="true" (change)="votingSchemeChanged($event)" value="FistOfFive">
-            Fist of Five
-          </mat-radio-button>
-          <mat-radio-button class="spacing" [disabled]="true" (change)="votingSchemeChanged($event)" value="Primes">
-            Primes
-          </mat-radio-button>
-          <!--<mat-radio-button class="spacing" *ngFor="let votingSchemeOption of votingSchemeOptions"-->
-          <!--[value]="votingSchemeOption"-->
-          <!--(change)="pointSelectionChanged($event)">{{votingSchemeOption}}-->
-          <!--</mat-radio-button>-->
-        </div>
-        <!--</mat-radio-group>-->
+
       </div>
     </mat-drawer>
 
