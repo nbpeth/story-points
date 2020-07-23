@@ -13,8 +13,8 @@ const startServer = () => {
   server.on('request', app);
   wss.on('connection', handleNewClients);
 
-  server.listen(8080, function() {
-    console.log(`listening on 8080`);
+  server.listen(process.env.PORT || 8080, () => {
+    console.log(`listening on ${process.env.PORT || 8080}`);
   });
 
   return wss;
