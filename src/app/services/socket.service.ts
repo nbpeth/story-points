@@ -20,7 +20,6 @@ export class SocketService  {
     const host = document.location.host;
     const wsProtocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
 
-    console.log('!', `${wsProtocol}://${host}/socket`)
     const config = {
       url: `${wsProtocol}://${host}/socket`,
       deserializer: (data) => data,
