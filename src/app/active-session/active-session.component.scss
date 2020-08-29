@@ -10,24 +10,22 @@
     justify-content: center;
     flex: 1;
     max-height: 75px;
-
   }
 
-  .user-tiles {
-    justify-content: center;
+  .active-session-body {
     display: flex;
-    flex: 3;
-    flex-wrap: wrap;
+    .user-tiles {
+      justify-content: center;
+      display: flex;
+      flex: 3;
+      flex-wrap: wrap;
+    }
 
+    .chart-container {
+      width: 30%
+    }
   }
-
-  .chart-container {
-    flex: 1;
-  }
-
-
 }
-
 
 .toolbar {
   width: 100%;

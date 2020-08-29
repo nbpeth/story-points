@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import * as Highcharts from 'highcharts';
+import {Options} from 'highcharts';
 import {ThemeService} from "../services/theme.service";
-import {Options} from "highcharts";
 import {PointSelection} from "../point-selection/point-selection";
 
 @Component({
@@ -14,9 +14,7 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
   @Input() ballots: Ballot[];
   @Input() pointSelection: PointSelection;
   categories: any[];
-
-  fontColor: string = 'white';
-
+  fontColor = 'white';
 
   chart: any;
   options = {
@@ -24,7 +22,7 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
       plotBackgroundColor: null,
       plotBorderWidth: null,
       plotShadow: false,
-      type: 'column',
+      type: 'bar',
       backgroundColor: 'transparent',
       style: {
         fontFamily: '\'Unica One\', sans-serif'
@@ -69,7 +67,7 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
         enabled: false,
       }
     },
-  }
+  };
 
   constructor(private themeService: ThemeService) {
   }
@@ -83,7 +81,7 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
 
       this.drawChart();
 
-    })
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -97,7 +95,6 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
 
   private drawChart = () => {
     const distribution = this.calculateDistribution(this.ballots);
-
     this.options.xAxis.categories = this.categories;
     this.options.series[0].data = distribution;
 
@@ -110,13 +107,13 @@ export class BallotDisplayComponent implements OnInit, OnChanges {
   private calculateDistribution = (ballots: Ballot[]) => {
 
     const categories: any[] = this.categories.slice().reduce((result, next) => {
-      result.push({name: next, y: 0})
+      result.push({name: next, y: 0});
       return result;
     }, []);
 
 
     return ballots.reduce((result, next) => {
-      const maybe = result.find(it => it.name == next);
+      const maybe = result.find(it => it.name === next);
       if (maybe) {
         maybe.y += 1;
       } else {
