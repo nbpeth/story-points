@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {WebSocketSubjectConfig} from 'rxjs/src/internal/observable/dom/WebSocketSubject';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
-import {map} from 'rxjs/operators';
+import {map, retry} from 'rxjs/operators';
 import {SpMessage} from '../active-session/model/events.model';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
 
@@ -35,7 +35,8 @@ export class SocketService  {
       }
     } as WebSocketSubjectConfig<any>;
 
-    this.socket = webSocket(config);
+    const wss = webSocket(config).pipe(retry(10)) as WebSocketSubject<any>;
+    this.socket = wss;
   }
 
   messages = () => {
