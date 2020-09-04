@@ -25,18 +25,17 @@ export class SocketService  {
       deserializer: (data) => data,
       openObserver: {
         next: () => {
-          console.log('WS connection ok');
+          console.log('WS Connected! Great job!');
         }
       },
       closeObserver: {
         next: (closeEvent) => {
-          console.log('WS connection closed', closeEvent);
+          console.log('WS closed', closeEvent);
         }
       }
     } as WebSocketSubjectConfig<any>;
 
-    const wss = webSocket(config).pipe(retry(10)) as WebSocketSubject<any>;
-    this.socket = wss;
+    this.socket = webSocket(config);
   }
 
   messages = () => {
@@ -65,6 +64,11 @@ export class SocketService  {
   }
 
   send = (message: any): void => {
+    // retry here?
+    if (this.socket.closed) {
+      console.log("socket is closed! :(")
+      this.connect();
+    }
     this.socket.next(message);
   }
 
