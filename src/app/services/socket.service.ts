@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {WebSocketSubjectConfig} from 'rxjs/src/internal/observable/dom/WebSocketSubject';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
-import {map, retry, flatMap} from 'rxjs/operators';
+import {map, retry, catchError, flatMap} from 'rxjs/operators';
 import {SpMessage} from '../active-session/model/events.model';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
 
 @Injectable({
@@ -65,7 +65,12 @@ export class SocketService {
 
         return this.$messages
           .pipe(
-            retry(1), // maybe a delay
+            // retry(1), // maybe a delay
+            catchError(e => {
+              // alert observer something bad happened and try to recover
+              this.connectionObserver.next(false);
+              return of({} as MessageEvent);
+            }),
             map((event: MessageEvent) => {
               try {
                 const messageData = JSON.parse(event.data) as SpMessage;
@@ -79,7 +84,7 @@ export class SocketService {
             })
           );
       })
-    )
+    );
   }
   showErrorBar = (message: string): void => {
     this.snackBar.openFromComponent(AlertSnackbarComponent, {
