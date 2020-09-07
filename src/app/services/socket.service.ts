@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {WebSocketSubjectConfig} from 'rxjs/src/internal/observable/dom/WebSocketSubject';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
-import {map} from 'rxjs/operators';
+import {map, catchError} from 'rxjs/operators';
 import {SpMessage} from '../active-session/model/events.model';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
 
 @Injectable({
@@ -57,6 +57,11 @@ export class SocketService {
   messages = () =>
     this.socket
       .pipe(
+        catchError(e => {
+          console.log('ERROR?!?!', e)
+          this.connectionObserver.next(false);
+          return of([])
+        }),
         map((event: MessageEvent) => {
           const messageData = JSON.parse(event.data) as SpMessage;
           if (messageData.eventType === 'error') {
