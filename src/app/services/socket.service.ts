@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {WebSocketSubjectConfig} from 'rxjs/src/internal/observable/dom/WebSocketSubject';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
-import {map, retry, tap, retryWhen, delay} from 'rxjs/operators';
+import {map, retry} from 'rxjs/operators';
 import {SpMessage} from '../active-session/model/events.model';
 import {BehaviorSubject, of} from 'rxjs';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
@@ -37,37 +37,18 @@ export class SocketService {
           this.connectionObserver.next(false);
         }
       },
-      closingObserver: {
-        next: (closeEvent) => {
-          console.log('Closing event about to occur', closeEvent);
-          // this.connectionObserver.next(false);
-        }
-      }
     } as WebSocketSubjectConfig<any>;
 
     this.socket = webSocket(config);
   }
 
-  // withAutoReconnect = () =>
-  //   this.connectionObserver.pipe(
-  //     map((connected: boolean) => {
-  //         if (!connected) {
-  //           console.log('connecting!');
-  //           this.connect();
-  //           console.log('connected?', !this.socket.closed);
-  //         }
-  //         return connected;
-  //       }
-  //     )
-  //   )
-
-  messages = () =>
-    this.socket
+  messages = () => {
+    if (this.socket.closed) {
+      this.connect();
+    }
+    return this.socket
       .pipe(
         retry(5), // maybe a delay
-        // catchError(e => { handle an error? tell the client something?
-        //   return of(e)
-        // }),
         map((event: MessageEvent) => {
           const messageData = JSON.parse(event.data) as SpMessage;
           if (messageData.eventType === 'error') {
@@ -76,7 +57,7 @@ export class SocketService {
           return messageData;
         })
       );
-
+  }
   showErrorBar = (message: string): void => {
     this.snackBar.openFromComponent(AlertSnackbarComponent, {
       duration: 5000,

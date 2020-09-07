@@ -95,36 +95,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    // this.socketService.withAutoReconnect()
-    //   .pipe(
-    //     flatMap((connected: boolean) =>
-    //       this.route.paramMap
-    //         .pipe(
-    //           flatMap((paramMap: any) => {
-    //             const id = paramMap.get('id');
-    //             this.session.sessionId = id;
-    //
-    //             this.requestInitialStateOfSessionBy(id);
-    //
-    //             return this.socketService.messages();
-    //           })
-    //         )
-    //         .pipe(
-    //           filter(this.eventsOnlyForThisSession),
-    //           tap(this.setSessionIfNotInLocalStorage),
-    //           tap(this.setUserIfAlreadyJoined),
-    //           map(this.handleEvents),
-    //         )
-    //     )
-    //   ).subscribe();
-
-
     this.themeService.isDarkTheme.subscribe(isIt => this.isDarkTheme = isIt);
-
   }
 
   ngOnDestroy(): void {
-    // this.socketService.close();
+    this.socketService.close();
   }
 
   submit = () => {
