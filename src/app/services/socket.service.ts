@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {WebSocketSubjectConfig} from 'rxjs/src/internal/observable/dom/WebSocketSubject';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
-import {map, catchError} from 'rxjs/operators';
+import {map, tap, retryWhen, delay} from 'rxjs/operators';
 import {SpMessage} from '../active-session/model/events.model';
 import {BehaviorSubject, of} from 'rxjs';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
@@ -57,11 +57,14 @@ export class SocketService {
   messages = () =>
     this.socket
       .pipe(
-        catchError(e => {
-          console.log('ERROR?!?!', e)
-          this.connectionObserver.next(false);
-          return of([])
-        }),
+        retryWhen(errors =>
+          errors.pipe(
+            tap(err => {
+              console.error('Got error', err);
+            }),
+            delay(1000)
+          )
+        ),
         map((event: MessageEvent) => {
           const messageData = JSON.parse(event.data) as SpMessage;
           if (messageData.eventType === 'error') {
