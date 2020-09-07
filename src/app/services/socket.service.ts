@@ -30,8 +30,9 @@ export class SocketService {
         deserializer: (data) => data,
         openObserver: {
           next: () => {
-            this.connectionObserver.next(true);
+            this.connectionObserver = new BehaviorSubject<boolean>(true);
             this.connectionRetries = 5;
+
             console.log('WS Connected! Great job!');
           }
         },
@@ -67,6 +68,7 @@ export class SocketService {
           .pipe(
             // retry(1), // maybe a delay
             catchError(e => {
+              console.error('in a distant universe, something bad happened somewhere...', e);
               // alert observer something bad happened and try to recover
               this.connectionObserver.next(false);
               return of({} as MessageEvent);
@@ -99,7 +101,9 @@ export class SocketService {
   }
 
   close() {
-    this.socket.unsubscribe();
+    // this.socket.unsubscribe();
+    this.socket.error({ code: 1000 });
+    this.connectionObserver.next(false);
   }
 
   send = (message: any): void => {
