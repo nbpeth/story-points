@@ -69,7 +69,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.successSound = new Audio('assets/sounds/ohyeah.mp3');
 
     this.localStorage.stateEventStream().subscribe((state: AppState) => {
-      const maybeSession = state.getSessionBy(this.session.sessionId);
+      const maybeSession = state.getSessionBy(this.session && this.session.sessionId);
 
       if (maybeSession) {
         this.showLogs = maybeSession.settings.showEventLog;
@@ -210,9 +210,9 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private eventsOnlyForThisSession = (message: SpMessage): boolean => {
-    const targetSession = message.payload.sessionId;
+    const targetSession = message && message.payload && message.payload.sessionId;
 
-    return this.session.sessionId === targetSession;
+    return targetSession && this.session.sessionId === targetSession;
   };
 
   private setSessionIfNotInLocalStorage = () => {
@@ -279,7 +279,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
     this.logs.unshift(message);
     this.showInfoBar(message, 'happy');
-    this.localStorage.setUser(this.session.sessionId, this.participant);
+    this.localStorage.setUser(this.session && this.session.sessionId, this.participant);
     this.updateSession(messageData);
   };
 
@@ -294,7 +294,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
     this.logs.unshift(message);
     this.showInfoBar(message, 'warn');
-    this.localStorage.removeUser(this.session.sessionId);
+    this.localStorage.removeUser(this.session && this.session.sessionId);
     this.updateSession(messageData);
   };
 
@@ -304,7 +304,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private recoverUser = (session: StoryPointSession): void => {
-    const maybeRecoveredUserEntry = this.localStorage.getSession(session.sessionId);
+    const maybeRecoveredUserEntry = this.localStorage.getSession(session && session.sessionId);
 
     if (maybeRecoveredUserEntry) {
       this.participant = Object.assign(new Participant(), maybeRecoveredUserEntry);
@@ -341,7 +341,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private clearLocalUserState = () => {
-    this.localStorage.removeUser(this.session.sessionId)
+    this.localStorage.removeUser(this.session && this.session.sessionId);
     this.participant = undefined;
   };
 
