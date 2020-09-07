@@ -11,9 +11,10 @@ import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component
   providedIn: 'root'
 })
 export class SocketService {
+  private MAX_RETRIES = 5;
   private socket: WebSocketSubject<any>;
   private connectionObserver = new BehaviorSubject<boolean>(false);
-  private connectionRetries = 5;
+  private connectionRetries = this.MAX_RETRIES;
 
   private $messages: Observable<any>;
 
@@ -30,9 +31,9 @@ export class SocketService {
         deserializer: (data) => data,
         openObserver: {
           next: () => {
-            this.connectionObserver = new BehaviorSubject<boolean>(true);
-            this.connectionRetries = 5;
-
+            // this.reset();
+            this.connectionObserver.next(true);
+            this.connectionRetries = this.MAX_RETRIES;
             console.log('WS Connected! Great job!');
           }
         },
@@ -101,12 +102,20 @@ export class SocketService {
   }
 
   close() {
-    // this.socket.unsubscribe();
-    this.socket.error({ code: 1000 });
-    this.connectionObserver.next(false);
+    this.socket.unsubscribe();
+    this.reset();
+  }
+
+  x() {
+    this.socket.unsubscribe();
   }
 
   send = (message: any): void => {
     this.socket.next(message);
+  }
+
+  private reset() {
+    this.connectionRetries = this.MAX_RETRIES;
+    this.connectionObserver = new BehaviorSubject<boolean>(false);
   }
 }

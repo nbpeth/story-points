@@ -124,7 +124,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   close() {
-    this.socketService.close()
+    this.socketService.x()
   }
 
   changePointVisibility = (state: PointVisibilityChange) => {
