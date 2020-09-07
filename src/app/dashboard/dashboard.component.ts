@@ -26,9 +26,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.socketService
-      .withAutoReconnect()
-      .pipe(flatMap(_ => this.socketService.messages()))
+    this.socketService.messages()
+      // .withAutoReconnect()
+      // .pipe(flatMap(_ => this.socketService.messages()))
       .subscribe(this.handleEvents);
 
     this.socketService.send(new GetCompleteStateMessage());

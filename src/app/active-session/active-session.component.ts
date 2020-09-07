@@ -76,28 +76,47 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.socketService.withAutoReconnect()
+    this.route.paramMap
       .pipe(
-        flatMap((connected: boolean) =>
-          this.route.paramMap
-            .pipe(
-              flatMap((paramMap: any) => {
-                const id = paramMap.get('id');
-                this.session.sessionId = id;
+        flatMap((paramMap: any) => {
+          const id = paramMap.get('id');
+          this.session.sessionId = id;
 
-                this.requestInitialStateOfSessionBy(id);
+          this.requestInitialStateOfSessionBy(id);
 
-                return this.socketService.messages();
-              })
-            )
-            .pipe(
-              filter(this.eventsOnlyForThisSession),
-              tap(this.setSessionIfNotInLocalStorage),
-              tap(this.setUserIfAlreadyJoined),
-              map(this.handleEvents),
-            )
-        )
-      ).subscribe();
+          return this.socketService.messages();
+        })
+      )
+      .pipe(
+        filter(this.eventsOnlyForThisSession),
+        tap(this.setSessionIfNotInLocalStorage),
+        tap(this.setUserIfAlreadyJoined),
+        map(this.handleEvents),
+      )
+      .subscribe();
+
+    // this.socketService.withAutoReconnect()
+    //   .pipe(
+    //     flatMap((connected: boolean) =>
+    //       this.route.paramMap
+    //         .pipe(
+    //           flatMap((paramMap: any) => {
+    //             const id = paramMap.get('id');
+    //             this.session.sessionId = id;
+    //
+    //             this.requestInitialStateOfSessionBy(id);
+    //
+    //             return this.socketService.messages();
+    //           })
+    //         )
+    //         .pipe(
+    //           filter(this.eventsOnlyForThisSession),
+    //           tap(this.setSessionIfNotInLocalStorage),
+    //           tap(this.setUserIfAlreadyJoined),
+    //           map(this.handleEvents),
+    //         )
+    //     )
+    //   ).subscribe();
 
 
     this.themeService.isDarkTheme.subscribe(isIt => this.isDarkTheme = isIt);
