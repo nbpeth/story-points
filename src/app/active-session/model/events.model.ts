@@ -10,6 +10,7 @@ export class SpMessage {
 }
 
 export class SpMessagePayload {
+  message: string;
   sessionId: number;
   participants: any;
 }

@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SocketService} from '../services/socket.service';
-import {filter, flatMap, map, tap} from 'rxjs/operators';
+import {filter, flatMap, map, tap, retry} from 'rxjs/operators';
 import {Events} from './enum/events';
 import {
   GetSessionNameMessage,
@@ -67,7 +67,15 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.session.sessionName;
 
   ngOnInit() {
-    this.socketService.connect();
+
+    this.socketService.connectionObserver.subscribe(connected => {
+      if (!connected) {
+        console.log('I am not connected but I will be!')
+        this.socketService.connect()
+      }
+    })
+
+    // this.socketService.connect();
 
     this.successSound = new Audio('assets/sounds/ohyeah.mp3');
 
@@ -79,27 +87,36 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       }
     })
 
-    this.route.paramMap
+    this.socketService.connectionObserver
       .pipe(
-        flatMap((paramMap: any) => {
-          const id = paramMap.get('id');
-          this.session.sessionId = id;
+        flatMap((connected: boolean) => {
+          if (!connected) {
+            this.socketService.connect();
+          }
 
-          this.requestInitialStateOfSessionBy(id);
+          return this.route.paramMap
+            .pipe(
+              flatMap((paramMap: any) => {
+                const id = paramMap.get('id');
+                this.session.sessionId = id;
 
-          return this.socketService.messages();
+                this.requestInitialStateOfSessionBy(id);
+
+                return this.socketService.messages();
+              })
+            )
+            .pipe(
+              filter(this.eventsOnlyForThisSession),
+              tap(this.setSessionIfNotInLocalStorage),
+              tap(this.setUserIfAlreadyJoined),
+              map(this.handleEvents),
+            )
         })
-      )
-      .pipe(
-        filter(this.eventsOnlyForThisSession),
-        tap(this.setSessionIfNotInLocalStorage),
-        tap(this.setUserIfAlreadyJoined),
-        map(this.handleEvents),
-      )
-      .subscribe();
+      ).subscribe();
 
 
     this.themeService.isDarkTheme.subscribe(isIt => this.isDarkTheme = isIt);
+
   }
 
   ngOnDestroy(): void {
@@ -124,6 +141,10 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.participant.setPoint(vote.value);
     this.submit();
   };
+
+  close() {
+    this.socketService.x()
+  }
 
   changePointVisibility = (state: PointVisibilityChange) => {
     switch (state) {

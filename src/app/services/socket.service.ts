@@ -4,6 +4,7 @@ import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
 import {map, retry} from 'rxjs/operators';
 import {SpMessage} from '../active-session/model/events.model';
+import { BehaviorSubject } from 'rxjs';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
 
 @Injectable({
@@ -11,7 +12,7 @@ import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component
 })
 export class SocketService  {
   private socket: WebSocketSubject<any>;
-
+  public connectionObserver = new BehaviorSubject<boolean>(false);
   constructor(private snackBar: MatSnackBar) {
     this.connect();
   }
@@ -26,16 +27,21 @@ export class SocketService  {
       openObserver: {
         next: () => {
           console.log('WS Connected! Great job!');
+          this.connectionObserver.next(true);
         }
       },
       closeObserver: {
         next: (closeEvent) => {
           console.log('WS closed', closeEvent);
+          this.connectionObserver.next(false);
         }
       }
     } as WebSocketSubjectConfig<any>;
 
     this.socket = webSocket(config);
+
+    console.log('connection status!', !this.socket.closed)
+
   }
 
   messages = () => {
@@ -44,7 +50,7 @@ export class SocketService  {
         map((event: MessageEvent) => {
           const messageData = JSON.parse(event.data) as SpMessage;
           if (messageData.eventType === 'error') {
-            this.showErrorBar(messageData.payload['message']);
+            this.showErrorBar(messageData.payload.message);
           }
           return messageData;
         })
@@ -63,12 +69,12 @@ export class SocketService  {
     });
   }
 
+  x(){
+    console.log('closing!!!!!')
+    this.socket.unsubscribe();
+  }
+
   send = (message: any): void => {
-    // retry here?
-    if (this.socket.closed) {
-      console.log("socket is closed! :(")
-      this.connect();
-    }
     this.socket.next(message);
   }
 
