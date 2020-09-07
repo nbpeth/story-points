@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SocketService} from '../services/socket.service';
-import {filter, flatMap, map, tap, retry} from 'rxjs/operators';
+import {filter, flatMap, map, tap} from 'rxjs/operators';
 import {Events} from './enum/events';
 import {
   GetSessionNameMessage,
@@ -63,20 +63,9 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
               private localStorage: LocalStorageService) {
   }
 
-  getSessionName = () =>
-    this.session.sessionName;
+  getSessionName = () => this.session.sessionName
 
   ngOnInit() {
-
-    this.socketService.connectionObserver.subscribe(connected => {
-      if (!connected) {
-        console.log('I am not connected but I will be!')
-        this.socketService.connect()
-      }
-    })
-
-    // this.socketService.connect();
-
     this.successSound = new Audio('assets/sounds/ohyeah.mp3');
 
     this.localStorage.stateEventStream().subscribe((state: AppState) => {
@@ -85,16 +74,12 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       if (maybeSession) {
         this.showLogs = maybeSession.settings.showEventLog;
       }
-    })
+    });
 
-    this.socketService.connectionObserver
+    this.socketService.withAutoReconnect()
       .pipe(
-        flatMap((connected: boolean) => {
-          if (!connected) {
-            this.socketService.connect();
-          }
-
-          return this.route.paramMap
+        flatMap((connected: boolean) =>
+          this.route.paramMap
             .pipe(
               flatMap((paramMap: any) => {
                 const id = paramMap.get('id');
@@ -111,7 +96,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
               tap(this.setUserIfAlreadyJoined),
               map(this.handleEvents),
             )
-        })
+        )
       ).subscribe();
 
 
@@ -120,7 +105,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // this.socketService.unsubscribe();
+    // this.socketService.close();
   }
 
   submit = () => {
@@ -143,7 +128,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   close() {
-    this.socketService.x()
+    this.socketService.close()
   }
 
   changePointVisibility = (state: PointVisibilityChange) => {

@@ -2,17 +2,18 @@ import {Injectable} from '@angular/core';
 import {WebSocketSubjectConfig} from 'rxjs/src/internal/observable/dom/WebSocketSubject';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
-import {map, retry} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {SpMessage} from '../active-session/model/events.model';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SocketService  {
+export class SocketService {
   private socket: WebSocketSubject<any>;
-  public connectionObserver = new BehaviorSubject<boolean>(false);
+  private connectionObserver = new BehaviorSubject<boolean>(false);
+
   constructor(private snackBar: MatSnackBar) {
     this.connect();
   }
@@ -39,13 +40,22 @@ export class SocketService  {
     } as WebSocketSubjectConfig<any>;
 
     this.socket = webSocket(config);
-
-    console.log('connection status!', !this.socket.closed)
-
   }
 
-  messages = () => {
-    return this.socket
+  withAutoReconnect = () =>
+    this.connectionObserver.pipe(
+      map((connected: boolean) => {
+          if (!connected) {
+            console.log('reconnecting!');
+            this.connect();
+          }
+          return connected;
+        }
+      )
+    )
+
+  messages = () =>
+    this.socket
       .pipe(
         map((event: MessageEvent) => {
           const messageData = JSON.parse(event.data) as SpMessage;
@@ -55,7 +65,6 @@ export class SocketService  {
           return messageData;
         })
       );
-  }
 
   showErrorBar = (message: string): void => {
     this.snackBar.openFromComponent(AlertSnackbarComponent, {
@@ -69,13 +78,11 @@ export class SocketService  {
     });
   }
 
-  x(){
-    console.log('closing!!!!!')
+  close() {
     this.socket.unsubscribe();
   }
 
   send = (message: any): void => {
     this.socket.next(message);
   }
-
 }

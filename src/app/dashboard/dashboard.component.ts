@@ -8,9 +8,7 @@ import {
   NewSessionPayload,
   SpMessage
 } from '../active-session/model/events.model';
-import {LocalStorageService} from '../services/local-storage.service';
-import {Session, SessionSettings} from '../services/local-storage.model';
-import {Participant} from '../active-session/model/session.model';
+import {flatMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',
@@ -28,17 +26,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.socketService.connect();
-
     this.socketService
-      .messages()
+      .withAutoReconnect()
+      .pipe(flatMap(_ => this.socketService.messages()))
       .subscribe(this.handleEvents);
 
     this.socketService.send(new GetCompleteStateMessage());
   }
 
   ngOnDestroy(): void {
-    // this.socketService.unsubscribe();
+    // this.socketService.close();
   }
 
   createNewSession = (newSessionName: string) => {
