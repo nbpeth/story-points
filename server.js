@@ -10,6 +10,14 @@ const startServer = () => {
   server.on('request', app);
   wss.on('connection', handleNewClients);
 
+  setInterval(() => {
+    // keep connections alive
+    console.log('clients', wss.clients.size);
+    wss.clients.forEach((client) => {
+      client.send(JSON.stringify({}))
+    });
+  }, 30000);
+
   server.listen(process.env.PORT || 8080, () => {
     console.log(`listening on ${process.env.PORT || 8080}`);
   });
