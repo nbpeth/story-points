@@ -64,7 +64,8 @@ getSessionState = (sessionId, onComplete) => {
         p.id as participantId,
         p.point,
         p.is_admin as isAdmin,
-        p.has_voted as hasVoted
+        p.has_voted as hasVoted,
+        p.has_revoted as hasAlreadyVoted
         FROM sessions s, participant p
         WHERE s.id = ?
         AND s.id = p.session_id;
@@ -107,12 +108,12 @@ removeParticipantFromSession = (participantId, sessionId, onComplete) => {
   runQuery(statement, onComplete);
 }
 
-pointWasSubmitted = (participantId, value, onComplete) => {
+pointWasSubmitted = (participantId, value, hasAlreadyVoted, onComplete) => {
   const sql = `
-        UPDATE participant SET point = ?, has_voted = true WHERE id = ?
+        UPDATE participant SET point = ?, has_voted = true, has_revoted = ? WHERE id = ?
     `
 
-  const statement = mysql.format(sql, [value, participantId]);
+  const statement = mysql.format(sql, [value, hasAlreadyVoted, participantId]);
 
   runQuery(statement, onComplete);
 }
@@ -120,7 +121,7 @@ pointWasSubmitted = (participantId, value, onComplete) => {
 resetPointsForSession = (sessionId, onComplete) => {
   const sql = `
         UPDATE participant p, sessions s
-        SET p.point = 0, p.has_voted = false, s.points_visible = false
+        SET p.point = 0, p.has_voted = false, s.points_visible = false, p.has_revoted = false
         WHERE p.session_id = ?
         AND s.id = ?
     `

@@ -4,6 +4,7 @@ export class Participant {
     public participantId?: number,
     public point?: number | string,
     public hasVoted?: boolean,
+    public hasAlreadyVoted?: boolean,
     public isAdmin?: boolean,
     public pointsVisible?: boolean,
   ) {

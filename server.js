@@ -189,7 +189,7 @@ const initHandlers = () => {
   };
 
   pointWasSubmitted = (messageData) => {
-    const {userId, value, sessionId} = messageData.payload;
+    const {userId, value, sessionId, hasAlreadyVoted} = messageData.payload;
 
     const pointWasSubmittedCallback = (err) => {
       if (err) {
@@ -199,7 +199,7 @@ const initHandlers = () => {
       }
     }
 
-    mysqlClient.pointWasSubmitted(userId, value, pointWasSubmittedCallback);
+    mysqlClient.pointWasSubmitted(userId, value, hasAlreadyVoted, pointWasSubmittedCallback);
   };
 
   addParticipantToSession = (messageData) => {

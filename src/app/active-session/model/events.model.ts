@@ -63,7 +63,7 @@ export class ParticipantRemovedSessionPayload extends SpMessagePayload {
 }
 
 export class PointSubmittedForParticipantPayload extends SpMessagePayload {
-  constructor(public sessionId: number, public userId: number, public userName: string, public value: string) {
+  constructor(public sessionId: number, public userId: number, public userName: string, public value: string, public hasAlreadyVoted: boolean) {
     super();
   }
 }

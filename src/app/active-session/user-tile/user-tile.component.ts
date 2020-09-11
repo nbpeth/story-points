@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {SocketService} from '../../services/socket.service';
 import {ParticipantRemovedSessionMessage, ParticipantRemovedSessionPayload} from '../model/events.model';
 import {Participant} from '../model/session.model';
@@ -8,7 +8,9 @@ import {Participant} from '../model/session.model';
   templateUrl: './user-tile.component.html',
   styleUrls: ['./user-tile.component.scss']
 })
-export class UserTileComponent {
+export class UserTileComponent
+  // implements OnChanges
+{
 
   @Input() sessionId: any;
   @Input() participant: Participant = new Participant();
@@ -29,6 +31,10 @@ export class UserTileComponent {
     );
     this.socketService.send(message);
   };
+
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   console.log(changes)
+  // }
 }
 
 

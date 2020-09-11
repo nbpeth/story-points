@@ -63,7 +63,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
               private localStorage: LocalStorageService) {
   }
 
-  getSessionName = () => this.session.sessionName
+  getSessionName = () => this.session.sessionName;
 
   ngOnInit() {
     this.successSound = new Audio('assets/sounds/ohyeah.mp3');
@@ -106,13 +106,16 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   submit = () => {
     const vote = this.participant && this.participant.point ? this.participant.point as string : 'Abstain';
+    const me = this.session.participants.find(p => p.participantId === this.participant.participantId);
+    // ew, ew ew. need to keep "this.participant" up to date maybe - this is nasty
     this.socketService.send(
       new PointSubmittedForParticipantMessage(
         new PointSubmittedForParticipantPayload(
           this.session.sessionId,
           this.participant.participantId,
           this.participant.participantName,
-          vote
+          vote,
+          me.pointsVisible
         )
       )
     );
@@ -124,7 +127,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   close() {
-    this.socketService.x()
+    this.socketService.close();
   }
 
   changePointVisibility = (state: PointVisibilityChange) => {
@@ -186,11 +189,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   collectBallots = (): Ballot[] =>
     this.session.participants.filter((p: Participant) => p.hasVoted).map((p: Participant) => p.point);
 
-
-  pointSelectionChanged = (pointSelection: PointSelection) => {
-    this.pointSelection = pointSelection;
-  }
-
   private requestInitialStateOfSessionBy = (id: number): void => {
     this.socketService.send(
       new GetSessionNameMessage(
@@ -203,7 +201,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       )
     );
   };
-
 
   private setSessionName = (messageData: GetSessionNameMessage) => {
     this.session.sessionName = messageData.payload.sessionName;
@@ -255,6 +252,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     if (!payload) {
       this.router.navigate(['/'], {queryParams: {error: 1}});
     } else {
+      // console.log(payload) // this is getting called twice for every message
       updateFunction(messageData);
       this.ballots = this.collectBallots();
     }

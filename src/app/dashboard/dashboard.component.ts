@@ -8,7 +8,6 @@ import {
   NewSessionPayload,
   SpMessage
 } from '../active-session/model/events.model';
-import {flatMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,8 +26,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.socketService.messages()
-      // .withAutoReconnect()
-      // .pipe(flatMap(_ => this.socketService.messages()))
       .subscribe(this.handleEvents);
 
     this.socketService.send(new GetCompleteStateMessage());

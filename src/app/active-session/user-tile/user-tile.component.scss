@@ -8,7 +8,6 @@
   opacity: 80%;
 }
 
-
 .mat-card-title {
   font-size: 45px;
 }
@@ -28,4 +27,19 @@
 
 .voted-dark {
   background-color: #9c27b0;
+}
+
+.vote-changer {
+  animation-name: color-cycle;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+
+}
+
+@keyframes color-cycle {
+  0%   {background-color:gold}
+  25%  {background-color:purple}
+  50%  {background-color:silver}
+  75%  {background-color:purple}
+  100%  {background-color:gold}
 }
