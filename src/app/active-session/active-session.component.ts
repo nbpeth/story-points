@@ -115,7 +115,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
           this.participant.participantId,
           this.participant.participantName,
           vote,
-          me.pointsVisible
+          me && me.pointsVisible
         )
       )
     );

@@ -1,8 +1,8 @@
-<!--<div [ngClass]="{'box': participant.hasAlreadyVoted}">-->
+<div [ngClass]="{'reveal': pointsVisible}">
 <mat-card
   [ngClass]="{'my-card': myCard && !isDarkTheme,
   'my-card-dark': myCard && isDarkTheme,
-  'voted': participant.hasVoted && !isDarkTheme,
+  'voted': participant.hasVoted,
   'voted-dark': participant.hasVoted && isDarkTheme,
   'vote-changer': participant.hasAlreadyVoted
   }">
@@ -22,4 +22,4 @@
     </div>
   </mat-card-footer>
 </mat-card>
-<!--</div>-->
+</div>

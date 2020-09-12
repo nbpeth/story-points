@@ -11,6 +11,7 @@ import {Participant} from '../model/session.model';
 export class UserTileComponent
   // implements OnChanges
 {
+  // input hasBeenReleaved (to prevent reflipping? )
 
   @Input() sessionId: any;
   @Input() participant: Participant = new Participant();
