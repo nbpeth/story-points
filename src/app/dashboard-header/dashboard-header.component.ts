@@ -36,7 +36,11 @@ export class DashboardHeaderComponent {
     this.createSession.emit(withName);
   }
 
-  logout(){
+  logout() {
     this.userService.logout();
+  }
+
+  userName() {
+    return this.userService.getUserDisplayName();
   }
 }
