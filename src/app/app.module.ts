@@ -46,6 +46,7 @@ import {VotingBoothComponent} from './voting-booth/voting-booth.component';
 import { BallotDisplayComponent } from './vote-display/ballot-display.component';
 import { ActivityLogComponent } from './activity-log/activity-log.component';
 import {AuthServiceConfig, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
+import {MatMenuModule} from "@angular/material/menu";
 
 const config = new AuthServiceConfig([
   {
@@ -90,6 +91,7 @@ const config = new AuthServiceConfig([
     MatIconModule,
     MatDialogModule,
     MatButtonModule,
+    MatMenuModule,
     MatSelectModule,
     MatInputModule,
     MatBadgeModule,
@@ -107,9 +109,6 @@ const config = new AuthServiceConfig([
   entryComponents: [ConfirmDialogComponent, JoinSessionDialogComponent, CreateSessionDialogComponent, AlertSnackbarComponent]
 
 })
-
-
-
 
 export class AppModule {
   constructor(private overlayContainer: OverlayContainer, private themeService: ThemeService) {

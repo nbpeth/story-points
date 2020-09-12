@@ -1,6 +1,6 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {ThemeService} from './services/theme.service';
-import {AuthService, GoogleLoginProvider} from "angularx-social-login";
+import {UserService} from './user.service';
 
 declare const confetti: any;
 
@@ -29,27 +29,11 @@ export class AppComponent implements OnInit {
     'KeyA',
   ];
   konamiCount = 0;
-  // successSound: HTMLAudioElement;
-  // failSound: HTMLAudioElement;
 
-  public user: {};
-  private loggedIn: boolean;
-
-  music: HTMLAudioElement;
-
-  constructor(private themeService: ThemeService, private authService: AuthService) {
+  constructor(private themeService: ThemeService, private userService: UserService) {
   }
 
   ngOnInit() {
-    // this.successSound = new Audio('assets/sounds/cheering.mp3');
-    // this.failSound = new Audio('assets/sounds/fail.mp3');
-
-    this.authService.authState.subscribe((user) => {
-      this.user = user;
-      this.loggedIn = (user != null);
-    });
-
-
     this.themeService.loadState();
     this.themeService.dynamicDarkValue.subscribe((value: number) => {
       this.setThemeFrom(value);
@@ -58,17 +42,12 @@ export class AppComponent implements OnInit {
     });
   }
 
-  signInWithGoogle(): void {
-    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
-      .then(res => {
-        console.log('login', res);
-      });
+  isLoggedIn() {
+    return this.userService.isLoggedIn();
   }
 
-  signOut(): void {
-    this.authService.signOut().then(res => {
-      console.log('logout', res);
-    });
+  signInWithGoogle(): void {
+    this.userService.login();
   }
 
   private setThemeFrom = (value: number) => {

@@ -3,9 +3,13 @@
         <div class="items">
             <span>
             </span>
-            <span>
-                <mat-icon (click)="create()">add</mat-icon>
-            </span>
+          <button mat-button [matMenuTriggerFor]="menu">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="create()">Create</button>
+            <button mat-menu-item (click)="logout()">Sign Out</button>
+          </mat-menu>
         </div>
         <div class="items icons">
             <span>
