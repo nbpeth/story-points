@@ -1,5 +1,6 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {ThemeService} from './services/theme.service';
+import {AuthService, GoogleLoginProvider} from "angularx-social-login";
 
 declare const confetti: any;
 
@@ -28,23 +29,45 @@ export class AppComponent implements OnInit {
     'KeyA',
   ];
   konamiCount = 0;
-  successSound: HTMLAudioElement;
-  failSound: HTMLAudioElement;
+  // successSound: HTMLAudioElement;
+  // failSound: HTMLAudioElement;
+
+  public user: {};
+  private loggedIn: boolean;
 
   music: HTMLAudioElement;
 
-  constructor(private themeService: ThemeService) {
+  constructor(private themeService: ThemeService, private authService: AuthService) {
   }
 
   ngOnInit() {
-    this.successSound = new Audio('assets/sounds/cheering.mp3');
-    this.failSound = new Audio('assets/sounds/fail.mp3');
+    // this.successSound = new Audio('assets/sounds/cheering.mp3');
+    // this.failSound = new Audio('assets/sounds/fail.mp3');
+
+    this.authService.authState.subscribe((user) => {
+      this.user = user;
+      this.loggedIn = (user != null);
+    });
+
 
     this.themeService.loadState();
     this.themeService.dynamicDarkValue.subscribe((value: number) => {
       this.setThemeFrom(value);
 
       this.themeService.setDarkTheme(this.isDarkTheme);
+    });
+  }
+
+  signInWithGoogle(): void {
+    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
+      .then(res => {
+        console.log('login', res);
+      });
+  }
+
+  signOut(): void {
+    this.authService.signOut().then(res => {
+      console.log('logout', res);
     });
   }
 
@@ -82,7 +105,7 @@ export class AppComponent implements OnInit {
       this.konamiCount++;
     } else {
       if (this.konamiCount > this.konami.length - 3) {
-        this.failSound.play();
+        // this.failSound.play();
         window.alert('you were so close to glory and then you disappointed everyone');
       }
       this.konamiCount = 0;
@@ -90,7 +113,7 @@ export class AppComponent implements OnInit {
 
     if (this.konamiCount === this.konami.length) {
       confetti.start(2500);
-      this.successSound.play();
+      // this.successSound.play();
       this.konamiCount = 0;
     }
   }

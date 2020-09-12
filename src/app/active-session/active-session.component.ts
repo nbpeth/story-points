@@ -65,6 +65,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   getSessionName = () => this.session.sessionName;
 
+  // pull auth out into it's own service
+
   ngOnInit() {
     this.successSound = new Audio('assets/sounds/ohyeah.mp3');
 

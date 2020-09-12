@@ -45,6 +45,14 @@ import {AdminControlsComponent} from './admin-controls/admin-controls.component'
 import {VotingBoothComponent} from './voting-booth/voting-booth.component';
 import { BallotDisplayComponent } from './vote-display/ballot-display.component';
 import { ActivityLogComponent } from './activity-log/activity-log.component';
+import {AuthServiceConfig, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
+
+const config = new AuthServiceConfig([
+  {
+    id: GoogleLoginProvider.PROVIDER_ID,
+    provider: new GoogleLoginProvider('169440150514-6p8qrgf59kceaonb8qvpk10jam8gmaho.apps.googleusercontent.com')
+  },
+]);
 
 @NgModule({
   declarations: [
@@ -90,7 +98,8 @@ import { ActivityLogComponent } from './activity-log/activity-log.component';
     MatSnackBarModule,
     MatSidenavModule,
     MatSliderModule,
-  ],
+    SocialLoginModule.initialize(config)
+],
   providers: [
     {provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig},
   ],
@@ -98,6 +107,10 @@ import { ActivityLogComponent } from './activity-log/activity-log.component';
   entryComponents: [ConfirmDialogComponent, JoinSessionDialogComponent, CreateSessionDialogComponent, AlertSnackbarComponent]
 
 })
+
+
+
+
 export class AppModule {
   constructor(private overlayContainer: OverlayContainer, private themeService: ThemeService) {
 

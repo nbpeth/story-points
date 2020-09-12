@@ -1,4 +1,11 @@
-<div style="height: 100%" [ngClass]="{'dark-theme': isDarkTheme}">
+<ng-template #login>
+  <div class="card-block">
+    <button class="btn btn-social-icon btn-google" (click)="signInWithGoogle()">
+      <span class="fa fa-google"></span></button>
+  </div>
+</ng-template>
+
+<div *ngIf="user; else login" style="height: 100%" [ngClass]="{'dark-theme': isDarkTheme}">
 
   <div class="mat-app-background"
        [ngClass]="{'moon': nighttime, 'sun': daytime}"
