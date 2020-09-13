@@ -7,6 +7,9 @@ export class Participant {
     public hasAlreadyVoted?: boolean,
     public isAdmin?: boolean,
     public pointsVisible?: boolean,
+    public loginId?: string,
+    public loginEmail?: string
+
   ) {
     if (!participantName) {
       this.participantName = `Lurker${Math.floor(Math.random() * 1000000)}`;

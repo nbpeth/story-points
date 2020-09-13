@@ -18,14 +18,13 @@
         <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter"
                    [participant]="participant"
                    [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
-                   [myCard]="isMyCard(participant.participantName)">
+                   [myCard]="isMyCard(participant)">
         </user-tile>
       </user-tiles>
 
     </div>
   </div>
 
-<!--<button (click)="close()">XXXX</button>-->
 </div>
 
 <div class="toolbar mat-app-background ">
