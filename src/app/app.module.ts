@@ -47,13 +47,15 @@ import { BallotDisplayComponent } from './vote-display/ballot-display.component'
 import { ActivityLogComponent } from './activity-log/activity-log.component';
 import {AuthServiceConfig, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
 import {MatMenuModule} from "@angular/material/menu";
-
-const config = new AuthServiceConfig([
-  {
-    id: GoogleLoginProvider.PROVIDER_ID,
-    provider: new GoogleLoginProvider('169440150514-6p8qrgf59kceaonb8qvpk10jam8gmaho.apps.googleusercontent.com')
-  },
-]);
+//
+// const config =
+//
+//   new AuthServiceConfig([
+//   {
+//     id: GoogleLoginProvider.PROVIDER_ID,
+//     provider: new GoogleLoginProvider('169440150514-6p8qrgf59kceaonb8qvpk10jam8gmaho.apps.googleusercontent.com')
+//   },
+// ])
 
 @NgModule({
   declarations: [
@@ -100,7 +102,12 @@ const config = new AuthServiceConfig([
     MatSnackBarModule,
     MatSidenavModule,
     MatSliderModule,
-    SocialLoginModule.initialize(config)
+    SocialLoginModule.initialize(new AuthServiceConfig([
+      {
+        id: GoogleLoginProvider.PROVIDER_ID,
+        provider: new GoogleLoginProvider('169440150514-6p8qrgf59kceaonb8qvpk10jam8gmaho.apps.googleusercontent.com')
+      },
+    ]))
 ],
   providers: [
     {provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig},
@@ -124,3 +131,4 @@ export class AppModule {
     this.overlayContainer.getContainerElement().classList.add(theme);
   };
 }
+
