@@ -1,5 +1,5 @@
-import {Component, EventEmitter, Output} from '@angular/core';
-import {UserService} from "../user.service";
+import {Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {User, UserService} from "../user.service";
 import {CreateSessionDialogComponent} from "../create-session-dialog/create-session-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {CreateNewSessionMessage, NewSessionPayload} from "../active-session/model/events.model";
@@ -11,13 +11,19 @@ import {Router} from "@angular/router";
   templateUrl: './titlebar.component.html',
   styleUrls: ['./titlebar.component.scss']
 })
-export class TitlebarComponent {
+export class TitlebarComponent implements OnInit {
   @Output() createSession: EventEmitter<string> = new EventEmitter<string>();
-
+  user: User;
   constructor(private dialog: MatDialog,
               private userService: UserService,
               private socketService: SocketService,
               private router: Router) {
+  }
+
+  ngOnInit() {
+    this.userService.userChanges().subscribe(user => {
+      this.user = user;
+    });
   }
 
   isDashboard() {
@@ -45,9 +51,5 @@ export class TitlebarComponent {
 
   logout() {
     this.userService.logout();
-  }
-
-  userName() {
-    return this.userService.getUserDisplayName();
   }
 }

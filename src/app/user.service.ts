@@ -1,23 +1,30 @@
 import {Injectable} from '@angular/core';
 import {AuthService, GoogleLoginProvider} from "angularx-social-login";
+import {BehaviorSubject, Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private user: User = {} as User;
+  private userChanged: BehaviorSubject<User> = new BehaviorSubject<User>(this.user);
   loggedIn: boolean;
 
   constructor(private authService: AuthService) {
+
     this.authService.authState.subscribe((user) => {
       this.user = user;
+      this.userChanged.next(user);
       this.loggedIn = (user != null);
     });
   }
 
+  userChanges(): Observable<User> {
+    return this.userChanged.asObservable();
+  }
+
   login() {
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
-
   }
 
   logout() {
