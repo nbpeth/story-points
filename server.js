@@ -52,21 +52,21 @@ const initHandlers = () => {
     })
   }
 
-  getSessionStateForParticipantJoined = (sessionId, userName, notifier) => {
+  getSessionStateForParticipantJoined = (sessionId, userName, loginId, loginEmail, notifier) => {
     mysqlClient.getSessionState(sessionId, (err, results) => {
       if (err) {
         sendErrorToCaller('Unable to get session state', err.message);
       }
-      notifier(formatMessage('participant-joined', {sessionId: sessionId, userName: userName, participants: results}, sessionId));
+      notifier(formatMessage('participant-joined', {sessionId: sessionId, userName: userName, loginId: loginId, loginEmail: loginEmail, participants: results}, sessionId));
     })
   }
 
-  getSessionStateForParticipantRemoved = (sessionId, userName, notifier) => {
+  getSessionStateForParticipantRemoved = (sessionId, userName, loginId, loginEmail, notifier) => {
     mysqlClient.getSessionState(sessionId, (err, results) => {
       if (err) {
         sendErrorToCaller('Unable to get session state', err.message);
       }
-      notifier(formatMessage('participant-removed', {sessionId: sessionId, userName: userName, participants: results}, sessionId));
+      notifier(formatMessage('participant-removed', {sessionId: sessionId, userName: userName, loginId: loginId, loginEmail: loginEmail, participants: results}, sessionId));
     })
   }
 
@@ -203,27 +203,27 @@ const initHandlers = () => {
   };
 
   addParticipantToSession = (messageData) => {
-    const {sessionId, userName, isAdmin} = messageData.payload;
+    const {sessionId, userName, isAdmin, loginId, loginEmail} = messageData.payload;
 
     const callback = (err) => {
       if (err) {
         sendErrorToCaller('Unable to add participant', err.message);
       }
 
-      getSessionStateForParticipantJoined(sessionId, userName, notifyClients);
+      getSessionStateForParticipantJoined(sessionId, userName, loginId, loginEmail, notifyClients);
 
     }
-    mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, callback)
+    mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, loginId, loginEmail, callback)
   };
 
   removeParticipantFromSession = (messageData) => {
-    const {participantId, userName, sessionId} = messageData.payload;
+    const {participantId, userName, sessionId, loginId, loginEmail} = messageData.payload;
 
     mysqlClient.removeParticipantFromSession(participantId, sessionId, (err) => {
       if (err) {
         sendErrorToCaller('Unable to remove participant', err.message);
       } else {
-        getSessionStateForParticipantRemoved(sessionId, userName, notifyClients);
+        getSessionStateForParticipantRemoved(sessionId, userName, loginId, loginEmail, notifyClients);
       }
     })
   };

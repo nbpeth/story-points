@@ -51,13 +51,13 @@ export class TerminateSessionPayload extends SpMessagePayload {
 }
 
 export class ParticipantJoinedSessionPayload extends SpMessagePayload {
-  constructor(public sessionId: number, public userName: string, public isAdmin: boolean) {
+  constructor(public sessionId: number, public userName: string, public isAdmin: boolean, public loginId: string, public loginEmail: string) {
     super();
   }
 }
 
 export class ParticipantRemovedSessionPayload extends SpMessagePayload {
-  constructor(public participantId: number, public userName: string, public sessionId: number) {
+  constructor(public participantId: number, public userName: string, public sessionId: number, public loginId: string, public loginEmail: string) {
     super();
   }
 }

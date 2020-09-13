@@ -35,6 +35,7 @@ import {Ballot} from "../vote-display/ballot-display.component";
 import {LocalStorageService} from '../services/local-storage.service';
 import {AppState, Session, SessionSettings} from '../services/local-storage.model';
 import {DefaultPointSelection, PointSelection} from "../point-selection/point-selection";
+import {UserService} from "../user.service";
 
 @Component({
   selector: 'app-active-session',
@@ -60,12 +61,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
               private socketService: SocketService,
               private themeService: ThemeService,
               private snackBar: MatSnackBar,
-              private localStorage: LocalStorageService) {
+              private localStorage: LocalStorageService,
+              private userService: UserService) {
   }
 
   getSessionName = () => this.session.sessionName;
-
-  // pull auth out into it's own service
 
   ngOnInit() {
     this.successSound = new Audio('assets/sounds/ohyeah.mp3');
@@ -107,8 +107,10 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   submit = () => {
+
     const vote = this.participant && this.participant.point ? this.participant.point as string : 'Abstain';
     const me = this.session.participants.find(p => p.participantId === this.participant.participantId);
+
     // ew, ew ew. need to keep "this.participant" up to date maybe - this is nasty
     this.socketService.send(
       new PointSubmittedForParticipantMessage(
@@ -160,13 +162,16 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   joinSession = (maybeNewParticipant: Participant, isAdmin: boolean = false) => {
     if (maybeNewParticipant) {
       this.participant = maybeNewParticipant;
+      const { id, email } = this.userService.getLoginUser();
 
       this.socketService.send(
         new ParticipantJoinedSessionMessage(
           new ParticipantJoinedSessionPayload(
             this.session.sessionId,
             maybeNewParticipant.participantName,
-            isAdmin
+            isAdmin,
+            id,
+            email
           )
         )
       );
@@ -174,12 +179,15 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   leaveSession = (_: Participant) => {
+    const { id, email } = this.userService.getLoginUser();
     this.socketService.send(
       new ParticipantRemovedSessionMessage(
         new ParticipantRemovedSessionPayload(
           this.participant.participantId,
           this.participant.participantName,
-          this.session.sessionId
+          this.session.sessionId,
+          id,
+          email
         )
       )
     );
@@ -273,8 +281,10 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
-    const {userName} = messageData.payload;
-    const itWasMe = this.wasItMe(userName);
+    //!!!!
+    console.log("??", messageData.payload)
+    const {userName, loginId} = messageData.payload;
+    const itWasMe = this.userService.isLoginUser(loginId);
     const message = itWasMe ? `You joined as ${userName}` : `${userName} joined.`;
 
     this.logs.unshift(message);
@@ -284,8 +294,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private participantRemoved = (messageData: ParticipantRemovedSessionMessage) => {
-    const {userName} = messageData.payload;
-    const itWasMe = this.wasItMe(userName);
+    const {userName, loginId} = messageData.payload;
+    const itWasMe = this.userService.isLoginUser(loginId);
     const message = itWasMe ? 'You left' : `${userName} left.`;
 
     if (itWasMe) {
@@ -296,11 +306,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.showInfoBar(message, 'warn');
     this.localStorage.removeUser(this.session && this.session.sessionId);
     this.updateSession(messageData);
-  };
-
-  private wasItMe = (userName: string): boolean => {
-    const yourName = this.participant ? this.participant.participantName : '';
-    return yourName === userName;
   };
 
   private recoverUser = (session: StoryPointSession): void => {

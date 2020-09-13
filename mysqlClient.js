@@ -65,7 +65,9 @@ getSessionState = (sessionId, onComplete) => {
         p.point,
         p.is_admin as isAdmin,
         p.has_voted as hasVoted,
-        p.has_revoted as hasAlreadyVoted
+        p.has_revoted as hasAlreadyVoted,
+        p.login_id as loginId,
+        p.login_email as loginEmail
         FROM sessions s, participant p
         WHERE s.id = ?
         AND s.id = p.session_id;
@@ -86,14 +88,14 @@ getSessionNameFor = (sessionId, onComplete) => {
   runQuery(statement, onComplete);
 }
 
-addParticipantToSession = (sessionId, userName, isAdmin, onComplete) => {
+addParticipantToSession = (sessionId, userName, isAdmin, loginId, loginEmail, onComplete) => {
   const sql = `
-        INSERT INTO participant (session_id, participant_name, point, is_admin)
+        INSERT INTO participant (session_id, participant_name, point, is_admin, login_id, login_email)
         VALUES
-        (?, ?, ?, ?);
+        (?, ?, ?, ?, ?, ?);
     `;
 
-  const statement = mysql.format(sql, [sessionId, userName, 0, isAdmin]);
+  const statement = mysql.format(sql, [sessionId, userName, 0, isAdmin, loginId, loginEmail]);
 
   runQuery(statement, onComplete);
 }

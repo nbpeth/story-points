@@ -35,3 +35,5 @@ ALTER TABLE sessions CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 ALTER TABLE participant CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 
 alter table participant add column has_revoted boolean;
+alter table participant add column login_id varchar(255);
+alter table participant add column login_email varchar(255);

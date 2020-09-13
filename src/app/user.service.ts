@@ -5,7 +5,7 @@ import {AuthService, GoogleLoginProvider} from "angularx-social-login";
   providedIn: 'root'
 })
 export class UserService {
-  user: User = {} as User;
+  private user: User = {} as User;
   loggedIn: boolean;
 
   constructor(private authService: AuthService) {
@@ -15,25 +15,30 @@ export class UserService {
     });
   }
 
-  login = () => {
-    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
-      .then(res => {
-        // console.log('login', res);
-      });
+  login() {
+    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
+
   }
 
-  logout = () => {
-    this.authService.signOut().then(res => {
-      // console.log('logout', res);
-    });
+  logout() {
+    this.authService.signOut();
   }
 
-  isLoggedIn = () => {
+  isLoggedIn() {
     return this.loggedIn;
   }
 
-  getUserDisplayName = () => {
+  getUserDisplayName() {
     return this.user.name;
+  }
+
+  getLoginUser(): User {
+    return this.user;
+  }
+
+  isLoginUser(loginId: string): boolean {
+    console.log(this.user.id === loginId, this.user.id, loginId)
+    return this.user.id === loginId;
   }
 }
 
@@ -45,6 +50,6 @@ export interface User {
   idToken: string;
   lastName: string;
   name: string;
-  photoUrl: string;
+  photoUrl: string; // neat!
   provider: string;
 }
