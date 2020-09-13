@@ -6,7 +6,10 @@
           <mat-icon>menu</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
-          <span>Logged in as {{userName()}}</span>
+          <div style="border-bottom: 1px solid white; padding: 5px;">
+          <span
+          >Logged in as {{userName()}}</span>
+          </div>
           <button *ngIf="isDashboard()" mat-menu-item (click)="create()">Create</button>
           <button mat-menu-item (click)="logout()">Sign Out</button>
         </mat-menu>
