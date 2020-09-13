@@ -43,8 +43,8 @@ import {JoinSessionDialogComponent} from './join-session-dialog/join-session-dia
 import {FormsModule} from '@angular/forms';
 import {AdminControlsComponent} from './admin-controls/admin-controls.component';
 import {VotingBoothComponent} from './voting-booth/voting-booth.component';
-import { BallotDisplayComponent } from './vote-display/ballot-display.component';
-import { ActivityLogComponent } from './activity-log/activity-log.component';
+import {BallotDisplayComponent} from './vote-display/ballot-display.component';
+import {ActivityLogComponent} from './activity-log/activity-log.component';
 import {AuthServiceConfig, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
 import {MatMenuModule} from "@angular/material/menu";
 //
@@ -102,14 +102,13 @@ import {MatMenuModule} from "@angular/material/menu";
     MatSnackBarModule,
     MatSidenavModule,
     MatSliderModule,
-    SocialLoginModule.initialize(new AuthServiceConfig([
-      {
-        id: GoogleLoginProvider.PROVIDER_ID,
-        provider: new GoogleLoginProvider('169440150514-6p8qrgf59kceaonb8qvpk10jam8gmaho.apps.googleusercontent.com')
-      },
-    ]))
-],
+    SocialLoginModule
+  ],
   providers: [
+    {
+      provide: AuthServiceConfig,
+      useFactory: provideConfig
+    },
     {provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig},
   ],
   bootstrap: [AppComponent],
@@ -132,3 +131,12 @@ export class AppModule {
   };
 }
 
+export function provideConfig() {
+  return (new AuthServiceConfig([
+      {
+        id: GoogleLoginProvider.PROVIDER_ID,
+        provider: new GoogleLoginProvider('169440150514-6p8qrgf59kceaonb8qvpk10jam8gmaho.apps.googleusercontent.com')
+      },
+    ])
+  );
+}
