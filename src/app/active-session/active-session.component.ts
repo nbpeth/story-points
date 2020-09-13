@@ -284,8 +284,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
-    //!!!!
-    console.log("??", messageData.payload)
     const {userName, loginId} = messageData.payload;
     const itWasMe = this.userService.isLoginUser(loginId);
     const message = itWasMe ? `You joined as ${userName}` : `${userName} joined.`;

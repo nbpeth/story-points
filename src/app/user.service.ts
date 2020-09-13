@@ -44,7 +44,6 @@ export class UserService {
   }
 
   isLoginUser(loginId: string): boolean {
-    console.log(this.user.id === loginId, this.user.id, loginId)
     return this.user.id === loginId;
   }
 }
