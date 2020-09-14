@@ -1,16 +1,13 @@
-<ng-template #login>
-  <div class="card-block">
-    <button class="btn btn-social-icon btn-google" (click)="signInWithGoogle()">
-      <span class="fa fa-google"></span></button>
-  </div>
-</ng-template>
-
-<div *ngIf="isLoggedIn(); else login" style="height: 100%" [ngClass]="{'dark-theme': isDarkTheme}">
+<div style="height: 100%" [ngClass]="{'dark-theme': isDarkTheme}">
 
   <div class="mat-app-background"
        [ngClass]="{'moon': nighttime, 'sun': daytime}"
        [ngStyle]="{'background-color': bgColor}">
     <app-titlebar></app-titlebar>
-    <router-outlet></router-outlet>
+    <ng-template #login>
+      <app-login></app-login>
+    </ng-template>
+
+    <router-outlet *ngIf="isLoggedIn(); else login"></router-outlet>
   </div>
 </div>

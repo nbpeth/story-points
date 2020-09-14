@@ -47,6 +47,7 @@ import {BallotDisplayComponent} from './vote-display/ballot-display.component';
 import {ActivityLogComponent} from './activity-log/activity-log.component';
 import {AuthServiceConfig, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
 import {MatMenuModule} from "@angular/material/menu";
+import { LoginComponent } from './login/login.component';
 //
 // const config =
 //
@@ -80,6 +81,7 @@ import {MatMenuModule} from "@angular/material/menu";
     VotingBoothComponent,
     BallotDisplayComponent,
     ActivityLogComponent,
+    LoginComponent,
   ],
   imports: [
     AppRoutingModule,

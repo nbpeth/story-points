@@ -30,6 +30,10 @@ export class TitlebarComponent implements OnInit {
     return this.router.url === '/';
   }
 
+  isLoggedIn() {
+    return this.userService.isLoggedIn();
+  }
+
   create = () => {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = false;

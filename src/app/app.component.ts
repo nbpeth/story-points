@@ -46,31 +46,12 @@ export class AppComponent implements OnInit {
     return this.userService.isLoggedIn();
   }
 
-  signInWithGoogle(): void {
-    this.userService.login();
-  }
-
   private setThemeFrom = (value: number) => {
     this.isDarkTheme = value <= 50;
     this.nighttime = value <= 20;
     this.daytime = value >= 99;
 
     this.bgColor = this.setBackgroundBrightnessFrom(value);
-
-    // if (this.daytime) {
-    //   this.music = new Audio('assets/sounds/twochords_and_a_glockenspiel.mp3');
-    //   this.music.loop = true;
-    //   this.music.play();
-    // } else if (this.nighttime) {
-    //   this.music = new Audio('assets/sounds/nighttime.mp3');
-    //   this.music.loop = true;
-    //   this.music.play();
-    // } else {
-    //   if (this.music) {
-    //     this.music.loop = false;
-    //     this.music.pause();
-    //   }
-    // }
   }
 
   private setBackgroundBrightnessFrom = (value: number): string => {
