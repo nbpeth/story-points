@@ -4,10 +4,17 @@
   justify-content: center;
   padding: 20px;
 
+  .dark-theme {
+    background-color: #444444;
+  }
+
+  .light-theme {
+    background-color: #DDDDDD;
+  }
+
   .form {
     padding: 10px;
     border-radius: 2px;
-    background-color: lightgray;
     text-align: center;
     box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px, rgba(0,0,0,0.09804) 0px 1px 2px 0px;
   }

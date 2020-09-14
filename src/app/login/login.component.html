@@ -1,5 +1,5 @@
 <div class="content">
-  <div class="form">
+  <div class="form" [ngClass]="{'light-theme': !isDarkTheme, 'dark-theme': isDarkTheme}">
     <div class="card-block">
       <button class="btn btn-social-icon btn-google" (click)="signInWithGoogle()">
         <span class="fa fa-google"></span></button>

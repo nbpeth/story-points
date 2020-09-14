@@ -16,6 +16,10 @@
   background-color: grey;
 }
 
+.my-card-dark {
+  background-color: grey;
+}
+
 .voted {
   background-color: #673ab7;
   color: white;
@@ -27,12 +31,6 @@
   animation-name: card-flip ;
   animation-duration: 1s;
   animation-iteration-count: 1;
-}
-
-
-
-.my-card-dark {
-  background-color: grey;
 }
 
 .voted-dark {
