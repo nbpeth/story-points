@@ -1,17 +1,26 @@
 <div class="content">
-
+  <control-panel
+    (participantJoined)="joinSession($event)"
+    (participantLeft)="leaveSession($event)"
+    (pointVisibilityEvent)="changePointVisibility($event)"
+    (voteSubmitted)="voteHasChanged($event)"
+    [sessionId]="session.sessionId"
+    [participant]="participant"
+    [logs]="logs"
+    [showLogs]="showLogs"
+  >
+  </control-panel>
   <div class="title">
     <h1>{{getSessionName()}}</h1>
   </div>
 
-
   <div class="active-session-body">
-    <div class="chart-container">
-      <vote-display *ngIf="session.pointsVisible"
-                    [ballots]="ballots"
-                    [pointSelection]="pointSelection"
-      ></vote-display>
-    </div>
+<!--    <div class="chart-container">-->
+<!--      <vote-display *ngIf="session.pointsVisible"-->
+<!--                    [ballots]="ballots"-->
+<!--                    [pointSelection]="pointSelection"-->
+<!--      ></vote-display>-->
+<!--    </div>-->
 
     <div class="user-tiles">
       <user-tiles>
@@ -24,19 +33,18 @@
 
     </div>
   </div>
-
 </div>
 
-<div class="toolbar mat-app-background ">
-  <control-panel
-    (participantJoined)="joinSession($event)"
-    (participantLeft)="leaveSession($event)"
-    (pointVisibilityEvent)="changePointVisibility($event)"
-    (voteSubmitted)="voteHasChanged($event)"
-    [sessionId]="session.sessionId"
-    [participant]="participant"
-    [logs]="logs"
-    [showLogs]="showLogs"
-  >
-  </control-panel>
-</div>
+<!--<div class="toolbar mat-app-background ">-->
+<!--  <control-panel-->
+<!--    (participantJoined)="joinSession($event)"-->
+<!--    (participantLeft)="leaveSession($event)"-->
+<!--    (pointVisibilityEvent)="changePointVisibility($event)"-->
+<!--    (voteSubmitted)="voteHasChanged($event)"-->
+<!--    [sessionId]="session.sessionId"-->
+<!--    [participant]="participant"-->
+<!--    [logs]="logs"-->
+<!--    [showLogs]="showLogs"-->
+<!--  >-->
+<!--  </control-panel>-->
+<!--</div>-->

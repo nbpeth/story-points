@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ThemeService} from './services/theme.service';
 import {UserService} from './user.service';
 
@@ -9,7 +9,7 @@ declare const confetti: any;
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit, OnChanges {
   isDarkTheme: boolean;
   bgColor: string;
 
@@ -30,7 +30,13 @@ export class AppComponent implements OnInit {
   ];
   konamiCount = 0;
 
-  constructor(private themeService: ThemeService, private userService: UserService) {
+  constructor(private elementRef: ElementRef, private themeService: ThemeService, private userService: UserService) {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty('bgColor')) {
+      this.setBackgroundColor();
+    }
   }
 
   ngOnInit() {
@@ -39,11 +45,34 @@ export class AppComponent implements OnInit {
       this.setThemeFrom(value);
 
       this.themeService.setDarkTheme(this.isDarkTheme);
+      this.setBackgroundColor();
     });
+  }
+
+  ngAfterViewInit() {
+    this.setBackgroundColor();
   }
 
   isLoggedIn() {
     return this.userService.isLoggedIn();
+  }
+
+  private setBackgroundColor() {
+    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = this.bgColor;
+
+    if(this.nighttime) {
+      this.elementRef.nativeElement.ownerDocument.body.classList.add('moon');
+    } else {
+      this.elementRef.nativeElement.ownerDocument.body.classList.remove('moon');
+    }
+
+    if(this.isDarkTheme) {
+      this.elementRef.nativeElement.ownerDocument.body.classList.add('dark-theme');
+
+    } else {
+      this.elementRef.nativeElement.ownerDocument.body.classList.remove('dark-theme');
+
+    }
   }
 
   private setThemeFrom = (value: number) => {
