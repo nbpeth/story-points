@@ -16,6 +16,7 @@ export class UserService {
       this.user = user;
       this.userChanged.next(user);
       this.loggedIn = (user != null);
+      console.log(this.user)
     });
   }
 

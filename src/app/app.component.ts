@@ -14,8 +14,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnChanges {
   bgColor: string;
 
   nighttime: boolean;
-  daytime: boolean;
 
+  // should be a service
   konami = [
     'ArrowUp',
     'ArrowUp',
@@ -59,27 +59,27 @@ export class AppComponent implements OnInit, AfterViewInit, OnChanges {
 
   private setBackgroundColor() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = this.bgColor;
+    this.toggleClassTheme();
+  }
 
-    if(this.nighttime) {
+  private toggleClassTheme() {
+    if (this.nighttime) {
       this.elementRef.nativeElement.ownerDocument.body.classList.add('moon');
     } else {
       this.elementRef.nativeElement.ownerDocument.body.classList.remove('moon');
     }
 
-    if(this.isDarkTheme) {
+    if (this.isDarkTheme) {
       this.elementRef.nativeElement.ownerDocument.body.classList.add('dark-theme');
 
     } else {
       this.elementRef.nativeElement.ownerDocument.body.classList.remove('dark-theme');
-
     }
   }
 
   private setThemeFrom = (value: number) => {
     this.isDarkTheme = value <= 50;
     this.nighttime = value <= 20;
-    this.daytime = value >= 99;
-
     this.bgColor = this.setBackgroundBrightnessFrom(value);
   }
 

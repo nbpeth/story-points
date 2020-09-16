@@ -1,27 +1,31 @@
 <div class="content">
-  <control-panel
-    (participantJoined)="joinSession($event)"
-    (participantLeft)="leaveSession($event)"
-    (pointVisibilityEvent)="changePointVisibility($event)"
-    (voteSubmitted)="voteHasChanged($event)"
-    [sessionId]="session.sessionId"
-    [participant]="participant"
-    [logs]="logs"
-    [showLogs]="showLogs"
-  >
-  </control-panel>
-  <div class="title">
-    <h1>{{getSessionName()}}</h1>
+  <div class="left">
+    <control-panel
+      [logs]="logs"
+    ></control-panel>
+<!--    <mat-drawer-container class="example-container" autosize style="height:100%">-->
+<!--      <mat-drawer #drawer class="example-sidenav" mode="side">-->
+<!--        <div style="display: flex; flex-direction: column">-->
+<!--          <div>-->
+<!--            <mat-icon>add</mat-icon>-->
+<!--            Join-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <mat-icon>close</mat-icon>-->
+<!--            Bail-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </mat-drawer>-->
+
+<!--      <div class="example-sidenav-content">-->
+<!--        <button type="button" mat-button (click)="drawer.toggle()">-->
+<!--          <mat-icon>settings</mat-icon>-->
+<!--        </button>-->
+<!--      </div>-->
+
+<!--    </mat-drawer-container>-->
   </div>
-
-  <div class="active-session-body">
-<!--    <div class="chart-container">-->
-<!--      <vote-display *ngIf="session.pointsVisible"-->
-<!--                    [ballots]="ballots"-->
-<!--                    [pointSelection]="pointSelection"-->
-<!--      ></vote-display>-->
-<!--    </div>-->
-
+  <div class="right">
     <div class="user-tiles">
       <user-tiles>
         <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter"
@@ -33,18 +37,53 @@
 
     </div>
   </div>
-</div>
 
-<!--<div class="toolbar mat-app-background ">-->
-<!--  <control-panel-->
-<!--    (participantJoined)="joinSession($event)"-->
-<!--    (participantLeft)="leaveSession($event)"-->
-<!--    (pointVisibilityEvent)="changePointVisibility($event)"-->
-<!--    (voteSubmitted)="voteHasChanged($event)"-->
-<!--    [sessionId]="session.sessionId"-->
-<!--    [participant]="participant"-->
-<!--    [logs]="logs"-->
-<!--    [showLogs]="showLogs"-->
-<!--  >-->
-<!--  </control-panel>-->
-<!--</div>-->
+  <!--  <control-panel-->
+  <!--    (participantJoined)="joinSession($event)"-->
+  <!--    (participantLeft)="leaveSession($event)"-->
+  <!--    (pointVisibilityEvent)="changePointVisibility($event)"-->
+  <!--    (voteSubmitted)="voteHasChanged($event)"-->
+  <!--    [sessionId]="session.sessionId"-->
+  <!--    [participant]="participant"-->
+  <!--    [logs]="logs"-->
+  <!--    [showLogs]="showLogs"-->
+  <!--  >-->
+  <!--  </control-panel>-->
+  <!--  <div class="title">-->
+  <!--    <h1>{{getSessionName()}}</h1>-->
+  <!--  </div>-->
+
+  <!--  <div class="active-session-body">-->
+  <!--&lt;!&ndash;    <div class="chart-container">&ndash;&gt;-->
+  <!--&lt;!&ndash;      <vote-display *ngIf="session.pointsVisible"&ndash;&gt;-->
+  <!--&lt;!&ndash;                    [ballots]="ballots"&ndash;&gt;-->
+  <!--&lt;!&ndash;                    [pointSelection]="pointSelection"&ndash;&gt;-->
+  <!--&lt;!&ndash;      ></vote-display>&ndash;&gt;-->
+  <!--&lt;!&ndash;    </div>&ndash;&gt;-->
+
+  <!--    <div class="user-tiles">-->
+  <!--      <user-tiles>-->
+  <!--        <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter"-->
+  <!--                   [participant]="participant"-->
+  <!--                   [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"-->
+  <!--                   [myCard]="isMyCard(participant)">-->
+  <!--        </user-tile>-->
+  <!--      </user-tiles>-->
+
+  <!--    </div>-->
+  <!--  </div>-->
+  <!--</div>-->
+
+  <!--<div class="toolbar mat-app-background ">-->
+  <!--  <control-panel-->
+  <!--    (participantJoined)="joinSession($event)"-->
+  <!--    (participantLeft)="leaveSession($event)"-->
+  <!--    (pointVisibilityEvent)="changePointVisibility($event)"-->
+  <!--    (voteSubmitted)="voteHasChanged($event)"-->
+  <!--    [sessionId]="session.sessionId"-->
+  <!--    [participant]="participant"-->
+  <!--    [logs]="logs"-->
+  <!--    [showLogs]="showLogs"-->
+  <!--  >-->
+  <!--  </control-panel>-->
+</div>

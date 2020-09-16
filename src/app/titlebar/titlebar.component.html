@@ -1,20 +1,24 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
     <div class="items" *ngIf="isLoggedIn()">
-      <div>
-        <button mat-button [matMenuTriggerFor]="menu">
-          <mat-icon>menu</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-          <div style="border-bottom: 1px solid white; padding: 5px;">
-          <span>
-            Logged in as {{user.firstName}}
-          </span>
-          </div>
-          <button *ngIf="isDashboard()" mat-menu-item (click)="create()">Create</button>
-          <button mat-menu-item (click)="logout()">Sign Out</button>
-        </mat-menu>
-      </div>
+      <app-logged-in-user>
+
+      </app-logged-in-user>
+<!--      <div style="border-radius: 50px;">-->
+<!--        <img height="40" width="40" src="{{imageUrl()}}}">-->
+<!--        <button mat-button [matMenuTriggerFor]="menu">-->
+<!--          <mat-icon>menu</mat-icon>-->
+<!--        </button>-->
+<!--        <mat-menu #menu="matMenu">-->
+<!--          <div style="border-bottom: 1px solid white; padding: 5px;">-->
+<!--          <span>-->
+<!--            Logged in as {{user.firstName}}-->
+<!--          </span>-->
+<!--          </div>-->
+<!--          <button *ngIf="isDashboard()" mat-menu-item (click)="create()">Create</button>-->
+<!--          <button mat-menu-item (click)="logout()">Sign Out</button>-->
+<!--        </mat-menu>-->
+<!--      </div>-->
       <span>
         <h1>
           <a [routerLink]="['']">

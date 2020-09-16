@@ -33,6 +33,14 @@ export class ControlPanelComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    // for(let i = 0; i< 50; i++ ){
+    //   this.logs.push("Welcome! " + i)
+    // }
+    // this.logs.push("Really long messages Really long messagesReally long messagesReally long messagesReally long messagesReally long messagesReally long messagesReally long messagesReally long messagesReally long messagesReally long messages")
+    // this.logs = this.logs.reverse()
+
+
     this.localStorage.stateEventStream()
       .subscribe((state: AppState) => {
         const maybeSession = state.getSessionBy(this.sessionId);

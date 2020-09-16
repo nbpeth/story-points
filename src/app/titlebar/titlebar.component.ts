@@ -56,4 +56,9 @@ export class TitlebarComponent implements OnInit {
   logout() {
     this.userService.logout();
   }
+
+  imageUrl() {
+    console.log(this.user.photoUrl)
+    return this.user.photoUrl;
+  }
 }

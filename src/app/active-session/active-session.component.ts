@@ -34,7 +34,6 @@ import {PointVisibilityChange} from "../control-panel/control-panel.component";
 import {Ballot} from "../vote-display/ballot-display.component";
 import {LocalStorageService} from '../services/local-storage.service';
 import {AppState, Session, SessionSettings} from '../services/local-storage.model';
-import {DefaultPointSelection, PointSelection} from "../point-selection/point-selection";
 import {UserService} from "../user.service";
 
 @Component({
@@ -48,7 +47,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   logs: string[] = [];
   showLogs: boolean;
   ballots: Ballot[] = [];
-  pointSelection: PointSelection = new DefaultPointSelection();
+  // pointSelection: PointSelection = new DefaultPointSelection();
 
   participant: Participant;
   isDarkTheme: boolean;
@@ -216,6 +215,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   private setSessionName = (messageData: GetSessionNameMessage) => {
     this.session.sessionName = messageData.payload.sessionName;
+    console.log("---", messageData)
+    this.logs.push(`Welcome to ${this.session.sessionName}`);
   };
 
   private eventsOnlyForThisSession = (message: SpMessage): boolean => {
