@@ -35,6 +35,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.socketService.close();
   }
 
+  createNewSession = (newSessionName: string) => {
+    const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));
+    this.socketService.send(message);
+  };
+
   searchBoxValueChanged = (value: string) => {
     this.sessionSearchTerm = value;
     this.applySearchFilter();

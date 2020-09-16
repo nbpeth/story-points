@@ -1,6 +1,9 @@
 <div *ngIf="userService.userChanges() | async as user">
   <img [matMenuTriggerFor]="menu" height="40" width="40" src="{{user.photoUrl}}" class="photo">
   <mat-menu #menu="matMenu">
+    <div class="items">
+    <span class="greeting">Oh hey, {{user.name}}</span>
     <span class="button" (click)="logout()">Sign Out</span>
+    </div>
   </mat-menu>
 </div>

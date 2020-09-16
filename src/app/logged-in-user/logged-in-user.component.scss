@@ -4,8 +4,22 @@
   border: 1px solid white;
 }
 
-.button {
-  padding: 10px;
-  cursor: pointer;
+.items {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 10px 5px 10px;
+
+  .greeting {
+    color: #DDDDDD;
+    padding-bottom: 5px;
+    border-bottom: 1px solid grey;
+  }
+
+  .button {
+    padding-top: 5px;
+    cursor: pointer;
+  }
+
+
 }
 
