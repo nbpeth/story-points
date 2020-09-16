@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {User, UserService} from "../user.service";
+import {Component, OnInit} from '@angular/core';
+import {UserService} from "../user.service";
 
 @Component({
   selector: 'app-logged-in-user',
@@ -11,6 +11,10 @@ export class LoggedInUserComponent implements OnInit {
   constructor(public userService: UserService) { }
 
   ngOnInit() {
+  }
+
+  logout() {
+    this.userService.logout();
   }
 
 }
