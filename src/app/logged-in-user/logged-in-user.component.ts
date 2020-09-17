@@ -7,8 +7,8 @@ import {UserService} from "../user.service";
   styleUrls: ['./logged-in-user.component.scss']
 })
 export class LoggedInUserComponent implements OnInit {
-
-  constructor(public userService: UserService) { }
+  constructor(public userService: UserService) {
+  }
 
   ngOnInit() {
   }
@@ -16,5 +16,4 @@ export class LoggedInUserComponent implements OnInit {
   logout() {
     this.userService.logout();
   }
-
 }

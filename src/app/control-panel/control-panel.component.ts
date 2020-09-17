@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {Participant} from '../active-session/model/session.model';
 import {MatDialog, MatDialogConfig, MatRadioChange} from '@angular/material';
 import {JoinSessionDialogComponent} from '../join-session-dialog/join-session-dialog.component';
@@ -11,7 +11,7 @@ import {AppState} from "../services/local-storage.model";
   templateUrl: './control-panel.component.html',
   styleUrls: ['./control-panel.component.scss']
 })
-export class ControlPanelComponent implements OnInit {
+export class ControlPanelComponent implements OnInit, OnChanges {
   @Input() sessionId: number;
   @Input() participant: Participant;
   @Input() logs: string[];
@@ -31,16 +31,10 @@ export class ControlPanelComponent implements OnInit {
   constructor(private dialog: MatDialog,
               private localStorage: LocalStorageService) {
   }
+  ngOnChanges(changes: any) {
+  }
 
   ngOnInit(): void {
-
-    // for(let i = 0; i< 50; i++ ){
-    //   this.logs.push("Welcome! " + i)
-    // }
-    // this.logs.push("Really long messages Really long messagesReally long messagesReally long messagesReally long messagesReally long messagesReally long messagesReally long messagesReally long messagesReally long messagesReally long messages")
-    // this.logs = this.logs.reverse()
-
-
     this.localStorage.stateEventStream()
       .subscribe((state: AppState) => {
         const maybeSession = state.getSessionBy(this.sessionId);

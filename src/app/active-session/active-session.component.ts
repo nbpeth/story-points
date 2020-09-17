@@ -35,6 +35,7 @@ import {Ballot} from "../vote-display/ballot-display.component";
 import {LocalStorageService} from '../services/local-storage.service';
 import {AppState, Session, SessionSettings} from '../services/local-storage.model';
 import {UserService} from "../user.service";
+import {DefaultPointSelection, PointSelection} from "../point-selection/point-selection";
 
 @Component({
   selector: 'app-active-session',
@@ -45,9 +46,10 @@ import {UserService} from "../user.service";
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
   logs: string[] = [];
+  // logs: string[] = [];
   showLogs: boolean;
   ballots: Ballot[] = [];
-  // pointSelection: PointSelection = new DefaultPointSelection();
+  pointSelection: PointSelection = new DefaultPointSelection();
 
   participant: Participant;
   isDarkTheme: boolean;
@@ -161,7 +163,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   joinSession = (maybeNewParticipant: Participant, isAdmin: boolean = false) => {
     if (maybeNewParticipant) {
       this.participant = maybeNewParticipant;
-      const { id, email } = this.userService.getLoginUser();
+      const {id, email} = this.userService.getLoginUser();
 
       this.socketService.send(
         new ParticipantJoinedSessionMessage(
@@ -178,7 +180,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   leaveSession = (_: Participant) => {
-    const { id, email } = this.userService.getLoginUser();
+    const {id, email} = this.userService.getLoginUser();
     this.socketService.send(
       new ParticipantRemovedSessionMessage(
         new ParticipantRemovedSessionPayload(
@@ -193,7 +195,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   isMyCard = (card: Participant) => {
-    const { id } = this.userService.getLoginUser();
+    const {id} = this.userService.getLoginUser();
     return card && card.loginId === id;
   }
 
@@ -215,7 +217,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   private setSessionName = (messageData: GetSessionNameMessage) => {
     this.session.sessionName = messageData.payload.sessionName;
-    console.log("---", messageData)
     this.logs.push(`Welcome to ${this.session.sessionName}`);
   };
 
@@ -278,7 +279,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.session.setName(previousName);
 
     if (!this.participant) {
-      this.recoverUser(session);
+      this.recoverUser(messageData);
     }
     this.refreshParticipants(session);
   };
@@ -309,11 +310,15 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.updateSession(messageData);
   };
 
-  private recoverUser = (session: StoryPointSession): void => {
-    const maybeRecoveredUserEntry = this.localStorage.getSession(session && session.sessionId);
+  private recoverUser = (messageData: GetStateForSessionMessage | ParticipantJoinedSessionMessage): void => {
 
-    if (maybeRecoveredUserEntry) {
-      this.participant = Object.assign(new Participant(), maybeRecoveredUserEntry);
+    const participants = messageData.payload.participants;
+    const me = participants.find((p: Participant) => {
+      return p.loginId === this.userService.getLoginUser().id;
+    });
+
+    if (me) {
+      this.participant = me;
     }
   };
 

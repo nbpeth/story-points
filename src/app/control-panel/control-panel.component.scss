@@ -2,56 +2,56 @@
 .container {
   display: flex;
   height: 100%;
-  //justify-content: space-between;
+  width: 100%;
+  justify-content: space-between;
+
+  .settings-items {
+    flex-direction: column;
+    .item {
+      padding: 10px
+    }
+  }
+
+  .options-container {
+    height: 100%;
+    border: 0;
+  }
+
+  .options-content {
+    text-align: left;
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: flex-start;
+  }
+
+  .options-sidenav {
+    font-size: small;
+    padding: 5px;
+  }
+
+  .mat-icon {
+    padding-right: 10px;
+  }
+
+  .content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .other-controls {
+    display: flex;
+  }
+
+  .event-log {
+    //height: 100%;
+     width: 25%;
+  }
+
 }
 
-//  .settings-items {
-//    flex-direction: column;
-//    .item {
-//      padding: 10px
-//    }
-//  }
-//
-//  .options-container {
-//    height: 100%;
-//    border: 0;
-//  }
-//
-//  .options-content {
-//    text-align: left;
-//    flex-wrap: wrap;
-//    display: flex;
-//    flex-direction: column;
-//    height: 100%;
-//    align-items: flex-start;
-//  }
-//
-//  .options-sidenav {
-//    font-size: small;
-//    padding: 5px;
-//  }
-//
-//  .mat-icon {
-//    padding-right: 10px;
-//  }
-//
-//  .content {
-//    width: 100%;
-//    display: flex;
-//    justify-content: space-between;
-//  }
-//
-//  .other-controls {
-//    display: flex;
-//  }
-//
-  .event-log {
-    min-height: 20%;
-    //height: 20%;
-  }
-//
-//}
-//
-//.spacing {
-//  margin-right: 5px;
-//}
+.spacing {
+  margin-right: 5px;
+}

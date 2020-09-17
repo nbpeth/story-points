@@ -6,7 +6,7 @@ import {Component, Input} from '@angular/core';
   styleUrls: ['./activity-log.component.scss']
 })
 export class ActivityLogComponent  {
-  @Input() logs: string[];
+  @Input() logs: any;
 
 
 }

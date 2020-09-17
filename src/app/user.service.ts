@@ -8,15 +8,13 @@ import {BehaviorSubject, Observable} from "rxjs";
 export class UserService {
   private user: User = {} as User;
   private userChanged: BehaviorSubject<User> = new BehaviorSubject<User>(this.user);
-  loggedIn: boolean;
+  loggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(private authService: AuthService) {
-
     this.authService.authState.subscribe((user) => {
       this.user = user;
       this.userChanged.next(user);
-      this.loggedIn = (user != null);
-      console.log(this.user)
+      this.loggedIn.next(user != null);
     });
   }
 
@@ -32,8 +30,8 @@ export class UserService {
     this.authService.signOut();
   }
 
-  isLoggedIn() {
-    return this.loggedIn;
+  isLoggedIn(): Observable<boolean> {
+    return this.loggedIn.asObservable();
   }
 
   getUserDisplayName() {
@@ -57,6 +55,6 @@ export interface User {
   idToken: string;
   lastName: string;
   name: string;
-  photoUrl: string; // neat!
+  photoUrl: string;
   provider: string;
 }

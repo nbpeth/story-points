@@ -1,90 +1,67 @@
+<div class="container">
 
-<!--<mat-drawer-container class="side-nav-container" autosize style="height:100%">-->
-<!--  <mat-drawer #drawer class="sidenav" mode="side" position="end">-->
-<!--    <div style="display: flex; flex-direction: column">-->
-<!--      <div>-->
-<!--        <mat-icon>add</mat-icon>-->
-<!--        Join-->
-<!--      </div>-->
-<!--      <div>-->
-<!--        <mat-icon>close</mat-icon>-->
-<!--        Bail-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </mat-drawer>-->
+  <mat-drawer-container class="options-container" autosize>
+    <mat-drawer #menu class="options-sidenav" mode="side">
+      <div class="settings-items">
 
-<!--  <div class="example-sidenav-content">-->
-<!--    <button type="button" mat-button (click)="drawer.toggle()">-->
-<!--      <mat-icon>settings</mat-icon>-->
-<!--    </button>-->
-<!--  </div>-->
-
-<!--</mat-drawer-container>-->
+        <div class="item">Control Panel</div>
+        <div>
+          <mat-checkbox class="item" (change)="setShowAdminConsole($event)" id="showAdminConsole"
+                        [(ngModel)]="showAdminConsole">
+            Point Controls
+          </mat-checkbox>
+        </div>
+        <div>
+          <mat-checkbox class="item" (change)="setShowEventLog($event)" id="eventLog" [(ngModel)]="showEventLog">
+            Event Log
+          </mat-checkbox>
+        </div>
 
 
-<!--<div class="container">-->
+      </div>
+    </mat-drawer>
 
-<!--  <mat-drawer-container class="options-container" autosize>-->
-<!--    <mat-drawer #menu class="options-sidenav" mode="side">-->
-<!--      <div class="settings-items">-->
+    <div class="options-content">
+      <button type="button" mat-button (click)="menu.toggle()">
+        <mat-icon>settings</mat-icon>
+        Settings
+      </button>
 
-<!--        <div class="item">Control Panel</div>-->
-<!--        <div>-->
-<!--          <mat-checkbox class="item" (change)="setShowAdminConsole($event)" id="showAdminConsole"-->
-<!--                        [(ngModel)]="showAdminConsole">-->
-<!--            Point Controls-->
-<!--          </mat-checkbox>-->
-<!--        </div>-->
-<!--        <div>-->
-<!--          <mat-checkbox class="item" (change)="setShowEventLog($event)" id="eventLog" [(ngModel)]="showEventLog">-->
-<!--            Event Log-->
-<!--          </mat-checkbox>-->
-<!--        </div>-->
+      <ng-container *ngIf="!participant; else leaveSessionButton">
+        <button type="button" mat-button (click)="joinSession()">
+          <mat-icon>add</mat-icon>
+          Join
+        </button>
+      </ng-container>
 
+      <ng-template #leaveSessionButton>
+        <button type="button" mat-button (click)="leaveSession()">
+          <mat-icon>close</mat-icon>
+          Bail
+        </button>
+      </ng-template>
 
-<!--      </div>-->
-<!--    </mat-drawer>-->
+    </div>
+  </mat-drawer-container>
 
-<!--    <div class="options-content">-->
-<!--      <button type="button" mat-button (click)="menu.toggle()">-->
-<!--        <mat-icon>settings</mat-icon>-->
-<!--        Settings-->
-<!--      </button>-->
+  <div>
+    <admin-controls *ngIf="showAdminConsole"
+                    (pointVisibilityEvent)="changePointVisibility($event)">
+    </admin-controls>
+  </div>
+  <div>
+    <voting-booth *ngIf="participant"
+                  [votingScheme]="votingScheme"
+                  (voteSubmitted)="submitVote($event)">
 
-<!--      <ng-container *ngIf="!participant; else leaveSessionButton">-->
-<!--        <button type="button" mat-button (click)="joinSession()">-->
-<!--          <mat-icon>add</mat-icon>-->
-<!--          Join-->
-<!--        </button>-->
-<!--      </ng-container>-->
-
-<!--      <ng-template #leaveSessionButton>-->
-<!--        <button type="button" mat-button (click)="leaveSession()">-->
-<!--          <mat-icon>close</mat-icon>-->
-<!--          Bail-->
-<!--        </button>-->
-<!--      </ng-template>-->
-
-<!--    </div>-->
-<!--  </mat-drawer-container>-->
-
-<!--  <div>-->
-<!--    <admin-controls *ngIf="showAdminConsole"-->
-<!--                    (pointVisibilityEvent)="changePointVisibility($event)">-->
-<!--    </admin-controls>-->
-<!--  </div>-->
-<!--  <div>-->
-<!--    <voting-booth *ngIf="participant"-->
-<!--                  [votingScheme]="votingScheme"-->
-<!--                  (voteSubmitted)="submitVote($event)">-->
-
-<!--    </voting-booth>-->
-<!--  </div>-->
-  <div class="event-log mat-app-background">
+    </voting-booth>
+  </div>
+  <div *ngIf="showEventLog" class="event-log">
     <activity-log
       [logs]="logs"
     ></activity-log>
+
   </div>
 
 
-<!--</div>-->
+</div>

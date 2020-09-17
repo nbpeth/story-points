@@ -1,8 +1,14 @@
-<mat-form-field>
-  <mat-select (selectionChange)="voteHasChanged($event)">
-    <mat-option *ngFor="let option of pointSelection.options" [value]="option">
-      {{option}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-<button class="spacing" name="smutButton" mat-stroked-button color="basic" (click)="submitVote()">Cast Vote</button>
+<div style="display: flex">
+  <div>
+    <mat-form-field>
+      <mat-select (selectionChange)="voteHasChanged($event)">
+        <mat-option *ngFor="let option of pointSelection.options" [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div>
+    <button class="spacing" name="smutButton" mat-stroked-button color="basic" (click)="submitVote()">Cast Vote</button>
+  </div>
+</div>
