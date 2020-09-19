@@ -1,9 +1,12 @@
 <div class="mat-app-background">
-  <app-titlebar></app-titlebar>
+  <div style="height:5%;">
+    <app-titlebar></app-titlebar>
+  </div>
 
   <ng-template #login>
     <app-login></app-login>
   </ng-template>
-
-  <router-outlet *ngIf="isLoggedIn() | async; else login"></router-outlet>
+  <div style="height:95%;">
+    <router-outlet *ngIf="isLoggedIn() | async; else login"></router-outlet>
+  </div>
 </div>

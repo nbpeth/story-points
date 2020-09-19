@@ -1,20 +1,22 @@
-<mat-toolbar color="primary">
-  <mat-toolbar-row>
-    <div class="items" *ngIf="isLoggedIn()">
-      <app-logged-in-user>
-      </app-logged-in-user>
-      <span>
+<div style="height: 100%">
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <div class="items" *ngIf="isLoggedIn()">
+        <app-logged-in-user>
+        </app-logged-in-user>
+        <span>
         <h1>
           <a [routerLink]="['']">
               Story Points
           </a>
         </h1>
       </span>
-    </div>
-    <div class="items icons">
+      </div>
+      <div class="items icons">
       <span>
         <app-theme-toggle></app-theme-toggle>
       </span>
-    </div>
-  </mat-toolbar-row>
-</mat-toolbar>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</div>

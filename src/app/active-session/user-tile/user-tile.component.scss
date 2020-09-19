@@ -53,6 +53,19 @@
   //animation-iteration-count: infinite;
 }
 
+
+.glow {
+  animation: glowing 5000ms infinite;
+}
+
+@keyframes glowing {
+  0% { box-shadow: 0 0 -10px #ffffff; }
+  40% { box-shadow: 0 0 20px #ffffff; }
+  60% { box-shadow: 0 0 20px #ffffff; }
+  60% { box-shadow: 0 0 20px #ffffff; }
+  100% { box-shadow: 0 0 -10px #ffffff; }
+}
+
 @keyframes card-flip {
   100% {transform: rotateY(360deg);} // show points at end of flip?
 }

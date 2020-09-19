@@ -1,4 +1,4 @@
-<div style="display: flex; flex-direction: column">
+<div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%">
   <div style="width:100%; display: flex; justify-content: center" class="mat-app-background">
     <div style="padding: 20px" *ngIf="session && session.sessionName">
       <h3>{{session.sessionName}}</h3>
@@ -19,7 +19,7 @@
 
   </div>
 
-  <div class="toolbar mat-app-background ">
+  <div class="toolbar mat-app-background">
     <control-panel
       (participantJoined)="joinSession($event)"
       (participantLeft)="leaveSession($event)"

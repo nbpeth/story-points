@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {Participant} from '../active-session/model/session.model';
-import {MatDialog, MatDialogConfig, MatRadioChange} from '@angular/material';
 import {LocalStorageService} from '../services/local-storage.service';
 import {DefaultPointSelection, PointSelection} from "../point-selection/point-selection";
 import {AppState} from "../services/local-storage.model";
@@ -28,13 +27,11 @@ export class ControlPanelComponent implements OnInit, OnChanges {
 
   @Output() pointSelectionChanged = new EventEmitter<PointSelection>();
 
-  constructor(private dialog: MatDialog,
-              private userService: UserService,
+  constructor(private userService: UserService,
               private localStorage: LocalStorageService) {
   }
 
   ngOnChanges(changes: any) {
-    console.log("you?", this.participant)
   }
 
   ngOnInit(): void {
@@ -55,12 +52,6 @@ export class ControlPanelComponent implements OnInit, OnChanges {
     const you = this.userService.getLoginUser();
     const youAsAParticipantOfThisSession = new Participant(you.firstName);
     this.participantJoined.emit(youAsAParticipantOfThisSession);
-
-    // const dialogRef = this.dialog.open(JoinSessionDialogComponent, this.getDialogConfig());
-    //
-    // dialogRef.afterClosed().subscribe((participant: Participant) => {
-    //   this.participantJoined.emit(participant);
-    // });
   };
 
   leaveSession = () => {
@@ -83,20 +74,6 @@ export class ControlPanelComponent implements OnInit, OnChanges {
     this.localStorage.setShowEventLog(this.sessionId, event.checked);
   };
 
-  votingSchemeChanged = (event: MatRadioChange) => {
-    this.votingScheme = event.value;
-    // this.pointSelectionChanged.emit(DefaultPointSelection);
-  };
-
-  private getDialogConfig = () => {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = false;
-    dialogConfig.autoFocus = true;
-    dialogConfig.data = {
-      participant: 'Identify Yourself!'
-    };
-    return dialogConfig;
-  };
 }
 
 export declare type PointVisibilityChange = 'reset' | 'reveal' | 'hide';
