@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {UserService} from "../user.service";
 
 @Component({
@@ -7,6 +7,8 @@ import {UserService} from "../user.service";
   styleUrls: ['./logged-in-user.component.scss']
 })
 export class LoggedInUserComponent implements OnInit {
+  @Input() enableMenu = true;
+
   constructor(public userService: UserService) {
   }
 

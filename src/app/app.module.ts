@@ -49,6 +49,8 @@ import {AuthServiceConfig, GoogleLoginProvider, SocialLoginModule} from 'angular
 import {MatMenuModule} from "@angular/material/menu";
 import { LoginComponent } from './login/login.component';
 import { LoggedInUserComponent } from './logged-in-user/logged-in-user.component';
+import {UserService} from "./user.service";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -82,6 +84,7 @@ import { LoggedInUserComponent } from './logged-in-user/logged-in-user.component
     BrowserModule,
     DragDropModule,
     FormsModule,
+    HttpClientModule,
     MatToolbarModule,
     MatCheckboxModule,
     MatCardModule,
@@ -100,6 +103,7 @@ import { LoggedInUserComponent } from './logged-in-user/logged-in-user.component
     SocialLoginModule
   ],
   providers: [
+    UserService,
     {
       provide: AuthServiceConfig,
       useFactory: provideConfig

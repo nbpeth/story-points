@@ -67,10 +67,14 @@ getSessionState = (sessionId, onComplete) => {
         p.has_voted as hasVoted,
         p.has_revoted as hasAlreadyVoted,
         p.login_id as loginId,
-        p.login_email as loginEmail
-        FROM sessions s, participant p
+        p.login_email as loginEmail,
+        u.photo_url as photoUrl,
+        u.first_name as firstName,
+        u.last_name as lastName
+        FROM sessions s, participant p, user u
         WHERE s.id = ?
-        AND s.id = p.session_id;
+        AND s.id = p.session_id
+        AND p.login_id = u.provider_id;
     `;
 
   const statement = mysql.format(sql, [sessionId]);
@@ -143,6 +147,27 @@ revealPointsForSession = (sessionId, onComplete) => {
   runQuery(statement, onComplete);
 }
 
+createUser = (user, onComplete) => {
+  const { firstName, lastName, id, name, photoUrl, provider } = user;
+  if(!id || !provider) {
+    // didn't write user
+    onComplete();
+  } else {
+    const sql = `
+        INSERT INTO USER
+        (first_name, last_name, provider_id, name, photo_url, provider, date_joined, updated)
+        VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+        first_name = ?, last_name = ?, name = ?, photo_url = ?, provider = ?, updated = ?
+    `
+    const now = new Date();
+    const statement = mysql.format(sql, [firstName, lastName, id, name, photoUrl, provider, now, now, firstName, lastName, name, photoUrl, provider, now]);
+
+    runQuery(statement, onComplete);
+  }
+}
+
 module.exports = {
   initDB: initDB,
   getAllSessions: getAllSessions,
@@ -155,4 +180,5 @@ module.exports = {
   pointWasSubmitted: pointWasSubmitted,
   resetPointsForSession: resetPointsForSession,
   revealPointsForSession: revealPointsForSession,
+  createUser: createUser,
 }

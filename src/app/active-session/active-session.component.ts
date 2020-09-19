@@ -46,10 +46,10 @@ import {DefaultPointSelection, PointSelection} from "../point-selection/point-se
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
   logs: string[] = [];
-  // logs: string[] = [];
   showLogs: boolean;
   ballots: Ballot[] = [];
   pointSelection: PointSelection = new DefaultPointSelection();
+  firstReveal: boolean;
 
   participant: Participant;
   isDarkTheme: boolean;
@@ -110,8 +110,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   submit = () => {
 
     const vote = this.participant && this.participant.point ? this.participant.point as string : 'Abstain';
-    const me = this.session.participants.find(p => p.participantId === this.participant.participantId);
-
+    const me = this.session.participants.find(p => p.loginId === this.participant.loginId);
     // ew, ew ew. need to keep "this.participant" up to date maybe - this is nasty
     this.socketService.send(
       new PointSubmittedForParticipantMessage(
@@ -127,7 +126,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   voteHasChanged = (vote: MatSelectChange) => {
-    this.participant.setPoint(vote.value);
+    this.participant.point = vote.value;
     this.submit();
   };
 
@@ -233,17 +232,18 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private setUserIfAlreadyJoined = () => {
-    const user = this.localStorage.getUser(this.session.sessionId);
-    if (user && user.participantName !== undefined) {
-      this.participant =
-        new Participant(user.participantName, user.participantId, user.point, user.hasVoted, user.isAdmin, user.pointsVisible);
-    }
+    const loggedInUser = this.userService.getLoginUser();
+    const maybeYou = this.session.participants.find((p, i) => {
+      return p.loginId === loggedInUser.id && p.loginEmail === loggedInUser.email;
+    });
+    this.participant = maybeYou;
+
   };
 
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
-
+  // console.log(messageData)
     switch (eventType) {
       case Events.PARTICIPANT_JOINED:
         this.verifyPayloadAndUpdate(payload, this.participantJoined, messageData);
@@ -276,7 +276,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     const session = Object.assign(new StoryPointSession(), messageData.payload);
     const previousName = this.session.sessionName;
     this.session = session;
-    this.session.setName(previousName);
+    this.session.setName(previousName); // the name gets set every. time. no.
+
 
     if (!this.participant) {
       this.recoverUser(messageData);
@@ -325,30 +326,10 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private refreshParticipants = (session: StoryPointSession) => {
     const participants = session.participants;
     this.setParticipantsInSession(participants);
-    this.ensureYouAreStillActive(participants);
   };
 
   private setParticipantsInSession = (participants: Participant[]) => {
     this.session.loadParticipants(participants);
-    this.setIdForLocalUser(participants);
-  };
-
-  private setIdForLocalUser = (participants: any[]) => {
-    participants.forEach((p: { participantName: string, participantId: number }) => {
-      if (this.participant && p.participantName === this.participant.participantName) {
-        this.participant.participantId = p.participantId;
-      }
-    });
-  };
-
-  private ensureYouAreStillActive = (participants: any[]) => {
-    const youAreStillHere = participants.find((participant: Participant) => {
-      return this.participant && participant.participantId === this.participant.participantId;
-    });
-
-    if (!youAreStillHere) {
-      this.clearLocalUserState();
-    }
   };
 
   private clearLocalUserState = () => {

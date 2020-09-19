@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, HostListener, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ThemeService} from './services/theme.service';
-import {UserService} from './user.service';
+import {User, UserService} from './user.service';
 
 declare const confetti: any;
 
@@ -47,6 +47,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnChanges {
       this.themeService.setDarkTheme(this.isDarkTheme);
       this.setBackgroundColor();
     });
+
+    // this.userService.userChanges().subscribe((user: User) => {
+    //   console.log('user changed!!!', user)
+    //   if (user) {
+    //     this.userService.createUser(user);
+    //   }
+    // });
+
   }
 
   ngAfterViewInit() {

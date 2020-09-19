@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {Participant} from '../active-session/model/session.model';
 import {MatDialog, MatDialogConfig, MatRadioChange} from '@angular/material';
-import {JoinSessionDialogComponent} from '../join-session-dialog/join-session-dialog.component';
 import {LocalStorageService} from '../services/local-storage.service';
 import {DefaultPointSelection, PointSelection} from "../point-selection/point-selection";
 import {AppState} from "../services/local-storage.model";
+import {UserService} from "../user.service";
 
 @Component({
   selector: 'control-panel',
@@ -29,9 +29,12 @@ export class ControlPanelComponent implements OnInit, OnChanges {
   @Output() pointSelectionChanged = new EventEmitter<PointSelection>();
 
   constructor(private dialog: MatDialog,
+              private userService: UserService,
               private localStorage: LocalStorageService) {
   }
+
   ngOnChanges(changes: any) {
+    console.log("you?", this.participant)
   }
 
   ngOnInit(): void {
@@ -49,11 +52,15 @@ export class ControlPanelComponent implements OnInit, OnChanges {
   }
 
   joinSession = () => {
-    const dialogRef = this.dialog.open(JoinSessionDialogComponent, this.getDialogConfig());
+    const you = this.userService.getLoginUser();
+    const youAsAParticipantOfThisSession = new Participant(you.firstName);
+    this.participantJoined.emit(youAsAParticipantOfThisSession);
 
-    dialogRef.afterClosed().subscribe((participant: Participant) => {
-      this.participantJoined.emit(participant);
-    });
+    // const dialogRef = this.dialog.open(JoinSessionDialogComponent, this.getDialogConfig());
+    //
+    // dialogRef.afterClosed().subscribe((participant: Participant) => {
+    //   this.participantJoined.emit(participant);
+    // });
   };
 
   leaveSession = () => {

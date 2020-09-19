@@ -1,25 +1,25 @@
-<div [ngClass]="{'reveal': pointsVisible}">
-<mat-card
-  [ngClass]="{'my-card': myCard && !isDarkTheme,
-  'my-card-dark': myCard && isDarkTheme,
+<div [ngClass]="{'reveal': pointsVisible && firstReveal}">
+  <mat-card
+    [ngClass]="{
   'voted': participant.hasVoted,
   'voted-dark': participant.hasVoted && isDarkTheme,
   'vote-changer': participant.hasAlreadyVoted
   }">
-  <mat-card-title>
+    <mat-card-title>
       <span>{{!pointsVisible && !myCard ? "?" : participant.point}}</span>
 
-  </mat-card-title>
-  <mat-card-content>
-    {{participant.participantName}}
-  </mat-card-content>
+    </mat-card-title>
+    <mat-card-content>
+      <img [src]="participant.photoUrl" height="50px" width="50x" style="border-radius: 50px"
+           [ngStyle]="{'border': myCard ? '4px solid white' : '1px solid #cccccc'}">
+    </mat-card-content>
 
-  <mat-card-footer>
-    <div class="actions">
-      <button (click)="removeUser()" mat-button>
-        <mat-icon>delete_forever</mat-icon>
-      </button>
-    </div>
-  </mat-card-footer>
-</mat-card>
+    <mat-card-footer>
+      <div class="actions">
+        <button (click)="removeUser()" mat-button>
+          <mat-icon>delete_forever</mat-icon>
+        </button>
+      </div>
+    </mat-card-footer>
+  </mat-card>
 </div>

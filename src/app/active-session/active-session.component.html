@@ -1,43 +1,11 @@
-<div style="width:100%; display: flex; justify-content: center" class="mat-app-background">
-  <div style="padding: 20px" *ngIf="session && session.sessionName">
-    <h3>{{session.sessionName}}</h3>
+<div style="display: flex; flex-direction: column">
+  <div style="width:100%; display: flex; justify-content: center" class="mat-app-background">
+    <div style="padding: 20px" *ngIf="session && session.sessionName">
+      <h3>{{session.sessionName}}</h3>
+    </div>
   </div>
-</div>
+  <div class="content">
 
-<div class="content">
-<!--  <div class="left">-->
-    <!--    <control-panel-->
-    <!--      (participantJoined)="joinSession($event)"-->
-    <!--      (participantLeft)="leaveSession($event)"-->
-    <!--      (pointVisibilityEvent)="changePointVisibility($event)"-->
-    <!--      (voteSubmitted)="voteHasChanged($event)"-->
-    <!--      [sessionId]="session.sessionId"-->
-    <!--      [participant]="participant"-->
-    <!--      [logs]="logs"-->
-    <!--    ></control-panel>-->
-    <!--    <mat-drawer-container class="example-container" autosize style="height:100%">-->
-    <!--      <mat-drawer #drawer class="example-sidenav" mode="side">-->
-    <!--        <div style="display: flex; flex-direction: column">-->
-    <!--          <div>-->
-    <!--            <mat-icon>add</mat-icon>-->
-    <!--            Join-->
-    <!--          </div>-->
-    <!--          <div>-->
-    <!--            <mat-icon>close</mat-icon>-->
-    <!--            Bail-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </mat-drawer>-->
-
-    <!--      <div class="example-sidenav-content">-->
-    <!--        <button type="button" mat-button (click)="drawer.toggle()">-->
-    <!--          <mat-icon>settings</mat-icon>-->
-    <!--        </button>-->
-    <!--      </div>-->
-
-    <!--    </mat-drawer-container>-->
-<!--  </div>-->
-<!--  <div class="right">-->
     <div class="tiles">
       <user-tiles>
         <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter"
@@ -48,43 +16,8 @@
       </user-tiles>
 
     </div>
-<!--  </div>-->
 
-  <!--  <control-panel-->
-  <!--    (participantJoined)="joinSession($event)"-->
-  <!--    (participantLeft)="leaveSession($event)"-->
-  <!--    (pointVisibilityEvent)="changePointVisibility($event)"-->
-  <!--    (voteSubmitted)="voteHasChanged($event)"-->
-  <!--    [sessionId]="session.sessionId"-->
-  <!--    [participant]="participant"-->
-  <!--    [logs]="logs"-->
-  <!--    [showLogs]="showLogs"-->
-  <!--  >-->
-  <!--  </control-panel>-->
-  <!--  <div class="title">-->
-  <!--    <h1>{{getSessionName()}}</h1>-->
-  <!--  </div>-->
-
-  <!--  <div class="active-session-body">-->
-<!--      <div class="chart-container">-->
-<!--        <vote-display *ngIf="session.pointsVisible"-->
-<!--                      [ballots]="ballots"-->
-<!--                      [pointSelection]="pointSelection"-->
-<!--        ></vote-display>-->
-<!--      </div>-->
-
-  <!--    <div class="user-tiles">-->
-  <!--      <user-tiles>-->
-  <!--        <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter"-->
-  <!--                   [participant]="participant"-->
-  <!--                   [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"-->
-  <!--                   [myCard]="isMyCard(participant)">-->
-  <!--        </user-tile>-->
-  <!--      </user-tiles>-->
-
-  <!--    </div>-->
-  <!--  </div>-->
-  <!--</div>-->
+  </div>
 
   <div class="toolbar mat-app-background ">
     <control-panel

@@ -1,6 +1,7 @@
 <div *ngIf="userService.userChanges() | async as user">
   <div [matMenuTriggerFor]="menu">
     <img *ngIf="user.photoUrl" height="40" width="40" [src]="user.photoUrl" class="photo">
+<!--    photo can be its own component-->
   </div>
 
   <mat-menu #menu="matMenu">

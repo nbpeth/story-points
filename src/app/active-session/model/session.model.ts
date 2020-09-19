@@ -8,7 +8,8 @@ export class Participant {
     public isAdmin?: boolean,
     public pointsVisible?: boolean,
     public loginId?: string,
-    public loginEmail?: string
+    public loginEmail?: string,
+    public photoUrl?: string,
 
   ) {
     if (!participantName) {
