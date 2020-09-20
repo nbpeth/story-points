@@ -51,7 +51,6 @@
   </div>
   <div>
     <voting-booth *ngIf="participant"
-                  [votingScheme]="votingScheme"
                   (voteSubmitted)="submitVote($event)">
 
     </voting-booth>
@@ -62,6 +61,4 @@
     ></activity-log>
 
   </div>
-
-
 </div>

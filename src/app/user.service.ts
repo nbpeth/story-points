@@ -4,7 +4,6 @@ import {BehaviorSubject, Observable} from "rxjs";
 import {SocketService} from "./services/socket.service";
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../environments/environment";
-import {flatMap, filter} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -21,16 +20,17 @@ export class UserService {
       this.loggedIn.next(user != null);
     });
 
-    this.userChanges().pipe(
-      filter((user) => !!user),
-      flatMap(this.createUser)
-    ).subscribe((user: User) => {
-      // I *made* you, I can *destroy* you
+    this.userChanges().subscribe((user: User) => {
+      if (user) {
+        this.createUser(user);
+      }
     });
   }
 
-  createUser(user: User): Observable<any> {
-    return this.http.post(`${environment.host}/user`, user);
+  createUser(user: User) {
+    this.http.post(`${environment.host}/user`, user).subscribe(x => {
+      // created user
+    });
   }
 
   userChanges(): Observable<User> {

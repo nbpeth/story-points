@@ -22,8 +22,6 @@ export class ControlPanelComponent implements OnInit, OnChanges {
 
   showAdminConsole: boolean;
   showEventLog: boolean;
-  votingSchemeOptions = [VotingScheme.Fibonaci, VotingScheme.FistOfFive, VotingScheme.Primes];
-  votingScheme: string = this.votingSchemeOptions[0].toString();
 
   @Output() pointSelectionChanged = new EventEmitter<PointSelection>();
 
@@ -77,9 +75,3 @@ export class ControlPanelComponent implements OnInit, OnChanges {
 }
 
 export declare type PointVisibilityChange = 'reset' | 'reveal' | 'hide';
-
-export enum VotingScheme {
-  Fibonaci = 'Fibonaci',
-  FistOfFive = 'FistOfFive',
-  Primes = 'Primes'
-}
