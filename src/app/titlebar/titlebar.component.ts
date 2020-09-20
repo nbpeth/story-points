@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {User, UserService} from "../user.service";
 import {CreateSessionDialogComponent} from "../create-session-dialog/create-session-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
