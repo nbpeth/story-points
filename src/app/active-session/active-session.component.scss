@@ -19,9 +19,11 @@
   .tiles {
     justify-content: center;
     display: flex;
+    flex-wrap: wrap;
   }
 
   .toolbar {
+    height: 130px;
     width: 100%;
   }
 

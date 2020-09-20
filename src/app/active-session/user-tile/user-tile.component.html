@@ -1,4 +1,4 @@
-<div [ngClass]="{'reveal': pointsVisible}">
+<div [ngClass]="{'reveal': pointsVisible && firstReveal}">
   <mat-card
     [ngClass]="{
       'voted': participant.hasVoted,
