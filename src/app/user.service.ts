@@ -2,9 +2,8 @@ import {Injectable} from '@angular/core';
 import {AuthService, GoogleLoginProvider} from "angularx-social-login";
 import {BehaviorSubject, Observable} from "rxjs";
 import {SocketService} from "./services/socket.service";
-import {CreateUserMessage, CreateUserPayload} from "./active-session/model/events.model";
-import {take} from "rxjs-compat/operator/take";
 import {HttpClient} from "@angular/common/http";
+import {environment} from "../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -23,15 +22,15 @@ export class UserService {
 
     this.userChanges().subscribe((user: User) => {
       if (user) {
-        this.createUser(user)
+        this.createUser(user);
       }
     });
   }
 
   createUser(user: User) {
-    this.http.post("http://localhost:4200/user", user).subscribe(x => {
-      // console.log("?", x);
-    })
+    this.http.post(environment.host, user).subscribe(x => {
+      // created user
+    });
   }
 
   userChanges(): Observable<User> {
