@@ -96,7 +96,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       .pipe(
         filter(this.eventsOnlyForThisSession),
         tap(this.setSessionIfNotInLocalStorage),
-        tap(this.setUserIfAlreadyJoined),
         map(this.handleEvents),
       )
       .subscribe();
@@ -230,16 +229,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     if (!this.localStorage.getSession(this.session.sessionId)) {
       this.localStorage.setSession(this.session.sessionId, new Session({} as Participant, new SessionSettings()));
     }
-  };
-
-  private setUserIfAlreadyJoined = () => {
-    const loggedInUser = this.userService.getLoginUser();
-    const maybeYou = this.session.participants.find((p, i) => {
-      return p.loginId === loggedInUser.id && p.loginEmail === loggedInUser.email;
-    });
-
-    this.participant = maybeYou;
-
   };
 
   private handleEvents = (messageData: SpMessage) => {
