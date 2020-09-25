@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {UserService} from "../user.service";
+import {User, UserService} from "../user.service";
 
 @Component({
   selector: 'app-logged-in-user',
@@ -8,14 +8,22 @@ import {UserService} from "../user.service";
 })
 export class LoggedInUserComponent implements OnInit {
   @Input() enableMenu = true;
+  user: User;
 
   constructor(public userService: UserService) {
   }
 
   ngOnInit() {
+    this.userService.userChanges().subscribe(user => {
+      this.user = user;
+    });
   }
 
   logout() {
     this.userService.logout();
+  }
+
+  signInWithGoogle(): void {
+    this.userService.login();
   }
 }

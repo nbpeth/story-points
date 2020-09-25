@@ -18,7 +18,7 @@ export class UserTileComponent {
   @Input() myCard: boolean;
   @Input() isDarkTheme: boolean;
 
-  constructor(private socketService: SocketService, private userService: UserService) {
+  constructor(private socketService: SocketService, public userService: UserService) {
   }
 
   removeUser = () => {

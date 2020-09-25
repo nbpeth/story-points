@@ -194,8 +194,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   isMyCard = (card: Participant) => {
-    const {id} = this.userService.getLoginUser();
-    return card && card.loginId === id;
+    const user = this.userService.getLoginUser();
+    return user && card && card.loginId === user.id;
   }
 
   collectBallots = (): Ballot[] =>
@@ -234,7 +234,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private setUserIfAlreadyJoined = () => {
     const loggedInUser = this.userService.getLoginUser();
     const maybeYou = this.session.participants.find((p, i) => {
-      return p.loginId === loggedInUser.id && p.loginEmail === loggedInUser.email;
+      return this.userService.getLoginUser() && p.loginId === loggedInUser.id && p.loginEmail === loggedInUser.email;
     });
     this.participant = maybeYou;
 
@@ -315,7 +315,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
     const participants = messageData.payload.participants;
     const me = participants.find((p: Participant) => {
-      return p.loginId === this.userService.getLoginUser().id;
+      return this.userService.getLoginUser() && p.loginId === this.userService.getLoginUser().id;
     });
 
     if (me) {

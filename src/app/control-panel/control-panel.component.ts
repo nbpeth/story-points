@@ -25,7 +25,7 @@ export class ControlPanelComponent implements OnInit, OnChanges {
 
   @Output() pointSelectionChanged = new EventEmitter<PointSelection>();
 
-  constructor(private userService: UserService,
+  constructor(public userService: UserService,
               private localStorage: LocalStorageService) {
   }
 

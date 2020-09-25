@@ -49,10 +49,6 @@ export class UserService {
     return this.loggedIn.asObservable();
   }
 
-  getUserDisplayName() {
-    return this.user.name;
-  }
-
   getLoginUser(): User {
     return this.user;
   }

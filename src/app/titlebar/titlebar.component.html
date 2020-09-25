@@ -1,7 +1,7 @@
-<div style="height: 100%">
+<div>
   <mat-toolbar style="background-color: rgba(40, 40, 40, 0.4)">
     <mat-toolbar-row>
-      <div class="items" *ngIf="isLoggedIn()">
+      <div class="items">
         <app-logged-in-user>
         </app-logged-in-user>
         <span>
@@ -13,9 +13,9 @@
       </span>
       </div>
       <div class="items icons">
-      <span>
-        <app-theme-toggle></app-theme-toggle>
-      </span>
+        <span>
+          <app-theme-toggle></app-theme-toggle>
+        </span>
       </div>
     </mat-toolbar-row>
   </mat-toolbar>
