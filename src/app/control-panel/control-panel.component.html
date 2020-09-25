@@ -1,5 +1,5 @@
 <div class="container">
-  <ng-container *ngIf="userService.isLoggedIn() | async">
+  <ng-container *ngIf="userService.userChanges() | async as user ">
     <mat-drawer-container class="options-container" autosize>
       <mat-drawer #menu class="options-sidenav" mode="side">
         <div class="settings-items">

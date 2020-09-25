@@ -48,13 +48,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnChanges {
       this.setBackgroundColor();
     });
 
-    // this.userService.userChanges().subscribe((user: User) => {
-    //   console.log('user changed!!!', user)
-    //   if (user) {
-    //     this.userService.createUser(user);
-    //   }
-    // });
-
   }
 
   ngAfterViewInit() {
