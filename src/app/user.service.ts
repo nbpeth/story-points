@@ -12,6 +12,7 @@ export class UserService {
   private user: User = {} as User;
   private userChanged: BehaviorSubject<User> = new BehaviorSubject<User>(this.user);
   loggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  isLoggingIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(private authService: AuthService, private socketService: SocketService, private http: HttpClient) {
     this.authService.authState.subscribe((user) => {
@@ -38,11 +39,17 @@ export class UserService {
   }
 
   login() {
-    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
+    this.isLoggingIn.next(true);
+    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).finally(() => {
+      this.isLoggingIn.next(false);
+    });
   }
 
   logout() {
-    this.authService.signOut();
+    this.isLoggingIn.next(true);
+    this.authService.signOut().finally(() => {
+      this.isLoggingIn.next(false);
+    });
   }
 
   isLoggedIn(): Observable<boolean> {
