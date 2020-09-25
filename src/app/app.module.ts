@@ -51,7 +51,7 @@ import { LoginComponent } from './login/login.component';
 import { LoggedInUserComponent } from './logged-in-user/logged-in-user.component';
 import {UserService} from "./user.service";
 import {HttpClientModule} from "@angular/common/http";
-import { TestComponent } from './test/test.component';
+// import { TestComponent } from './test/test.component';
 
 @NgModule({
   declarations: [
@@ -78,7 +78,7 @@ import { TestComponent } from './test/test.component';
     ActivityLogComponent,
     LoginComponent,
     LoggedInUserComponent,
-    TestComponent,
+    // TestComponent,
   ],
   imports: [
     AppRoutingModule,
