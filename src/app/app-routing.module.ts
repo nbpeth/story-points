@@ -8,7 +8,7 @@ import {TestComponent} from "./test/test.component";
 const routes: Routes = [
   { path: '', component: DashboardComponent},
   { path: 'sessions/:id', component: ActiveSessionComponent },
-  { path: 'test', component: TestComponent },
+  // { path: 'test', component: TestComponent },
 
 ];
 
