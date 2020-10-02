@@ -195,6 +195,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   isMyCard = (card: Participant) => {
     const user = this.userService.getLoginUser();
+    console.log("????", card && card.loginId, user && user.id)
     return user && card && card.loginId === user.id;
   }
 
