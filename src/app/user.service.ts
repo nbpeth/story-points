@@ -9,7 +9,7 @@ import {environment} from "../environments/environment";
   providedIn: 'root'
 })
 export class UserService {
-  private user: User = {} as User;
+  private user: User;
   private userChanged: BehaviorSubject<User> = new BehaviorSubject<User>(this.user);
   loggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   isLoggingIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);

@@ -299,11 +299,16 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private recoverUser = (user: User): void => {
-      if (user && this.session && this.session.participants) {
-        this.participant = this.session.participants.find((p: Participant) =>
-          p.loginId === this.userService.getLoginUser().id
-        );
-      }
+    console.log('recover user', user);
+    if (user && this.session && this.session.participants) {
+      this.participant = this.session.participants.find((p: Participant) => {
+          // p.loginId === this.userService.getLoginUser().id
+        console.log('recover user, find', user.id, p.loginId);
+
+        return p && p.loginId === user.id
+        }
+      );
+    }
   };
 
   private refreshParticipants = (session: StoryPointSession) => {
