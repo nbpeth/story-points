@@ -1,19 +1,12 @@
-<div class="content">
-
-  <div class="title">
-    <h1>{{getSessionName()}}</h1>
-  </div>
-
-
-  <div class="active-session-body">
-    <div class="chart-container">
-      <vote-display *ngIf="session.pointsVisible"
-                    [ballots]="ballots"
-                    [pointSelection]="pointSelection"
-      ></vote-display>
+<div style=" display: flex; flex-direction: column; justify-content: space-between; height: 100%">
+  <div style="width:100%; display: flex; justify-content: center" class="mat-app-background">
+    <div style="padding: 20px" *ngIf="session && session.sessionName">
+      <h3>{{session.sessionName}}</h3>
     </div>
+  </div>
+  <div class="content">
 
-    <div class="user-tiles">
+    <div class="tiles">
       <user-tiles>
         <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter"
                    [participant]="participant"
@@ -23,20 +16,20 @@
       </user-tiles>
 
     </div>
+
   </div>
 
-</div>
-
-<div class="toolbar mat-app-background ">
-  <control-panel
-    (participantJoined)="joinSession($event)"
-    (participantLeft)="leaveSession($event)"
-    (pointVisibilityEvent)="changePointVisibility($event)"
-    (voteSubmitted)="voteHasChanged($event)"
-    [sessionId]="session.sessionId"
-    [participant]="participant"
-    [logs]="logs"
-    [showLogs]="showLogs"
-  >
-  </control-panel>
+  <div class="toolbar mat-app-background" style="height:130px">
+    <control-panel
+      (participantJoined)="joinSession($event)"
+      (participantLeft)="leaveSession($event)"
+      (pointVisibilityEvent)="changePointVisibility($event)"
+      (voteSubmitted)="voteHasChanged($event)"
+      [sessionId]="session.sessionId"
+      [participant]="participant"
+      [logs]="logs"
+      [showLogs]="showLogs"
+    >
+    </control-panel>
+  </div>
 </div>

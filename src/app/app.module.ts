@@ -48,15 +48,10 @@ import {ActivityLogComponent} from './activity-log/activity-log.component';
 import {AuthServiceConfig, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
 import {MatMenuModule} from "@angular/material/menu";
 import { LoginComponent } from './login/login.component';
-//
-// const config =
-//
-//   new AuthServiceConfig([
-//   {
-//     id: GoogleLoginProvider.PROVIDER_ID,
-//     provider: new GoogleLoginProvider('169440150514-6p8qrgf59kceaonb8qvpk10jam8gmaho.apps.googleusercontent.com')
-//   },
-// ])
+import { LoggedInUserComponent } from './logged-in-user/logged-in-user.component';
+import {UserService} from "./user.service";
+import {HttpClientModule} from "@angular/common/http";
+// import { TestComponent } from './test/test.component';
 
 @NgModule({
   declarations: [
@@ -82,6 +77,8 @@ import { LoginComponent } from './login/login.component';
     BallotDisplayComponent,
     ActivityLogComponent,
     LoginComponent,
+    LoggedInUserComponent,
+    // TestComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -89,6 +86,7 @@ import { LoginComponent } from './login/login.component';
     BrowserModule,
     DragDropModule,
     FormsModule,
+    HttpClientModule,
     MatToolbarModule,
     MatCheckboxModule,
     MatCardModule,
@@ -107,6 +105,7 @@ import { LoginComponent } from './login/login.component';
     SocialLoginModule
   ],
   providers: [
+    UserService,
     {
       provide: AuthServiceConfig,
       useFactory: provideConfig
@@ -125,8 +124,8 @@ export class AppModule {
   }
 
   private toggleDarkThemeForOverlay = (isDarkTheme: boolean) => {
-    const theme = isDarkTheme ? 'dark-theme' : undefined;
-    const removeTheme = !isDarkTheme ? 'dark-theme' : undefined;
+    const theme = isDarkTheme ? 'dark-theme' : 'light-theme';
+    const removeTheme = !isDarkTheme ? 'dark-theme' : 'light-theme';
 
     this.overlayContainer.getContainerElement().classList.remove(removeTheme);
     this.overlayContainer.getContainerElement().classList.add(theme);

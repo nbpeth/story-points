@@ -1,11 +1,7 @@
-<app-dashboard-header (searchBoxValue)="searchBoxValueChanged($event)">
+<app-dashboard-header (createSession)="createNewSession($event)" (searchBoxValue)="searchBoxValueChanged($event)">
 </app-dashboard-header>
 
 <div class="body-container">
-  <div *ngIf="error" style="background-color: #FFAAAA">
-    {{error}}
-  </div>
-
   <active-session-tiles>
     <active-session-tile cdkDrag *ngFor="let tile of visibleSessions" [session]="tile">
 

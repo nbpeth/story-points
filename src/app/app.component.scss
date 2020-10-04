@@ -1,4 +1,9 @@
+
 .mat-app-background {
-  height: 100%;
+  background-color: transparent;
+
 }
 
+:host ::ng-deep app-active-session  {
+  height: 100%;
+}

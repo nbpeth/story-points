@@ -1,17 +1,16 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {Participant} from '../active-session/model/session.model';
-import {MatDialog, MatDialogConfig, MatRadioChange} from '@angular/material';
-import {JoinSessionDialogComponent} from '../join-session-dialog/join-session-dialog.component';
 import {LocalStorageService} from '../services/local-storage.service';
 import {DefaultPointSelection, PointSelection} from "../point-selection/point-selection";
 import {AppState} from "../services/local-storage.model";
+import {UserService} from "../user.service";
 
 @Component({
   selector: 'control-panel',
   templateUrl: './control-panel.component.html',
   styleUrls: ['./control-panel.component.scss']
 })
-export class ControlPanelComponent implements OnInit {
+export class ControlPanelComponent implements OnInit, OnChanges {
   @Input() sessionId: number;
   @Input() participant: Participant;
   @Input() logs: string[];
@@ -23,13 +22,14 @@ export class ControlPanelComponent implements OnInit {
 
   showAdminConsole: boolean;
   showEventLog: boolean;
-  votingSchemeOptions = [VotingScheme.Fibonaci, VotingScheme.FistOfFive, VotingScheme.Primes];
-  votingScheme: string = this.votingSchemeOptions[0].toString();
 
   @Output() pointSelectionChanged = new EventEmitter<PointSelection>();
 
-  constructor(private dialog: MatDialog,
+  constructor(public userService: UserService,
               private localStorage: LocalStorageService) {
+  }
+
+  ngOnChanges(changes: any) {
   }
 
   ngOnInit(): void {
@@ -47,11 +47,9 @@ export class ControlPanelComponent implements OnInit {
   }
 
   joinSession = () => {
-    const dialogRef = this.dialog.open(JoinSessionDialogComponent, this.getDialogConfig());
-
-    dialogRef.afterClosed().subscribe((participant: Participant) => {
-      this.participantJoined.emit(participant);
-    });
+    const you = this.userService.getLoginUser();
+    const youAsAParticipantOfThisSession = new Participant(you.firstName);
+    this.participantJoined.emit(youAsAParticipantOfThisSession);
   };
 
   leaveSession = () => {
@@ -74,26 +72,6 @@ export class ControlPanelComponent implements OnInit {
     this.localStorage.setShowEventLog(this.sessionId, event.checked);
   };
 
-  votingSchemeChanged = (event: MatRadioChange) => {
-    this.votingScheme = event.value;
-    // this.pointSelectionChanged.emit(DefaultPointSelection);
-  };
-
-  private getDialogConfig = () => {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = false;
-    dialogConfig.autoFocus = true;
-    dialogConfig.data = {
-      participant: 'Identify Yourself!'
-    };
-    return dialogConfig;
-  };
 }
 
 export declare type PointVisibilityChange = 'reset' | 'reveal' | 'hide';
-
-export enum VotingScheme {
-  Fibonaci = 'Fibonaci',
-  FistOfFive = 'FistOfFive',
-  Primes = 'Primes'
-}

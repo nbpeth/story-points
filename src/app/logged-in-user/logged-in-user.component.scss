@@ -1,0 +1,30 @@
+.link {
+  cursor: pointer;
+}
+
+.photo {
+  border-radius: 50px;
+  border: 1px solid white;
+  height: 40px;
+  width: 40px;
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 10px 5px 10px;
+
+  .greeting {
+    color: #DDDDDD;
+    padding-bottom: 5px;
+    border-bottom: 1px solid grey;
+  }
+
+  .button {
+    padding-top: 5px;
+    cursor: pointer;
+  }
+
+
+}
+

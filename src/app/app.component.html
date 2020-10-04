@@ -1,13 +1,5 @@
-<div style="height: 100%" [ngClass]="{'dark-theme': isDarkTheme}">
-
-  <div class="mat-app-background"
-       [ngClass]="{'moon': nighttime, 'sun': daytime}"
-       [ngStyle]="{'background-color': bgColor}">
-    <app-titlebar></app-titlebar>
-    <ng-template #login>
-      <app-login></app-login>
-    </ng-template>
-
-    <router-outlet *ngIf="isLoggedIn(); else login"></router-outlet>
-  </div>
+<div id="content"
+     style="background-color: transparent; height: 100%; display: flex; flex-direction: column;">
+  <app-titlebar></app-titlebar>
+  <router-outlet></router-outlet>
 </div>

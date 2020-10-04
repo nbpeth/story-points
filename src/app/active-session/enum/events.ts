@@ -9,5 +9,6 @@ export enum Events {
   POINTS_REVEALED = 'points-revealed',
   TERMINATE_SESSION = 'terminate-session',
   GET_SESSION_NAME = 'get-session-name',
+  CREATE_USER = 'create-user',
   ERROR = 'error',
 }

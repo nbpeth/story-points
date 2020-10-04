@@ -12,17 +12,16 @@ import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component
 })
 export class SocketService {
   private MAX_RETRIES = 5;
-  private socket: WebSocketSubject<any>;
-  private connectionObserver = new BehaviorSubject<boolean>(false);
   private connectionRetries = this.MAX_RETRIES;
-
-  private $messages: Observable<any>;
+  private socket$: WebSocketSubject<any>;
+  private connectionObserver$ = new BehaviorSubject<boolean>(false);
+  private messages$: Observable<any>;
 
   constructor(private snackBar: MatSnackBar) {
   }
 
   connect = () => {
-    if (!this.socket || this.socket.closed) {
+    if (!this.socket$ || this.socket$.closed) {
       const host = document.location.host;
       const wsProtocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
 
@@ -32,7 +31,7 @@ export class SocketService {
         openObserver: {
           next: () => {
             // this.reset();
-            this.connectionObserver.next(true);
+            this.connectionObserver$.next(true);
             this.connectionRetries = this.MAX_RETRIES;
             console.log('WS Connected! Great job!');
           }
@@ -40,20 +39,20 @@ export class SocketService {
         closeObserver: {
           next: (closeEvent) => {
             console.log('WS closed', closeEvent);
-            this.connectionObserver.next(false);
+            this.connectionObserver$.next(false);
           }
         },
       } as WebSocketSubjectConfig<any>;
 
-      this.socket = webSocket(config);
-      this.$messages = this.socket.asObservable();
+      this.socket$ = webSocket(config);
+      this.messages$ = this.socket$.asObservable();
     }
   }
 
   messages = () => {
     this.connect();
 
-    return this.connectionObserver.pipe(
+    return this.connectionObserver$.pipe(
       flatMap(connected => {
         if (!connected) {
           if (this.connectionRetries > 0) {
@@ -65,13 +64,13 @@ export class SocketService {
           }
         }
 
-        return this.$messages
+        return this.messages$
           .pipe(
             // retry(1), // maybe a delay
             catchError(e => {
               console.error('in a distant universe, something bad happened somewhere...', e);
               // alert observer something bad happened and try to recover
-              this.connectionObserver.next(false);
+              this.connectionObserver$.next(false);
               return of({} as MessageEvent);
             }),
             map((event: MessageEvent) => {
@@ -102,20 +101,20 @@ export class SocketService {
   }
 
   close() {
-    this.socket.unsubscribe();
+    this.socket$.unsubscribe();
     this.reset();
   }
 
   x() {
-    this.socket.unsubscribe();
+    this.socket$.unsubscribe();
   }
 
   send = (message: any): void => {
-    this.socket.next(message);
+    this.socket$.next(message);
   }
 
   private reset() {
     this.connectionRetries = this.MAX_RETRIES;
-    this.connectionObserver = new BehaviorSubject<boolean>(false);
+    this.connectionObserver$ = new BehaviorSubject<boolean>(false);
   }
 }

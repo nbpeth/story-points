@@ -1,21 +1,36 @@
 import {Injectable} from '@angular/core';
 import {AuthService, GoogleLoginProvider} from "angularx-social-login";
 import {BehaviorSubject, Observable} from "rxjs";
+import {SocketService} from "./services/socket.service";
+import {HttpClient} from "@angular/common/http";
+import {environment} from "../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private user: User = {} as User;
+  private user: User;
   private userChanged: BehaviorSubject<User> = new BehaviorSubject<User>(this.user);
-  loggedIn: boolean;
+  loggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  isLoggingIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  constructor(private authService: AuthService) {
-
+  constructor(private authService: AuthService, private socketService: SocketService, private http: HttpClient) {
     this.authService.authState.subscribe((user) => {
       this.user = user;
       this.userChanged.next(user);
-      this.loggedIn = (user != null);
+      this.loggedIn.next(user != null);
+    });
+
+    this.userChanges().subscribe((user: User) => {
+      if (user) {
+        this.createUser(user);
+      }
+    });
+  }
+
+  createUser(user: User) {
+    this.http.post(`${environment.host}/user`, user).subscribe(x => {
+      // created user
     });
   }
 
@@ -24,19 +39,21 @@ export class UserService {
   }
 
   login() {
-    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
+    this.isLoggingIn.next(true);
+    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).finally(() => {
+      this.isLoggingIn.next(false);
+    });
   }
 
   logout() {
-    this.authService.signOut();
+    this.isLoggingIn.next(true);
+    this.authService.signOut().finally(() => {
+      this.isLoggingIn.next(false);
+    });
   }
 
-  isLoggedIn() {
-    return this.loggedIn;
-  }
-
-  getUserDisplayName() {
-    return this.user.name;
+  isLoggedIn(): Observable<boolean> {
+    return this.loggedIn.asObservable();
   }
 
   getLoginUser(): User {
@@ -56,6 +73,6 @@ export interface User {
   idToken: string;
   lastName: string;
   name: string;
-  photoUrl: string; // neat!
+  photoUrl: string;
   provider: string;
 }

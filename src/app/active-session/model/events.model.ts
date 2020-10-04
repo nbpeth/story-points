@@ -1,4 +1,5 @@
 import { Events } from 'src/app/active-session/enum/events';
+import {User} from "../../user.service";
 
 export class SpMessage {
   eventType: string;
@@ -75,6 +76,12 @@ export class GetSessionNamePayload extends SpMessagePayload {
   }
 }
 
+export class CreateUserPayload extends SpMessagePayload {
+  constructor(public user: User) {
+    super();
+  }
+}
+
 export class GetCompleteStateMessage extends SpMessage {
   constructor() {
     super();
@@ -142,5 +149,12 @@ export class TerminateSessionMessage extends SpMessage {
   constructor(public payload: TerminateSessionPayload) {
     super(payload);
     this.eventType = Events.TERMINATE_SESSION as string;
+  }
+}
+
+export class CreateUserMessage extends SpMessage {
+  constructor(public payload: CreateUserPayload) {
+    super(payload);
+    this.eventType = Events.CREATE_USER as string;
   }
 }

@@ -1,4 +1,3 @@
-
 const WebSocketServer = require("ws").Server;
 const mysqlClient = require('./mysqlClient')
 
@@ -57,7 +56,13 @@ const initHandlers = () => {
       if (err) {
         sendErrorToCaller('Unable to get session state', err.message);
       }
-      notifier(formatMessage('participant-joined', {sessionId: sessionId, userName: userName, loginId: loginId, loginEmail: loginEmail, participants: results}, sessionId));
+      notifier(formatMessage('participant-joined', {
+        sessionId: sessionId,
+        userName: userName,
+        loginId: loginId,
+        loginEmail: loginEmail,
+        participants: results
+      }, sessionId));
     })
   }
 
@@ -66,7 +71,13 @@ const initHandlers = () => {
       if (err) {
         sendErrorToCaller('Unable to get session state', err.message);
       }
-      notifier(formatMessage('participant-removed', {sessionId: sessionId, userName: userName, loginId: loginId, loginEmail: loginEmail, participants: results}, sessionId));
+      notifier(formatMessage('participant-removed', {
+        sessionId: sessionId,
+        userName: userName,
+        loginId: loginId,
+        loginEmail: loginEmail,
+        participants: results
+      }, sessionId));
     })
   }
 
@@ -116,6 +127,9 @@ const initHandlers = () => {
       case 'get-session-name':
         getSessionNameFor(messageData);
         break;
+      // case 'create-user':
+      //   createUser(messageData)
+      //   break;
     }
   };
 
@@ -270,7 +284,7 @@ const initHandlers = () => {
     wss.clients
       .forEach(client => {
         // if (client === _ws) {
-          client.send(JSON.stringify(message));
+        client.send(JSON.stringify(message));
         // }
       });
   };

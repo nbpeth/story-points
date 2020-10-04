@@ -37,3 +37,15 @@ ALTER TABLE participant CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 alter table participant add column has_revoted boolean;
 alter table participant add column login_id varchar(255);
 alter table participant add column login_email varchar(255);
+
+create table user (
+    first_name varchar(100),
+    last_name varchar(100),
+    provider_id varchar(100) UNIQUE ,
+    name varchar(200),
+    photo_url varchar(200),
+    provider varchar(100),
+    date_joined DATETIME,
+    updated DATETIME,
+    PRIMARY KEY (provider_id)
+);

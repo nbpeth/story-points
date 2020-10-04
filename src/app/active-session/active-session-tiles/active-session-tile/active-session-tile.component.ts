@@ -4,6 +4,7 @@ import {TerminateSessionMessage, TerminateSessionPayload} from '../../model/even
 import {MatDialog, MatDialogConfig} from '@angular/material';
 import {ConfirmDialogComponent} from 'src/app/confirm-dialog/confirm-dialog.component';
 import {LocalStorageService} from '../../../services/local-storage.service';
+import {UserService} from "../../../user.service";
 
 @Component({
   selector: 'active-session-tile',
@@ -15,7 +16,8 @@ export class ActiveSessionTileComponent {
 
   constructor(private socketService: SocketService,
               private dialog: MatDialog,
-              private localStorage: LocalStorageService) {
+              private localStorage: LocalStorageService,
+              public userService: UserService) {
   }
 
   closeSession = () => {

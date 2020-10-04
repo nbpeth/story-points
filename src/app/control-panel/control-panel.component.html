@@ -1,67 +1,69 @@
 <div class="container">
+  <ng-container *ngIf="userService.isLoggingIn | async; else controls">
+    <!-- loading?-->
+  </ng-container>
+  <ng-template #controls>
+    <ng-container *ngIf="userService.userChanges() | async as user ">
+      <mat-drawer-container class="options-container" autosize>
+        <mat-drawer #menu class="options-sidenav" mode="side">
+          <div class="settings-items">
 
-  <mat-drawer-container class="options-container" autosize>
-    <mat-drawer #menu class="options-sidenav" mode="side">
-      <div class="settings-items">
+            <div class="item">Control Panel</div>
+            <div>
+              <mat-checkbox class="item" (change)="setShowAdminConsole($event)" id="showAdminConsole"
+                            [(ngModel)]="showAdminConsole">
+                Point Controls
+              </mat-checkbox>
+            </div>
+            <div>
+              <mat-checkbox class="item" (change)="setShowEventLog($event)" id="eventLog" [(ngModel)]="showEventLog">
+                Event Log
+              </mat-checkbox>
+            </div>
 
-        <div class="item">Control Panel</div>
-        <div>
-          <mat-checkbox class="item" (change)="setShowAdminConsole($event)" id="showAdminConsole"
-                        [(ngModel)]="showAdminConsole">
-            Point Controls
-          </mat-checkbox>
+
+          </div>
+        </mat-drawer>
+
+        <div class="options-content">
+          <button type="button" mat-button (click)="menu.toggle()">
+            <mat-icon>settings</mat-icon>
+            Settings
+          </button>
+
+          <ng-container *ngIf="!participant; else leaveSessionButton">
+            <button type="button" mat-button (click)="joinSession()">
+              <mat-icon>add</mat-icon>
+              Join
+            </button>
+          </ng-container>
+
+          <ng-template #leaveSessionButton>
+            <button type="button" mat-button (click)="leaveSession()">
+              <mat-icon>close</mat-icon>
+              Bail
+            </button>
+          </ng-template>
+
         </div>
-        <div>
-          <mat-checkbox class="item" (change)="setShowEventLog($event)" id="eventLog" [(ngModel)]="showEventLog">
-            Event Log
-          </mat-checkbox>
-        </div>
+      </mat-drawer-container>
 
-
+      <div>
+        <admin-controls *ngIf="showAdminConsole"
+                        (pointVisibilityEvent)="changePointVisibility($event)">
+        </admin-controls>
       </div>
-    </mat-drawer>
+      <div>
+        <voting-booth *ngIf="participant"
+                      (voteSubmitted)="submitVote($event)">
 
-    <div class="options-content">
-      <button type="button" mat-button (click)="menu.toggle()">
-        <mat-icon>settings</mat-icon>
-        Settings
-      </button>
-
-      <ng-container *ngIf="!participant; else leaveSessionButton">
-        <button type="button" mat-button (click)="joinSession()">
-          <mat-icon>add</mat-icon>
-          Join
-        </button>
-      </ng-container>
-
-      <ng-template #leaveSessionButton>
-        <button type="button" mat-button (click)="leaveSession()">
-          <mat-icon>close</mat-icon>
-          Bail
-        </button>
-      </ng-template>
-
-    </div>
-  </mat-drawer-container>
-
-  <div>
-    <admin-controls *ngIf="showAdminConsole"
-                    (pointVisibilityEvent)="changePointVisibility($event)">
-    </admin-controls>
-  </div>
-  <div>
-    <voting-booth *ngIf="participant"
-                  [votingScheme]="votingScheme"
-                  (voteSubmitted)="submitVote($event)">
-
-    </voting-booth>
-  </div>
-  <div *ngIf="showEventLog" class="event-log">
-    <activity-log
-      [logs]="logs"
-    ></activity-log>
-
-  </div>
-
-
+        </voting-booth>
+      </div>
+      <div *ngIf="showEventLog" class="event-log">
+        <activity-log
+          [logs]="logs"
+        ></activity-log>
+      </div>
+    </ng-container>
+  </ng-template>
 </div>
