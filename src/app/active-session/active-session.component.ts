@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SocketService} from '../services/socket.service';
 import {filter, flatMap, map, tap} from 'rxjs/operators';
+import {Subject, combineLatest} from 'rxjs';
 import {Events} from './enum/events';
 import {
   GetSessionNameMessage,
@@ -45,6 +46,7 @@ import {DefaultPointSelection, PointSelection} from "../point-selection/point-se
 })
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
+  private participantsInThisSession = new Subject<any>();
   logs: string[] = [];
   showLogs: boolean;
   ballots: Ballot[] = [];
@@ -68,7 +70,12 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.userService.userChanges().subscribe(this.recoverUser);
+    combineLatest(
+      this.userService.userChanges(),
+      this.participantsInThisSession
+    ).subscribe(([user, participants]) => {
+      this.recoverUser(user, participants);
+    });
 
     this.successSound = new Audio('assets/sounds/ohyeah.mp3');
 
@@ -195,7 +202,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   isMyCard = (card: Participant) => {
     const user = this.userService.getLoginUser();
-    console.log("????", card && card.loginId, user && user.id)
     return user && card && card.loginId === user.id;
   }
 
@@ -298,14 +304,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.updateSession(messageData);
   };
 
-  private recoverUser = (user: User): void => {
-    console.log('recover user', user);
-    if (user && this.session && this.session.participants) {
-      this.participant = this.session.participants.find((p: Participant) => {
-          // p.loginId === this.userService.getLoginUser().id
-        console.log('recover user, find', user.id, p.loginId);
+  private recoverUser = (user: User, participants: any[]): void => {
+    if (user && participants) {
+      this.participant = participants.find((p: Participant) => {
 
-        return p && p.loginId === user.id
+          return p && p.loginId === user.id;
         }
       );
     }
@@ -318,6 +321,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   private setParticipantsInSession = (participants: Participant[]) => {
     this.session.loadParticipants(participants);
+    this.participantsInThisSession.next(participants);
   };
 
   private clearLocalUserState = () => {
