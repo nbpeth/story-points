@@ -1,13 +1,8 @@
 <div class="items">
-  <div class="item toppad">
-    <mat-icon>brightness_2</mat-icon>
+  <div class="item">
+    <mat-slide-toggle  [(ngModel)]="isDarkMode" (change)="setIsDarkMode($event)" [disabled]="isUltraDarkMode">Dark Mode</mat-slide-toggle>
   </div>
   <div class="item">
-
-    <mat-slider
-      [(ngModel)]="sliderValue"
-      (change)="sliderChanged($event)">
-
-    </mat-slider>
+    <mat-slide-toggle [(ngModel)]="isUltraDarkMode" (change)="setIsUltraDarkMode($event)">Ultra Dark Mode</mat-slide-toggle>
   </div>
 </div>

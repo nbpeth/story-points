@@ -1,6 +1,7 @@
-import {AfterViewInit, Component, ElementRef, HostListener, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, OnInit} from '@angular/core';
 import {ThemeService} from './services/theme.service';
-import {User, UserService} from './user.service';
+import {UserService} from './user.service';
+import {combineLatest} from 'rxjs';
 
 declare const confetti: any;
 
@@ -9,11 +10,9 @@ declare const confetti: any;
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit, AfterViewInit, OnChanges {
+export class AppComponent implements OnInit, AfterViewInit {
   isDarkTheme: boolean;
-  bgColor: string;
-
-  nighttime: boolean;
+  isUltraDarkTheme: boolean;
 
   // should be a service
   konami = [
@@ -33,38 +32,30 @@ export class AppComponent implements OnInit, AfterViewInit, OnChanges {
   constructor(private elementRef: ElementRef, private themeService: ThemeService, private userService: UserService) {
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty('bgColor')) {
-      this.setBackgroundColor();
-    }
-  }
-
   ngOnInit() {
     this.themeService.loadState();
-    this.themeService.dynamicDarkValue.subscribe((value: number) => {
-      this.setThemeFrom(value);
 
-      this.themeService.setDarkTheme(this.isDarkTheme);
-      this.setBackgroundColor();
+    combineLatest(
+      this.themeService.isUltraDarkTheme,
+      this.themeService.isDarkTheme
+    ).subscribe(([isUltraDarkTheme, isDarkTheme]) => {
+      this.isDarkTheme = isDarkTheme;
+      this.isUltraDarkTheme = isUltraDarkTheme;
+
+      this.toggleClassTheme();
     });
-
   }
 
   ngAfterViewInit() {
-    this.setBackgroundColor();
+    this.toggleClassTheme();
   }
 
   isLoggedIn() {
     return this.userService.isLoggedIn();
   }
 
-  private setBackgroundColor() {
-    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = this.bgColor;
-    this.toggleClassTheme();
-  }
-
   private toggleClassTheme() {
-    if (this.nighttime) {
+    if (this.isUltraDarkTheme) {
       this.elementRef.nativeElement.ownerDocument.body.classList.add('moon');
     } else {
       this.elementRef.nativeElement.ownerDocument.body.classList.remove('moon');
@@ -72,21 +63,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnChanges {
 
     if (this.isDarkTheme) {
       this.elementRef.nativeElement.ownerDocument.body.classList.add('dark-theme');
-
     } else {
       this.elementRef.nativeElement.ownerDocument.body.classList.remove('dark-theme');
     }
-  }
-
-  private setThemeFrom = (value: number) => {
-    this.isDarkTheme = value <= 50;
-    this.nighttime = value <= 20;
-    this.bgColor = this.setBackgroundBrightnessFrom(value);
-  }
-
-  private setBackgroundBrightnessFrom = (value: number): string => {
-    const brightness = (value / 100) * 255;
-    return `rgb(${brightness}, ${brightness}, ${brightness})`;
   }
 
   @HostListener('document:keydown', ['$event'])

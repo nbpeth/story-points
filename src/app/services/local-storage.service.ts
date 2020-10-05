@@ -34,14 +34,20 @@ export class LocalStorageService {
   stateEventStream = () =>
     this.stateEvents.asObservable();
 
-  getTheme = (): boolean => {
+  getTheme = (): { isDarkTheme, isUltraDarkTheme } => {
     const appState: AppState = this.getState();
-    return appState.globals.isDarkTheme;
+    return {isDarkTheme: appState.globals.isDarkTheme, isUltraDarkTheme: appState.globals.isUltraDarkTheme};
   };
 
-  setTheme = (isDarkTheme: boolean) => {
+  setDarkTheme = (isDarkTheme: boolean) => {
     const appState: AppState = this.getState();
     appState.globals.isDarkTheme = isDarkTheme;
+    this.setState(appState);
+  };
+
+  setUltraDarkTheme = (isUltraDarkTheme: boolean) => {
+    const appState: AppState = this.getState();
+    appState.globals.isUltraDarkTheme = isUltraDarkTheme;
     this.setState(appState);
   };
 
