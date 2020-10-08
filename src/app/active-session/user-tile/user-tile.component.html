@@ -10,8 +10,13 @@
 
     </mat-card-title>
     <mat-card-content>
+      <div>
       <img [src]="participant.photoUrl" height="50px" width="50x" style="border: 1px solid white; border-radius: 50px">
 <!--           [ngClass]="{'glow': myCard}">-->
+      </div>
+      <div style="margin-top: 10px;">
+      {{participant.participantName}}
+      </div>
     </mat-card-content>
 
     <mat-card-footer>
