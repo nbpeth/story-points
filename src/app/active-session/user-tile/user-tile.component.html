@@ -1,4 +1,5 @@
 <div [ngClass]="{'reveal': pointsVisible && firstReveal}">
+<!--  should flip when all votes are cast or one vote cast -->
   <mat-card
     [ngClass]="{
       'voted': participant.hasVoted,
@@ -11,8 +12,8 @@
     </mat-card-title>
     <mat-card-content>
       <div>
-      <img [src]="participant.photoUrl" height="50px" width="50x" style="border: 1px solid white; border-radius: 50px">
-<!--           [ngClass]="{'glow': myCard}">-->
+      <img [src]="participant.photoUrl" height="50px" width="50x" style="border: 1px solid white; border-radius: 50px"
+           [ngClass]="{'glow': myCard}">
       </div>
       <div style="margin-top: 10px;">
       {{participant.participantName}}

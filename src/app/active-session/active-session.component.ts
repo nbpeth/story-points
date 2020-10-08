@@ -50,7 +50,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   logs: string[] = [];
   showLogs: boolean;
   ballots: Ballot[] = [];
-  pointSelection: PointSelection = new DefaultPointSelection();
   participant: Participant;
   isDarkTheme: boolean;
   successSound: HTMLAudioElement;
