@@ -289,8 +289,10 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private participantRemoved = (messageData: ParticipantRemovedSessionMessage) => {
+    console.log(messageData)
     const {userName, loginId} = messageData.payload;
     const itWasMe = this.userService.isLoginUser(loginId);
+    console.log('?', itWasMe);
     const message = itWasMe ? 'You left' : `${userName} left.`;
 
     if (itWasMe) {

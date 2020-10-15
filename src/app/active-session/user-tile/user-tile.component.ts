@@ -22,14 +22,13 @@ export class UserTileComponent {
   }
 
   removeUser = () => {
-    const { id, email } = this.userService.getLoginUser();
     const message = new ParticipantRemovedSessionMessage(
       new ParticipantRemovedSessionPayload(
         this.participant.participantId,
         this.participant.participantName,
         this.sessionId,
-        id,
-        email
+        this.participant.loginId,
+        this.participant.loginEmail
       )
     );
     this.socketService.send(message);
