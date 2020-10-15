@@ -8,6 +8,6 @@ import {Participant} from "../active-session/model/session.model";
 export class UsernamePipe implements PipeTransform {
 
   transform(value: Participant, ...args: any[]): any {
-    return `${value.firstName} ${value.lastName.charAt(0)}`;
+    return `${value.firstName} ${value.lastName.charAt(0)}.`;
   }
 }
