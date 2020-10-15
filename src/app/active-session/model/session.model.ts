@@ -9,6 +9,8 @@ export class Participant {
     public pointsVisible?: boolean,
     public loginId?: string,
     public loginEmail?: string,
+    public firstName?: string,
+    public lastName?: string,
     public photoUrl?: string,
 
   ) {

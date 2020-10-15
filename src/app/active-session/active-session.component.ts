@@ -246,6 +246,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         this.verifyPayloadAndUpdate(payload, this.participantJoined, messageData);
         break;
       case Events.SESSION_STATE:
+        console.log('??', payload)
         this.verifyPayloadAndUpdate(payload, this.updateSession, messageData);
         break;
       case Events.PARTICIPANT_REMOVED:
@@ -289,10 +290,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   };
 
   private participantRemoved = (messageData: ParticipantRemovedSessionMessage) => {
-    console.log(messageData)
     const {userName, loginId} = messageData.payload;
     const itWasMe = this.userService.isLoginUser(loginId);
-    console.log('?', itWasMe);
     const message = itWasMe ? 'You left' : `${userName} left.`;
 
     if (itWasMe) {

@@ -51,6 +51,7 @@ import { LoginComponent } from './login/login.component';
 import { LoggedInUserComponent } from './logged-in-user/logged-in-user.component';
 import {UserService} from "./user.service";
 import {HttpClientModule} from "@angular/common/http";
+import {UsernamePipe} from "./pipe/username.pipe";
 // import { TestComponent } from './test/test.component';
 
 @NgModule({
@@ -69,6 +70,7 @@ import {HttpClientModule} from "@angular/common/http";
     ConfirmDialogComponent,
     CreateSessionDialogComponent,
     ParticipantFilterPipe,
+    UsernamePipe,
     AlertSnackbarComponent,
     ControlPanelComponent,
     JoinSessionDialogComponent,
