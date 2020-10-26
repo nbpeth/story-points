@@ -22,15 +22,10 @@ export class ThemeService {
   }
 
   setUltraDarkTheme(ultraaaaaa: boolean): void {
-    this.darkTheme.next(ultraaaaaa);
+    // this.darkTheme.next(ultraaaaaa);
     this.ultraDarkTheme.next(ultraaaaaa);
     this.localStorage.setUltraDarkTheme(ultraaaaaa);
   }
-
-  setDarkValue = (value: number) => {
-    this.dynamicDark.next(value);
-    this.localStorage.setDarkValue(value);
-  };
 
   loadState = (): void => {
     const { isDarkTheme, isUltraDarkTheme } = this.localStorage.getTheme();

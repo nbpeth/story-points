@@ -1,4 +1,5 @@
 const WebSocketServer = require("ws").Server;
+const url = require('url');
 const mysqlClient = require('./mysqlClient')
 
 const startServer = () => {
@@ -24,9 +25,18 @@ const startServer = () => {
   return wss;
 }
 
-const handleNewClients = (ws) => {
+const setTargetSessionOn = (ws, request) => {
+  const queryParams = url.parse(request.url, {parseQueryString: true}).query;
+  ws["targetSessionId"] = queryParams.sessionId;
+}
+
+const handleNewClients = (ws, request) => {
+
+  setTargetSessionOn(ws, request);
+
   ws.on('message', handleIncomingMessages);
 };
+
 
 const initHandlers = () => {
   const wss = startServer();
@@ -274,18 +284,21 @@ const initHandlers = () => {
   });
 
   notifyClients = (message) => {
-    wss.clients
-      .forEach(client => {
-        client.send(JSON.stringify(message));
-      });
+    notifyCaller(message); // need to be able to iso
   };
 
   notifyCaller = (message) => {
     wss.clients
       .forEach(client => {
-        // if (client === _ws) {
-        client.send(JSON.stringify(message));
-        // }
+        const isTargeted = message.payload.sessionId !== undefined;
+
+        if(isTargeted) { // can refactor to some targeting rules
+          if(message.payload.sessionId == client.targetSessionId) {
+            client.send(JSON.stringify(message));
+          }
+        } else {
+          client.send(JSON.stringify(message));
+        }
       });
   };
 }

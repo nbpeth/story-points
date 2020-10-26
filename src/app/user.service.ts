@@ -61,7 +61,7 @@ export class UserService {
   }
 
   isLoginUser(loginId: string): boolean {
-    return this.user.id === loginId;
+    return this.user && this.user.id === loginId;
   }
 }
 

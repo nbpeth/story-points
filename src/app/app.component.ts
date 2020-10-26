@@ -50,15 +50,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.toggleClassTheme();
   }
 
-  isLoggedIn() {
-    return this.userService.isLoggedIn();
-  }
-
   private toggleClassTheme() {
     if (this.isUltraDarkTheme) {
       this.elementRef.nativeElement.ownerDocument.body.classList.add('moon');
+      this.elementRef.nativeElement.ownerDocument.body.classList.remove('dark-theme');
     } else {
       this.elementRef.nativeElement.ownerDocument.body.classList.remove('moon');
+
+
     }
 
     if (this.isDarkTheme) {

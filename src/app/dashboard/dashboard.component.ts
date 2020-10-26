@@ -58,6 +58,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
+    console.log("message!", payload)
+
     switch (eventType) {
       case Events.COMPLETE_STATE:
         this.setSessionsFrom(payload as GetCompleteStatePayload);

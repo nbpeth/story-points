@@ -20,13 +20,11 @@ export class SocketService {
   constructor(private snackBar: MatSnackBar) {
   }
 
-  connect = () => {
+  connect = (sessionId: string | number | undefined = undefined) => {
     if (!this.socket$ || this.socket$.closed) {
-      const host = document.location.host;
-      const wsProtocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
 
       const config = {
-        url: `${wsProtocol}://${host}/socket`,
+        url: this.buildSocketUrl(sessionId),
         deserializer: (data) => data,
         openObserver: {
           next: () => {
@@ -116,5 +114,17 @@ export class SocketService {
   private reset() {
     this.connectionRetries = this.MAX_RETRIES;
     this.connectionObserver$ = new BehaviorSubject<boolean>(false);
+  }
+
+  private buildSocketUrl = (sessionId: string | number | undefined): string => {
+    const host = document.location.host;
+    const wsProtocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
+
+    let baseUrl = `${wsProtocol}://${host}/socket`;
+    if (sessionId !== undefined) {
+      baseUrl += `?sessionId=${sessionId}`;
+    }
+
+    return baseUrl;
   }
 }

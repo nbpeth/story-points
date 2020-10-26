@@ -58,7 +58,6 @@ export class TitlebarComponent implements OnInit {
   }
 
   imageUrl() {
-    console.log(this.user.photoUrl)
     return this.user.photoUrl;
   }
 }

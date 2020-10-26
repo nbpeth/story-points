@@ -36,7 +36,6 @@ import {Ballot} from "../vote-display/ballot-display.component";
 import {LocalStorageService} from '../services/local-storage.service';
 import {AppState, Session, SessionSettings} from '../services/local-storage.model';
 import {User, UserService} from "../user.service";
-import {DefaultPointSelection, PointSelection} from "../point-selection/point-selection";
 
 @Component({
   selector: 'app-active-session',
@@ -65,8 +64,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
               private userService: UserService) {
   }
 
-  getSessionName = () => this.session.sessionName;
-
   ngOnInit() {
 
     combineLatest(
@@ -92,7 +89,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
           const id = paramMap.get('id');
           this.session.sessionId = id;
 
-          this.socketService.connect();
+          this.socketService.connect(id);
 
           this.requestInitialStateOfSessionBy(id);
 
@@ -240,13 +237,12 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
-
+    console.log("message!", payload)
     switch (eventType) {
       case Events.PARTICIPANT_JOINED:
         this.verifyPayloadAndUpdate(payload, this.participantJoined, messageData);
         break;
       case Events.SESSION_STATE:
-        console.log('??', payload)
         this.verifyPayloadAndUpdate(payload, this.updateSession, messageData);
         break;
       case Events.PARTICIPANT_REMOVED:
