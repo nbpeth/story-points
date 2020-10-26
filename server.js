@@ -105,7 +105,7 @@ const initHandlers = () => {
   handleIncomingMessages = (message) => {
     const messageData = JSON.parse(message);
     const eventType = messageData.eventType;
-
+    console.log('incoming!', messageData)
     switch (eventType) {
       case 'state-of-the-state':
         getStateOfTheAppForCaller();
@@ -288,16 +288,21 @@ const initHandlers = () => {
   };
 
   notifyCaller = (message) => {
+    console.log('outgoing!!!', message)
     wss.clients
       .forEach(client => {
         const isTargeted = message.payload.sessionId !== undefined;
 
         if(isTargeted) { // can refactor to some targeting rules
-          if(message.payload.sessionId == client.targetSessionId) {
+          // message is targeted and client is connected to targeted session
+          const clientIsTargeted = +message.payload.sessionId === +client.targetSessionId;
+          if(clientIsTargeted) {
             client.send(JSON.stringify(message));
           }
         } else {
-          client.send(JSON.stringify(message));
+          if(!client.targetSessionId) { // message not targeted and client not connected to dashboard
+            client.send(JSON.stringify(message));
+          }
         }
       });
   };

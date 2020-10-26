@@ -93,11 +93,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
           this.requestInitialStateOfSessionBy(id);
 
-          return this.socketService.messages();
+          return this.socketService.messages(id);
         })
       )
       .pipe(
-        filter(this.eventsOnlyForThisSession),
+        //filter(this.eventsOnlyForThisSession), // dashboard messages still trickle in
         tap(this.setSessionIfNotInLocalStorage),
         map(this.handleEvents),
       )

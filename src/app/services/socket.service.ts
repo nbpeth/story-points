@@ -20,11 +20,12 @@ export class SocketService {
   constructor(private snackBar: MatSnackBar) {
   }
 
-  connect = (sessionId: string | number | undefined = undefined) => {
+  connect = (targetSessionId: string | number | undefined = undefined) => {
+    console.log("## connecting!")
     if (!this.socket$ || this.socket$.closed) {
 
       const config = {
-        url: this.buildSocketUrl(sessionId),
+        url: this.buildSocketUrl(targetSessionId),
         deserializer: (data) => data,
         openObserver: {
           next: () => {
@@ -47,8 +48,8 @@ export class SocketService {
     }
   }
 
-  messages = () => {
-    this.connect();
+  messages = (targetSessionId: string | number | undefined = undefined) => {
+    // this.connect();
 
     return this.connectionObserver$.pipe(
       flatMap(connected => {
@@ -56,7 +57,7 @@ export class SocketService {
           if (this.connectionRetries > 0) {
             console.log('Attempting to connect WS. Retries remaining:', this.connectionRetries);
             this.connectionRetries--;
-            this.connect();
+            this.connect(targetSessionId);
           } else {
             throw new Error('Cannot connect :(');
           }
