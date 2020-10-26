@@ -288,7 +288,7 @@ const initHandlers = () => {
   };
 
   notifyCaller = (message) => {
-    console.log('outgoing!!!', message)
+    console.log('outgoing!!!', message.eventType)
     wss.clients
       .forEach(client => {
         const isTargeted = message.payload.sessionId !== undefined;

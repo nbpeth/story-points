@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {WebSocketSubjectConfig} from 'rxjs/src/internal/observable/dom/WebSocketSubject';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
-import {map, catchError, flatMap} from 'rxjs/operators';
+import {map, catchError, flatMap, filter} from 'rxjs/operators';
 import {SpMessage} from '../active-session/model/events.model';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
@@ -18,11 +18,11 @@ export class SocketService {
   private messages$: Observable<any>;
 
   constructor(private snackBar: MatSnackBar) {
+
   }
 
   connect = (targetSessionId: string | number | undefined = undefined) => {
     if (!this.socket$ || this.socket$.closed) {
-
       const config = {
         url: this.buildSocketUrl(targetSessionId),
         deserializer: (data) => data,
@@ -50,11 +50,12 @@ export class SocketService {
   messages = (targetSessionId: string | number | undefined = undefined) => {
     // this.connect();
 
+
     return this.connectionObserver$.pipe(
       flatMap(connected => {
         if (!connected) {
           if (this.connectionRetries > 0) {
-            console.log('Attempting to connect WS. Retries remaining:', this.connectionRetries);
+            console.log(`Attempting to connect WS. Retries remaining: ${this.connectionRetries} for target session ${targetSessionId}`);
             this.connectionRetries--;
             this.connect(targetSessionId);
           } else {
@@ -64,13 +65,17 @@ export class SocketService {
 
         return this.messages$
           .pipe(
-            // retry(1), // maybe a delay
             catchError(e => {
               console.error('in a distant universe, something bad happened somewhere...', e);
               // alert observer something bad happened and try to recover
               this.connectionObserver$.next(false);
               return of({} as MessageEvent);
             }),
+            filter((_: MessageEvent) => connected),
+            // hack to prevent double messages
+            // value of "connected" is inexplicably false on every message
+            // connectionObserver does not push new values, so unclear how
+            // first thought would be the behaviorsubject default but it does not appear to be getting reassigned
             map((event: MessageEvent) => {
               try {
                 const messageData = JSON.parse(event.data) as SpMessage;

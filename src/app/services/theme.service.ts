@@ -8,10 +8,8 @@ import {LocalStorageService} from './local-storage.service';
 export class ThemeService {
   private darkTheme = new ReplaySubject<boolean>(1);
   private ultraDarkTheme = new ReplaySubject<boolean>(1);
-  private dynamicDark = new ReplaySubject<number>(1);
   isDarkTheme: Observable<boolean> = this.darkTheme.asObservable();
   isUltraDarkTheme: Observable<boolean> = this.ultraDarkTheme.asObservable();
-  // dynamicDarkValue = this.dynamicDark.asObservable();
 
   constructor(private localStorage: LocalStorageService) {
   }
@@ -22,7 +20,6 @@ export class ThemeService {
   }
 
   setUltraDarkTheme(ultraaaaaa: boolean): void {
-    // this.darkTheme.next(ultraaaaaa);
     this.ultraDarkTheme.next(ultraaaaaa);
     this.localStorage.setUltraDarkTheme(ultraaaaaa);
   }

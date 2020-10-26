@@ -98,7 +98,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       )
       .pipe(
         // filter(this.eventsOnlyForThisSession), // server should be handling this
-        tap(this.setSessionIfNotInLocalStorage),
+        // tap(this.setSessionIfNotInLocalStorage),
         map(this.handleEvents),
       )
       .subscribe();
@@ -222,17 +222,17 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.logs.push(`Welcome to ${this.session.sessionName}`);
   };
 
-  private eventsOnlyForThisSession = (message: SpMessage): boolean => {
-    const targetSession = message && message.payload && message.payload.sessionId;
+  // private eventsOnlyForThisSession = (message: SpMessage): boolean => {
+  //   const targetSession = message && message.payload && message.payload.sessionId;
+  //
+  //   return targetSession && this.session.sessionId === targetSession;
+  // };
 
-    return targetSession && this.session.sessionId === targetSession;
-  };
-
-  private setSessionIfNotInLocalStorage = () => {
-    if (!this.localStorage.getSession(this.session.sessionId)) {
-      this.localStorage.setSession(this.session.sessionId, new Session({} as Participant, new SessionSettings()));
-    }
-  };
+  // private setSessionIfNotInLocalStorage = () => {
+  //   if (!this.localStorage.getSession(this.session.sessionId)) {
+  //     this.localStorage.setSession(this.session.sessionId, new Session({} as Participant, new SessionSettings()));
+  //   }
+  // };
 
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
@@ -252,7 +252,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         this.setSessionName(messageData as GetStateForSessionMessage);
         break;
       default:
-        console.log('not matched', eventType);
+        console.log('not matched', messageData);
     }
   };
 
