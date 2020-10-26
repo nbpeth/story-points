@@ -49,7 +49,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const sessions = this.activeSessions ? [...this.activeSessions] : [];
 
     const matches = sessions.filter((session: { id: number, sessionName: string }) =>
-      session.sessionName ? session.sessionName.includes(this.sessionSearchTerm) : false
+      session.sessionName ? session.sessionName.toLowerCase().includes(this.sessionSearchTerm && this.sessionSearchTerm.toLowerCase()) : false
     );
 
     this.visibleSessions = matches;

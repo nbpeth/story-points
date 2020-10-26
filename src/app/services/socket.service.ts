@@ -21,7 +21,6 @@ export class SocketService {
   }
 
   connect = (targetSessionId: string | number | undefined = undefined) => {
-    console.log("## connecting!")
     if (!this.socket$ || this.socket$.closed) {
 
       const config = {
