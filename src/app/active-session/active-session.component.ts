@@ -222,23 +222,20 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.logs.push(`Welcome to ${this.session.sessionName}`);
   };
 
-  // private eventsOnlyForThisSession = (message: SpMessage): boolean => {
-  //   const targetSession = message && message.payload && message.payload.sessionId;
-  //
-  //   return targetSession && this.session.sessionId === targetSession;
-  // };
-
-  // private setSessionIfNotInLocalStorage = () => {
-  //   if (!this.localStorage.getSession(this.session.sessionId)) {
-  //     this.localStorage.setSession(this.session.sessionId, new Session({} as Participant, new SessionSettings()));
-  //   }
-  // };
 
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
-    console.log("message!", payload)
+    // console.log("message!", eventType)
     switch (eventType) {
+      // add event types back for logging, at least
+      // each event can still do a whole refresh for now
+
+
+
+      // case Events.POINTS_REVEALED:
+      //   this.logs.push("Points have been releaved " + JSON.stringify(payload));
+      //   break;
       case Events.PARTICIPANT_JOINED:
         this.verifyPayloadAndUpdate(payload, this.participantJoined, messageData);
         break;
@@ -260,7 +257,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     if (!payload) {
       this.router.navigate(['/'], {queryParams: {error: 1}});
     } else {
-      // console.log(payload) // this is getting called twice for every message
       updateFunction(messageData);
       this.ballots = this.collectBallots();
     }
