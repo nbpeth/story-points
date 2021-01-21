@@ -10,6 +10,7 @@ const startServer = () => {
 
   app.use(bodyParser.urlencoded({extended: false}));
   app.use(bodyParser.json());
+  app.use(cors);
 
   app.post('/user', (req, res) => {
 
@@ -29,7 +30,6 @@ const startServer = () => {
   });
 
 
-  app.use(cors);
 }
 
 mysqlClient.initDB(startServer)
