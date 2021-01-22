@@ -16,7 +16,7 @@ const startServer = () => {
 
   app.use(bodyParser.urlencoded({extended: false}));
   app.use(bodyParser.json());
-  app.use(cors);
+  app.use(cors());
 
   app.post('/user', (req, res) => {
 
