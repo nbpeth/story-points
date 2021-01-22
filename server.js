@@ -5,6 +5,12 @@ const mysqlClient = require('./mysqlClient')
 const startServer = () => {
   const server = require('http').createServer();
   const app = require('./http-server');
+  app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+
   const wss = new WebSocketServer({server: server, path: '/socket'});
 
   server.on('request', app);
