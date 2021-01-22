@@ -18,7 +18,7 @@ const startServer = () => {
   app.use(bodyParser.json());
   app.use(cors);
 
-  app.post('/user', (req, res) => {
+  app.post('https://story-points-9000.herokuapp.com/user', (req, res) => {
 
     mysqlClient.createUser(req.body, (err) => {
       if (err) {
