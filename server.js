@@ -111,7 +111,7 @@ const initHandlers = () => {
   handleIncomingMessages = (message) => {
     const messageData = JSON.parse(message);
     const eventType = messageData.eventType;
-    console.log('incoming!', messageData)
+    // console.log('incoming!', messageData)
     switch (eventType) {
       case 'state-of-the-state':
         getStateOfTheAppForCaller();
@@ -279,7 +279,7 @@ const initHandlers = () => {
   };
 
   sendErrorToCaller = (message, reason) => {
-    console.error(`${message}: ${reason}`);
+    // console.error(`${message}: ${reason}`);
     notifyCaller(formatMessage('error', {message: message}))
   }
 
@@ -294,7 +294,7 @@ const initHandlers = () => {
   };
 
   notifyCaller = (message) => {
-    console.log('outgoing!!!', message.eventType)
+    // console.log('outgoing!!!', message.eventType)
     wss.clients
       .forEach(client => {
         const isTargeted = message.payload.sessionId !== undefined;

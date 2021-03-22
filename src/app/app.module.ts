@@ -134,6 +134,7 @@ export class AppModule {
   };
 }
 
+// google provider should be injected from env
 export function provideConfig() {
   return (new AuthServiceConfig([
       {

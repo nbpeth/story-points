@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {UserService} from "../user.service";
-import {ThemeService} from "../services/theme.service";
+import {UserService} from '../user.service';
+import {ThemeService} from '../services/theme.service';
 
 @Component({
   selector: 'app-login',
@@ -9,7 +9,7 @@ import {ThemeService} from "../services/theme.service";
 })
 export class LoginComponent implements OnInit {
   isDarkTheme: boolean;
-
+  
   constructor(private userService: UserService, private themeService: ThemeService) { }
 
   ngOnInit() {
@@ -21,5 +21,4 @@ export class LoginComponent implements OnInit {
   signInWithGoogle(): void {
     this.userService.login();
   }
-
 }

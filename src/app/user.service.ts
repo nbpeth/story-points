@@ -1,9 +1,12 @@
 import {Injectable} from '@angular/core';
-import {AuthService, GoogleLoginProvider} from "angularx-social-login";
-import {BehaviorSubject, Observable} from "rxjs";
-import {SocketService} from "./services/socket.service";
-import {HttpClient} from "@angular/common/http";
-import {environment} from "../environments/environment";
+import {AuthService, GoogleLoginProvider, SocialUser} from 'angularx-social-login';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {SocketService} from './services/socket.service';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {environment} from '../environments/environment';
+import {LocalStorageService} from './services/local-storage.service';
+import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
+import {AlertSnackbarComponent} from './alert-snackbar/alert-snackbar.component';
 
 @Injectable({
   providedIn: 'root'
@@ -14,12 +17,20 @@ export class UserService {
   loggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   isLoggingIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  constructor(private authService: AuthService, private socketService: SocketService, private http: HttpClient) {
-    this.authService.authState.subscribe((user) => {
+
+  constructor(private authService: AuthService,
+              private socketService: SocketService,
+              private http: HttpClient,
+              private lss: LocalStorageService,
+              private snackBar: MatSnackBar) {
+    this.authService.authState.subscribe((user: SocialUser) => {
+      const idToken = user ? user.idToken : null;
+      this.lss.set('idToken', idToken);
       this.user = user;
       this.userChanged.next(user);
       this.loggedIn.next(user != null);
     });
+
 
     this.userChanges().subscribe((user: User) => {
       if (user) {
@@ -29,9 +40,13 @@ export class UserService {
   }
 
   createUser(user: User) {
-    this.http.post(`${environment.host}/user`, user).subscribe(x => {
-      // created user
-    });
+    const idToken = this.lss.get('idToken');
+    this.http.post(`${environment.host}/user`, user, { headers: new HttpHeaders().append('Authorization', idToken) })
+      .subscribe((res) => {
+      }, error => {
+        console.error(error);
+        this.logoutWithPrejudice('An error occurred during login or you are not authorized to use this app');
+      });
   }
 
   userChanges(): Observable<User> {
@@ -43,6 +58,19 @@ export class UserService {
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).finally(() => {
       this.isLoggingIn.next(false);
     });
+  }
+
+  logoutWithPrejudice(message: string) {
+    this.snackBar.openFromComponent(AlertSnackbarComponent, {
+      duration: 5000,
+      horizontalPosition: 'center' as MatSnackBarHorizontalPosition,
+      verticalPosition: 'top' as MatSnackBarVerticalPosition,
+      data: {
+        message,
+        labelClass: 'warn',
+      }
+    });
+    this.logout();
   }
 
   logout() {

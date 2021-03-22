@@ -14,6 +14,12 @@ export class LocalStorageService {
   constructor(@Inject(LOCAL_STORAGE) private storage: StorageService) {
   }
 
+  set = (key: string, value: string): void => {
+    this.storage.set(key, value);
+  }
+
+  get = (key: string): string => this.storage.get(key)
+
   private getState = (): AppState => {
     const appState = this.storage.get(this.key);
     if (!appState) {
@@ -23,66 +29,44 @@ export class LocalStorageService {
       return state;
     }
     return Object.assign(new AppState(null, null), JSON.parse(appState));
-  };
+  }
 
   private setState = (state: AppState) => {
     const appState = JSON.stringify(state);
     this.storage.set(this.key, appState);
     this.stateEvents.next(state);
-  };
+  }
 
   stateEventStream = () =>
-    this.stateEvents.asObservable();
+    this.stateEvents.asObservable()
 
   getTheme = (): { isDarkTheme, isUltraDarkTheme } => {
     const appState: AppState = this.getState();
     return {isDarkTheme: appState.globals.isDarkTheme, isUltraDarkTheme: appState.globals.isUltraDarkTheme};
-  };
+  }
 
   setDarkTheme = (isDarkTheme: boolean) => {
     const appState: AppState = this.getState();
     appState.globals.isDarkTheme = isDarkTheme;
     this.setState(appState);
-  };
+  }
 
   setUltraDarkTheme = (isUltraDarkTheme: boolean) => {
     const appState: AppState = this.getState();
     appState.globals.isUltraDarkTheme = isUltraDarkTheme;
     this.setState(appState);
-  };
-
-  getDarkValue = (): number => {
-    const appState: AppState = this.getState();
-    return Number(appState.globals.darkValue);
-  };
-
-  setDarkValue = (darkValue: number) => {
-    const appState: AppState = this.getState();
-    appState.globals.darkValue = String(darkValue);
-    this.setState(appState);
-  };
-
-  getSession = (sessionId: number): Session => {
-    const appState: AppState = this.getState();
-    return appState.sessions[sessionId];
-  };
-
-  setSession = (sessionId: number, session: Session) => {
-    const appState: AppState = this.getState();
-    appState.sessions[sessionId] = new Session(session.user, session.settings);
-    this.setState(appState);
-  };
+  }
 
   removeSession = (sessionId: number) => {
     const appState: AppState = this.getState();
     delete appState.sessions[sessionId];
     this.setState(appState);
-  };
+  }
 
   getUser = (sessionId: number): Participant => {
     const appState: AppState = this.getState();
     return appState.sessions[sessionId].user;
-  };
+  }
 
   setUser = (sessionId: number, user: Participant) => {
     const appState: AppState = this.getState();
@@ -91,7 +75,7 @@ export class LocalStorageService {
       maybeSession.user = user;
     }
     this.setState(appState);
-  };
+  }
 
   removeUser = (sessionId: number) => {
     const appState: AppState = this.getState();
@@ -100,7 +84,7 @@ export class LocalStorageService {
       maybeSession.user = {} as Participant;
       this.setState(appState);
     }
-  };
+  }
 
   getShowAdminConsole = (sessionId: number) => {
     const appState: AppState = this.getState();
@@ -110,7 +94,7 @@ export class LocalStorageService {
     }
 
     return false;
-  };
+  }
 
   setShowAdminConsole = (sessionId: number, showAdminConsole: boolean) => {
     const appState: AppState = this.getState();
@@ -119,7 +103,7 @@ export class LocalStorageService {
       maybeSession.settings.showAdminConsole = showAdminConsole;
       this.setState(appState);
     }
-  };
+  }
 
   setShowEventLog = (sessionId: number, showEventLog: boolean) => {
     const appState: AppState = this.getState();
@@ -128,7 +112,7 @@ export class LocalStorageService {
       maybeSession.settings.showEventLog = showEventLog;
       this.setState(appState);
     }
-  };
+  }
 }
 
 
