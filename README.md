@@ -5,6 +5,22 @@
 * Compile the app `ng build --watch` 
 * Start the server to serve static content and run the websocket/http servers `PORT=4200 node server.js`
 
+## Configuration
+Story Points connects to a mysql db of your choice
+* Apply the database schema and patches to your database from `db_seed/db_ddl.sql`
+Environment variables are required:
+* SPMYSQL_URL=<mysql://username:password@host/db?reconnect=true">
+* SPPASSWORD=<mysql-password>
+* SPUSER=<mysql-username>
+* SP_CLIENT_ID=<google-oath-client-id>
+
+export SPMYSQL_URL="mysql://b1429845583306:8451b970@us-cdbr-east-06.cleardb.net/heroku_87b34e619065b87?reconnect=true"
+export SPPASSWORD="8451b970"
+export SPUSER="b1429845583306"
+export SPHOST="us-cdbr-east-06.cleardb.net/heroku_87b34e619065b87"
+export SP_API_KEY="superKeyXXX"
+export SP_CLIENT_ID="169440150514-6p8qrgf59kceaonb8qvpk10jam8gmaho.apps.googleusercontent.com"
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
