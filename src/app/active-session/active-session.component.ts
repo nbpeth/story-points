@@ -229,8 +229,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       // add event types back for logging, at least
       // each event can still do a whole refresh for now
 
-
-
       // case Events.POINTS_REVEALED:
       //   this.logs.push("Points have been releaved " + JSON.stringify(payload));
       //   break;

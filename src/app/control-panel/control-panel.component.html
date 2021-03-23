@@ -1,7 +1,11 @@
 <div class="container">
-  <ng-container *ngIf="userService.isLoggingIn | async; else controls">
-    <!-- loading?-->
-  </ng-container>
+  <ng-container *ngIf="locked || (userService.isLoggingIn | async); else controls">
+      <div style="width:100%; display: flex; justify-content: center" class="mat-app-background">
+        <div style="padding: 20px" *ngIf="locked">
+          <h5>Frozen in time</h5>
+        </div>
+      </div>
+    </ng-container>
   <ng-template #controls>
     <ng-container *ngIf="userService.userChanges() | async as user ">
       <mat-drawer-container class="options-container" autosize>

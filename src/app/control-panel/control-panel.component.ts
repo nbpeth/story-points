@@ -15,6 +15,7 @@ export class ControlPanelComponent implements OnInit, OnChanges {
   @Input() participant: Participant;
   @Input() logs: string[];
   @Input() showLogs: boolean;
+  @Input() locked: boolean;
   @Output() participantJoined: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Output() participantLeft: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Output() pointVisibilityEvent: EventEmitter<PointVisibilityChange> = new EventEmitter<PointVisibilityChange>();
