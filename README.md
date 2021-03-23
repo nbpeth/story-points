@@ -8,7 +8,11 @@
 ## Configuration
 Story Points connects to a mysql db of your choice
 * Apply the database schema and patches to your database from `db_seed/db_ddl.sql`
+
+
 Environment variables are required:
+
+
 * SPMYSQL_URL=`<mysql://username:password@host/db?reconnect=true">`
 * SPPASSWORD=`<mysql-password>`
 * SPUSER=`<mysql-username>`
