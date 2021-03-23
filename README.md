@@ -2,8 +2,8 @@
 
 ## Development server
 
-Compile the app `ng build --watch` 
-Start the server to serve static content and run the websocket/http servers `PORT=4200 node server.js`
+* Compile the app `ng build --watch` 
+* Start the server to serve static content and run the websocket/http servers `PORT=4200 node server.js`
 
 ## Code scaffolding
 
