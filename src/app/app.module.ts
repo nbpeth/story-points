@@ -53,6 +53,8 @@ import {UserService} from './user.service';
 import {HttpClientModule} from '@angular/common/http';
 import {UsernamePipe} from './pipe/username.pipe';
 import {ParseDatePipe} from './pipe/parse-date.pipe';
+import { ChangeLogComponent } from './change-log/change-log.component';
+import { CreateSessionTileComponent } from './create-session-tile/create-session-tile.component';
 
 @NgModule({
   declarations: [
@@ -81,6 +83,8 @@ import {ParseDatePipe} from './pipe/parse-date.pipe';
     ActivityLogComponent,
     LoginComponent,
     LoggedInUserComponent,
+    ChangeLogComponent,
+    CreateSessionTileComponent,
     // TestComponent,
   ],
   imports: [
