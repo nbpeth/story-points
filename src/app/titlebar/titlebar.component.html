@@ -1,21 +1,37 @@
 <div>
+<!-- todo  use theme color not this-->
   <mat-toolbar style="background-color: rgba(40, 40, 40, 0.4)">
     <mat-toolbar-row>
       <div class="items">
-        <app-logged-in-user>
-        </app-logged-in-user>
-        <span>
-        <h1>
-          <a [routerLink]="['']">
-              Story Points
-          </a>
-        </h1>
-      </span>
+        <div class="item">
+          <app-logged-in-user>
+          </app-logged-in-user>
+        </div>
+
+
+
+        <div class="item">
+          <h2>
+            <a [routerLink]="['']">
+                Story Points
+            </a>
+          </h2>
+        </div>
       </div>
       <div class="items icons">
-        <span>
-          <app-theme-toggle></app-theme-toggle>
-        </span>
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+            <mat-icon>menu</mat-icon>
+          </button>
+
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item [routerLink]="['']">
+              <mat-icon>home</mat-icon>
+              <span>Dashboard</span>
+            </button>
+            <hr style="width: 90%">
+            <app-theme-toggle></app-theme-toggle>
+
+          </mat-menu>
       </div>
     </mat-toolbar-row>
   </mat-toolbar>
