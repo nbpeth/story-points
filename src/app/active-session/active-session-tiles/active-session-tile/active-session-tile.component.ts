@@ -4,7 +4,7 @@ import {TerminateSessionMessage, TerminateSessionPayload} from '../../model/even
 import {MatDialog, MatDialogConfig} from '@angular/material';
 import {ConfirmDialogComponent} from 'src/app/confirm-dialog/confirm-dialog.component';
 import {LocalStorageService} from '../../../services/local-storage.service';
-import {UserService} from "../../../user.service";
+import {UserService} from '../../../user.service';
 
 @Component({
   selector: 'active-session-tile',
@@ -12,7 +12,7 @@ import {UserService} from "../../../user.service";
   styleUrls: ['./active-session-tile.component.scss']
 })
 export class ActiveSessionTileComponent {
-  @Input() session: { id: number, sessionName: string };
+  @Input() session: { id: number, sessionName: string, participantCount: number, lastActive: any };
 
   constructor(private socketService: SocketService,
               private dialog: MatDialog,
@@ -32,7 +32,7 @@ export class ActiveSessionTileComponent {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(this.destroySessionIfItIsWilled);
-  };
+  }
 
   private destroySessionIfItIsWilled = (result: boolean) => {
     if (result) {
@@ -40,5 +40,5 @@ export class ActiveSessionTileComponent {
       this.socketService.send(message);
       this.localStorage.removeSession(this.session.id);
     }
-  };
+  }
 }

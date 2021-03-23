@@ -17,7 +17,7 @@ export class SpMessagePayload {
 }
 
 export class GetCompleteStatePayload extends SpMessagePayload {
-  sessions: { id: number, sessionName: string }[];
+  sessions: { id: number, sessionName: string, participantCount: number, lastActive: any }[];
 }
 
 export class NewSessionPayload extends SpMessagePayload {

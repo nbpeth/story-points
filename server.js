@@ -43,11 +43,10 @@ const handleNewClients = (ws, request) => {
   ws.on('message', handleIncomingMessages);
 };
 
-
 const initHandlers = () => {
   const wss = startServer();
 
-  getStateOfTheAppForCaller = () => {
+  getAllSession = () => {
     const getAllSessionsCallback = (err, results) => {
       if (err) {
         sendErrorToCaller('Unable to get sessions', err.message);
@@ -56,6 +55,18 @@ const initHandlers = () => {
     }
 
     mysqlClient.getAllSessions(getAllSessionsCallback)
+  }
+
+  getStateOfTheAppForCaller = () => {
+    // const getAllSessionsCallback = (err, results) => {
+    //   if (err) {
+    //     sendErrorToCaller('Unable to get sessions', err.message);
+    //   }
+    //   notifyCaller(formatMessage('state-of-the-state', {sessions: results}))
+    // }
+    //
+    // mysqlClient.getAllSessions(getAllSessionsCallback)
+    getAllSession()
   }
 
   getSessionState = (sessionId, notifier) => {
@@ -98,20 +109,21 @@ const initHandlers = () => {
   }
 
   getStateOfTheAppForClients = () => {
-    const getAllSessionsCallback = (err, results) => {
-      if (err) {
-        sendErrorToCaller('Unable to terminate sessions', err.message);
-      }
-      notifyClients(formatMessage('state-of-the-state', {sessions: results}))
-    }
-
-    mysqlClient.getAllSessions(getAllSessionsCallback)
+    getAllSession()
+    // const getAllSessionsCallback = (err, results) => {
+    //   if (err) {
+    //     sendErrorToCaller('Unable to terminate sessions', err.message);
+    //   }
+    //   notifyClients(formatMessage('state-of-the-state', {sessions: results}))
+    // }
+    //
+    // mysqlClient.getAllSessions(getAllSessionsCallback)
   }
 
   handleIncomingMessages = (message) => {
     const messageData = JSON.parse(message);
     const eventType = messageData.eventType;
-    // console.log('incoming!', messageData)
+    console.log('incoming!', messageData)
     switch (eventType) {
       case 'state-of-the-state':
         getStateOfTheAppForCaller();
@@ -169,6 +181,7 @@ const initHandlers = () => {
 
     mysqlClient.revealPointsForSession(sessionId, (err) => {
       if (err) {
+        console.error(err)
         sendErrorToCaller('Unable to reveal points', err.message);
       } else {
         getSessionState(sessionId, notifyClients);
@@ -241,6 +254,7 @@ const initHandlers = () => {
       }
 
       getSessionStateForParticipantJoined(sessionId, userName, loginId, loginEmail, notifyClients);
+      getAllSession();
 
     }
     mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, loginId, loginEmail, callback)
@@ -255,23 +269,18 @@ const initHandlers = () => {
       } else {
         getSessionStateForParticipantRemoved(sessionId, userName, loginId, loginEmail, notifyClients);
       }
+
+      getAllSession();
     })
   };
 
   createNewSession = (messageData) => {
-    const getAllSessionsCallback = (err, results) => {
-      if (err) {
-        sendErrorToCaller('Unable to get sessions', err.message);
-      } else {
-        notifyClients(formatMessage('state-of-the-state', {sessions: results}));
-      }
-    }
-
     const createSessionCallback = (err) => {
       if (err) {
         sendErrorToCaller('Unable to create session', err.message);
       } else {
-        mysqlClient.getAllSessions(getAllSessionsCallback)
+        // mysqlClient.getAllSessions(getAllSessionsCallback)
+        getAllSession()
       }
     }
 
@@ -294,7 +303,7 @@ const initHandlers = () => {
   };
 
   notifyCaller = (message) => {
-    // console.log('outgoing!!!', message.eventType)
+    console.log('outgoing!!!', message)
     wss.clients
       .forEach(client => {
         const isTargeted = message.payload.sessionId !== undefined;

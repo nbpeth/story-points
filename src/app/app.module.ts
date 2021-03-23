@@ -46,13 +46,13 @@ import {VotingBoothComponent} from './voting-booth/voting-booth.component';
 import {BallotDisplayComponent} from './vote-display/ballot-display.component';
 import {ActivityLogComponent} from './activity-log/activity-log.component';
 import {AuthServiceConfig, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
-import {MatMenuModule} from "@angular/material/menu";
+import {MatMenuModule} from '@angular/material/menu';
 import { LoginComponent } from './login/login.component';
 import { LoggedInUserComponent } from './logged-in-user/logged-in-user.component';
-import {UserService} from "./user.service";
-import {HttpClientModule} from "@angular/common/http";
-import {UsernamePipe} from "./pipe/username.pipe";
-// import { TestComponent } from './test/test.component';
+import {UserService} from './user.service';
+import {HttpClientModule} from '@angular/common/http';
+import {UsernamePipe} from './pipe/username.pipe';
+import {ParseDatePipe} from './pipe/parse-date.pipe';
 
 @NgModule({
   declarations: [
@@ -71,6 +71,7 @@ import {UsernamePipe} from "./pipe/username.pipe";
     CreateSessionDialogComponent,
     ParticipantFilterPipe,
     UsernamePipe,
+    ParseDatePipe,
     AlertSnackbarComponent,
     ControlPanelComponent,
     JoinSessionDialogComponent,
@@ -131,7 +132,7 @@ export class AppModule {
 
     this.overlayContainer.getContainerElement().classList.remove(removeTheme);
     this.overlayContainer.getContainerElement().classList.add(theme);
-  };
+  }
 }
 
 // google provider should be injected from env

@@ -28,7 +28,18 @@ runQuery = (statement, onComplete) => {
 }
 
 getAllSessions = (onComplete) => {
-  const sql = 'SELECT id, session_name as sessionName FROM sessions';
+  const sql = `select a.id as id, a.id, a.sessionName as sessionName, lastActive, participantCount from
+    (select s.id, s.session_name as sessionName from sessions s) as a
+    left join (select
+        s.id,
+        s.session_name as sessionName,
+        s.last_active as lastActive,
+        count(p.id) as participantCount
+        from sessions s, participant p
+        where s.id = p.session_id
+        group by s.session_name) as b
+    on a.id = b.id`
+
   const statement = mysql.format(sql, []);
 
   runQuery(statement, onComplete)
@@ -138,11 +149,9 @@ resetPointsForSession = (sessionId, onComplete) => {
 }
 
 revealPointsForSession = (sessionId, onComplete) => {
-  const sql = `
-        UPDATE sessions SET points_visible = true WHERE id = ?
-    `
+  const sql = `UPDATE sessions SET points_visible = true, last_active = ? WHERE id = ?`
 
-  const statement = mysql.format(sql, [sessionId]);
+  const statement = mysql.format(sql, [new Date(), sessionId]);
 
   runQuery(statement, onComplete);
 }

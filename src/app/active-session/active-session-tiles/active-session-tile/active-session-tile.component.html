@@ -6,6 +6,10 @@
   </mat-card-title>
 
   <mat-card-content>
+    <div style="align-items: flex-start; display: flex; flex-direction: column">
+    <div>Users: {{session.participantCount}}</div>
+    <div>Last Active: {{session.lastActive ? (session.lastActive | parseDatePipe | date) : "--"}}</div>
+    </div>
   </mat-card-content>
 
   <mat-card-footer>

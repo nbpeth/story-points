@@ -49,3 +49,7 @@ create table user (
     updated DATETIME,
     PRIMARY KEY (provider_id)
 );
+
+
+ALTER TABLE sessions
+ADD COLUMN last_active date;

@@ -97,8 +97,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         })
       )
       .pipe(
-        // filter(this.eventsOnlyForThisSession), // server should be handling this
-        // tap(this.setSessionIfNotInLocalStorage),
         map(this.handleEvents),
       )
       .subscribe();
