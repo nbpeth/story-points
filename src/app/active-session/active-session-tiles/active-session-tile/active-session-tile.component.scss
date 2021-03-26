@@ -12,3 +12,9 @@ a:link {
 .mat-icon {
   opacity: 80%;
 }
+
+@media(max-width: 600px) {
+  mat-card {
+    min-width: 15rem;
+  }
+}
