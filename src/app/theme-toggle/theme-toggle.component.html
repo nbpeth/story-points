@@ -1,6 +1,7 @@
 <div class="items">
   <div class="item">
-    <mat-slide-toggle  [(ngModel)]="isDarkMode" (change)="setIsDarkMode($event)" [disabled]="isUltraDarkMode">Dark Mode</mat-slide-toggle>
+    <mat-slide-toggle  [(ngModel)]="isDarkMode" (change)="setIsDarkMode($event)" [disabled]="true">Dark Mode</mat-slide-toggle>
+<!--    <mat-slide-toggle  [(ngModel)]="isDarkMode" (change)="setIsDarkMode($event)" [disabled]="isUltraDarkMode">Dark Mode</mat-slide-toggle>-->
   </div>
   <div class="item">
     <mat-slide-toggle [(ngModel)]="isUltraDarkMode" (change)="setIsUltraDarkMode($event)">Ultra Dark Mode</mat-slide-toggle>

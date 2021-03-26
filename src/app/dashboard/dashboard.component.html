@@ -1,11 +1,11 @@
-<app-dashboard-header (createSession)="createNewSession($event)" (searchBoxValue)="searchBoxValueChanged($event)">
+<app-dashboard-header  (searchBoxValue)="searchBoxValueChanged($event)">
 </app-dashboard-header>
 
 <div class="body-container">
   <active-session-tiles>
+    <app-create-session-tile (createSession)="createNewSession($event)"></app-create-session-tile>
     <active-session-tile cdkDrag *ngFor="let tile of visibleSessions" [session]="tile">
 
     </active-session-tile>
   </active-session-tiles>
-
 </div>

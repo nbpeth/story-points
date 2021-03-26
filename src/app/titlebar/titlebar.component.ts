@@ -1,10 +1,10 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {User, UserService} from "../user.service";
-import {CreateSessionDialogComponent} from "../create-session-dialog/create-session-dialog.component";
-import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {CreateNewSessionMessage, NewSessionPayload} from "../active-session/model/events.model";
-import {SocketService} from "../services/socket.service";
-import {Router} from "@angular/router";
+import {User, UserService} from '../user.service';
+import {CreateSessionDialogComponent} from '../create-session-dialog/create-session-dialog.component';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {CreateNewSessionMessage, NewSessionPayload} from '../active-session/model/events.model';
+import {SocketService} from '../services/socket.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-titlebar',
@@ -51,7 +51,7 @@ export class TitlebarComponent implements OnInit {
   createNewSession = (newSessionName: string) => {
     const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));
     this.socketService.send(message);
-  };
+  }
 
   logout() {
     this.userService.logout();

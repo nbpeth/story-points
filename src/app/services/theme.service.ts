@@ -26,8 +26,8 @@ export class ThemeService {
 
   loadState = (): void => {
     const { isDarkTheme, isUltraDarkTheme } = this.localStorage.getTheme();
-    this.setDarkTheme(isDarkTheme);
+    this.setDarkTheme(true); // until theming is fixed should always be dark
+    // this.setDarkTheme(isDarkTheme);
     this.setUltraDarkTheme(isUltraDarkTheme);
   };
-
 }

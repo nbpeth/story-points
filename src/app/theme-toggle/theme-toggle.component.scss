@@ -1,17 +1,10 @@
 .items {
-
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
 
   .item {
-    padding-left: 10px;
-
-    mat-slider {
-      width: 90px;
-      min-width: 50px;
-    }
-
+    padding: 0 10px 0 10px;
+    font-size: 0.875rem;
   }
 
   .toppad {

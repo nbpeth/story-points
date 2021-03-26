@@ -1,12 +1,10 @@
-
-a:link {
-  text-decoration: none;
-}
-
 .mat-card {
   margin: 10px;
   text-align: center;
-
+  height: 90%;
+  opacity: 50%;
+  border:  5px dashed white;
+  cursor: pointer;
 }
 
 .mat-icon {
