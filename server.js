@@ -58,14 +58,6 @@ const initHandlers = () => {
   }
 
   getStateOfTheAppForCaller = () => {
-    // const getAllSessionsCallback = (err, results) => {
-    //   if (err) {
-    //     sendErrorToCaller('Unable to get sessions', err.message);
-    //   }
-    //   notifyCaller(formatMessage('state-of-the-state', {sessions: results}))
-    // }
-    //
-    // mysqlClient.getAllSessions(getAllSessionsCallback)
     getAllSession()
   }
 
@@ -110,14 +102,6 @@ const initHandlers = () => {
 
   getStateOfTheAppForClients = () => {
     getAllSession()
-    // const getAllSessionsCallback = (err, results) => {
-    //   if (err) {
-    //     sendErrorToCaller('Unable to terminate sessions', err.message);
-    //   }
-    //   notifyClients(formatMessage('state-of-the-state', {sessions: results}))
-    // }
-    //
-    // mysqlClient.getAllSessions(getAllSessionsCallback)
   }
 
   handleIncomingMessages = (message) => {
@@ -155,6 +139,9 @@ const initHandlers = () => {
       case 'get-session-name':
         getSessionNameFor(messageData);
         break;
+      case 'celebrate':
+        celebrate(messageData)
+        break
       // case 'create-user':
       //   createUser(messageData)
       //   break;
@@ -274,12 +261,16 @@ const initHandlers = () => {
     })
   };
 
+  celebrate = (messageData) => {
+    const { celebration, sessionId } = messageData.payload;
+    notifyClients(formatMessage("celebrate", {celebration: celebration, sessionId: sessionId}))
+  }
+
   createNewSession = (messageData) => {
     const createSessionCallback = (err) => {
       if (err) {
         sendErrorToCaller('Unable to create session', err.message);
       } else {
-        // mysqlClient.getAllSessions(getAllSessionsCallback)
         getAllSession()
       }
     }
@@ -299,7 +290,7 @@ const initHandlers = () => {
   });
 
   notifyClients = (message) => {
-    notifyCaller(message); // need to be able to iso
+    notifyCaller(message);
   };
 
   notifyCaller = (message) => {
@@ -315,7 +306,7 @@ const initHandlers = () => {
             client.send(JSON.stringify(message));
           }
         } else {
-          if(!client.targetSessionId) { // message not targeted and client not connected to dashboard
+          if(!client.targetSessionId) {
             client.send(JSON.stringify(message));
           }
         }

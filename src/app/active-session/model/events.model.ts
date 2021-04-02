@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 import { Events } from 'src/app/active-session/enum/events';
 import {User} from "../../user.service";
 
@@ -81,6 +82,11 @@ export class CreateUserPayload extends SpMessagePayload {
     super();
   }
 }
+export class CelebratePayload extends SpMessagePayload {
+  constructor(public celebration: string) {
+    super();
+  }
+}
 
 export class GetCompleteStateMessage extends SpMessage {
   constructor() {
@@ -158,3 +164,11 @@ export class CreateUserMessage extends SpMessage {
     this.eventType = Events.CREATE_USER as string;
   }
 }
+
+export class CelebrateMessage extends SpMessage {
+  constructor(public payload: CelebratePayload) {
+    super(payload);
+    this.eventType = Events.CELEBRATE as string;
+  }
+}
+

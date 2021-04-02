@@ -2,7 +2,7 @@
   <ng-container *ngIf="locked || (userService.isLoggingIn | async); else controls">
       <div style="width:100%; display: flex; justify-content: center" class="mat-app-background">
         <div style="padding: 20px" *ngIf="locked">
-          <h5>Frozen in time</h5>
+          <mat-icon>update_disabled</mat-icon>
         </div>
       </div>
     </ng-container>
@@ -30,6 +30,10 @@
         </mat-drawer>
 
         <div class="options-content">
+          <button type="button" mat-button (click)="celebrate()">
+            <mat-icon>cake</mat-icon>
+            Celebrate
+          </button>
           <button type="button" mat-button (click)="menu.toggle()">
             <mat-icon>settings</mat-icon>
             Settings
