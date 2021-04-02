@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {PointVisibilityChange} from "../control-panel/control-panel.component";
+import {PointVisibilityChange} from '../control-panel/control-panel.component';
 
 @Component({
   selector: 'admin-controls',

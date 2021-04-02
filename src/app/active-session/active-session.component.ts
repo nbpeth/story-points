@@ -78,11 +78,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.successSound = new Audio('assets/sounds/ohyeah.mp3');
 
     this.localStorage.stateEventStream().subscribe((state: AppState) => {
-      const maybeSession = state.getSessionBy(this.session && this.session.sessionId);
-
-      if (maybeSession) {
-        this.showLogs = maybeSession.settings.showEventLog;
-      }
+      // const maybeSession = state.getSessionBy(this.session && this.session.sessionId);
+      //
+      // if (maybeSession) {
+      //   this.showLogs = maybeSession.settings.showEventLog;
+      // }
     });
 
     this.route.paramMap

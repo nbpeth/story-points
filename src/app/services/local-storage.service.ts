@@ -88,30 +88,21 @@ export class LocalStorageService {
 
   getShowAdminConsole = (sessionId: number) => {
     const appState: AppState = this.getState();
-    const maybeSession = appState.getSessionBy(sessionId);
-    if (maybeSession && maybeSession.settings) {
-      return maybeSession.settings.showAdminConsole;
-    }
-
-    return false;
+    return appState.globals.showAdminConsole;
   }
 
-  setShowAdminConsole = (sessionId: number, showAdminConsole: boolean) => {
+  setShowAdminConsole = (showAdminConsole: boolean) => {
     const appState: AppState = this.getState();
-    const maybeSession = appState.getSessionBy(sessionId);
-    if (maybeSession && maybeSession.settings) {
-      maybeSession.settings.showAdminConsole = showAdminConsole;
-      this.setState(appState);
-    }
+    const updatedState = {...appState, globals: {...appState.globals, showAdminConsole}} as AppState;
+
+    this.setState(updatedState);
   }
 
-  setShowEventLog = (sessionId: number, showEventLog: boolean) => {
+  setShowEventLog = (showEventLog: boolean) => {
     const appState: AppState = this.getState();
-    const maybeSession = appState.getSessionBy(sessionId);
-    if (maybeSession && maybeSession.settings) {
-      maybeSession.settings.showEventLog = showEventLog;
-      this.setState(appState);
-    }
+    const updatedState = {...appState, globals: {...appState.globals, showEventLog}} as AppState;
+
+    this.setState(updatedState);
   }
 }
 
