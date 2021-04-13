@@ -2,3 +2,10 @@
   display: flex;
   flex-wrap: wrap;
 }
+
+@media(max-width: 800px) {
+  .content {
+    display: flex;
+    justify-content: center;
+  }
+}

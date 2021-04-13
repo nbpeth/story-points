@@ -28,7 +28,6 @@ export class SocketService {
         deserializer: (data) => data,
         openObserver: {
           next: () => {
-            // this.reset();
             this.connectionObserver$.next(true);
             this.connectionRetries = this.MAX_RETRIES;
             console.log('WS Connected! Great job!');
@@ -48,9 +47,6 @@ export class SocketService {
   }
 
   messages = (targetSessionId: string | number | undefined = undefined) => {
-    // this.connect();
-
-
     return this.connectionObserver$.pipe(
       flatMap(connected => {
         if (!connected) {
@@ -67,15 +63,10 @@ export class SocketService {
           .pipe(
             catchError(e => {
               console.error('in a distant universe, something bad happened somewhere...', e);
-              // alert observer something bad happened and try to recover
               this.connectionObserver$.next(false);
               return of({} as MessageEvent);
             }),
             filter((_: MessageEvent) => connected),
-            // hack to prevent double messages
-            // value of "connected" is inexplicably false on every message
-            // connectionObserver does not push new values, so unclear how
-            // first thought would be the behaviorsubject default but it does not appear to be getting reassigned
             map((event: MessageEvent) => {
               try {
                 const messageData = JSON.parse(event.data) as SpMessage;
@@ -106,10 +97,6 @@ export class SocketService {
   close() {
     this.socket$.unsubscribe();
     this.reset();
-  }
-
-  x() {
-    this.socket$.unsubscribe();
   }
 
   send = (message: any): void => {

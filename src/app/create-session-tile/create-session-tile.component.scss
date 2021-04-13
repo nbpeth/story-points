@@ -7,6 +7,22 @@
   cursor: pointer;
 }
 
+.mat-card-content {
+  height:100%;
+  width:100%;
+
+  button {
+    height:100%;
+    width:100%;
+  }
+}
+
 .mat-icon {
   opacity: 80%;
+}
+
+@media(max-width: 800px) {
+  mat-card {
+    min-width: 15rem;
+  }
 }

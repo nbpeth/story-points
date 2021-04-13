@@ -10,7 +10,7 @@ export class AppState {
 }
 
 export class Globals {
-  constructor(public isDarkTheme: boolean, public isUltraDarkTheme: boolean, public darkValue: string) {
+  constructor(public isDarkTheme: boolean, public isUltraDarkTheme: boolean, public darkValue: string, public showAdminConsole: boolean, public showEventLog?: boolean) {
   }
 }
 

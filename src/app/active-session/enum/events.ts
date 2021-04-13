@@ -11,4 +11,5 @@ export enum Events {
   GET_SESSION_NAME = 'get-session-name',
   CREATE_USER = 'create-user',
   ERROR = 'error',
+  CELEBRATE = 'celebrate',
 }

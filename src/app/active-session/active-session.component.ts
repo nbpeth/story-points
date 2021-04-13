@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SocketService} from '../services/socket.service';
-import {filter, flatMap, map, tap} from 'rxjs/operators';
-import {Subject, combineLatest} from 'rxjs';
+import {flatMap, map} from 'rxjs/operators';
+import {combineLatest, Subject} from 'rxjs';
 import {Events} from './enum/events';
 import {
   GetSessionNameMessage,
@@ -31,11 +31,13 @@ import {
 import {ThemeService} from '../services/theme.service';
 import {ParticipantFilterPipe} from '../pipe/participant-filter.pipe';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
-import {PointVisibilityChange} from "../control-panel/control-panel.component";
-import {Ballot} from "../vote-display/ballot-display.component";
+import {PointVisibilityChange} from '../control-panel/control-panel.component';
+import {Ballot} from '../vote-display/ballot-display.component';
 import {LocalStorageService} from '../services/local-storage.service';
-import {AppState, Session, SessionSettings} from '../services/local-storage.model';
-import {User, UserService} from "../user.service";
+import {AppState} from '../services/local-storage.model';
+import {User, UserService} from '../user.service';
+
+declare const confetti: any;
 
 @Component({
   selector: 'app-active-session',
@@ -76,11 +78,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.successSound = new Audio('assets/sounds/ohyeah.mp3');
 
     this.localStorage.stateEventStream().subscribe((state: AppState) => {
-      const maybeSession = state.getSessionBy(this.session && this.session.sessionId);
-
-      if (maybeSession) {
-        this.showLogs = maybeSession.settings.showEventLog;
-      }
+      // const maybeSession = state.getSessionBy(this.session && this.session.sessionId);
+      //
+      // if (maybeSession) {
+      //   this.showLogs = maybeSession.settings.showEventLog;
+      // }
     });
 
     this.route.paramMap
@@ -124,15 +126,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         )
       )
     );
-  };
+  }
 
   voteHasChanged = (vote: MatSelectChange) => {
     this.participant.point = vote.value;
     this.submit();
-  };
-
-  close() {
-    this.socketService.close();
   }
 
   changePointVisibility = (state: PointVisibilityChange) => {
@@ -146,11 +144,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       default:
         break;
     }
-  };
+  }
 
   resetPoints = () => {
     this.socketService.send(new ResetPointsForSessionMessage(new ResetPointsForSessionPayload(this.session.sessionId)));
-  };
+  }
 
   revealPoints = () => {
     this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.session.sessionId)));
@@ -158,7 +156,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     if (points.length > 1 && points.every(point => point === points[0])) {
       this.successSound.play();
     }
-  };
+  }
 
   joinSession = (maybeNewParticipant: Participant, isAdmin: boolean = false) => {
     if (maybeNewParticipant) {
@@ -177,7 +175,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         )
       );
     }
-  };
+  }
 
   leaveSession = (_: Participant) => {
     const {id, email} = this.userService.getLoginUser();
@@ -192,7 +190,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         )
       )
     );
-  };
+  }
 
   isMyCard = (card: Participant) => {
     const user = this.userService.getLoginUser();
@@ -200,7 +198,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   collectBallots = (): Ballot[] =>
-    this.session.participants.filter((p: Participant) => p.hasVoted).map((p: Participant) => p.point);
+    this.session.participants.filter((p: Participant) => p.hasVoted).map((p: Participant) => p.point)
 
   private requestInitialStateOfSessionBy = (id: number): void => {
     this.socketService.send(
@@ -213,12 +211,12 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         new GetStateForSessionPayload(id)
       )
     );
-  };
+  }
 
   private setSessionName = (messageData: GetSessionNameMessage) => {
     this.session.sessionName = messageData.payload.sessionName;
     this.logs.push(`Welcome to ${this.session.sessionName}`);
-  };
+  }
 
 
   private handleEvents = (messageData: SpMessage) => {
@@ -244,10 +242,13 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       case Events.GET_SESSION_NAME:
         this.setSessionName(messageData as GetStateForSessionMessage);
         break;
+      case Events.CELEBRATE:
+        confetti.start(2500);
+        break;
       default:
         console.log('not matched', messageData);
     }
-  };
+  }
 
   private verifyPayloadAndUpdate = (payload: any, updateFunction: any, messageData: any) => {
     if (!payload) {
@@ -256,7 +257,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       updateFunction(messageData);
       this.ballots = this.collectBallots();
     }
-  };
+  }
 
   private updateSession = (messageData: GetStateForSessionMessage | ParticipantJoinedSessionMessage) => {
     const session = Object.assign(new StoryPointSession(), messageData.payload);
@@ -264,7 +265,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.session = session;
     this.session.setName(previousName); // the name gets set every. time. no.
     this.refreshParticipants(session);
-  };
+  }
 
   private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
     const {userName, loginId} = messageData.payload;
@@ -275,7 +276,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.showInfoBar(message, 'happy');
     this.localStorage.setUser(this.session && this.session.sessionId, this.participant);
     this.updateSession(messageData);
-  };
+  }
 
   private participantRemoved = (messageData: ParticipantRemovedSessionMessage) => {
     const {userName, loginId} = messageData.payload;
@@ -290,7 +291,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.showInfoBar(message, 'warn');
     this.localStorage.removeUser(this.session && this.session.sessionId);
     this.updateSession(messageData);
-  };
+  }
 
   private recoverUser = (user: User, participants: any[]): void => {
     if (user && participants) {
@@ -300,22 +301,22 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         }
       );
     }
-  };
+  }
 
   private refreshParticipants = (session: StoryPointSession) => {
     const participants = session.participants;
     this.setParticipantsInSession(participants);
-  };
+  }
 
   private setParticipantsInSession = (participants: Participant[]) => {
     this.session.loadParticipants(participants);
     this.participantsInThisSession.next(participants);
-  };
+  }
 
   private clearLocalUserState = () => {
     this.localStorage.removeUser(this.session && this.session.sessionId);
     this.participant = undefined;
-  };
+  }
 
   private showInfoBar = (message: string, labelClass: string, duration: number = 2000): void => {
     this.snackBar.openFromComponent(AlertSnackbarComponent, {
@@ -327,5 +328,5 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         labelClass
       }
     });
-  };
+  }
 }

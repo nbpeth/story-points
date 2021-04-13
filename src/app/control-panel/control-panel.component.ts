@@ -1,9 +1,11 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {Participant} from '../active-session/model/session.model';
 import {LocalStorageService} from '../services/local-storage.service';
-import {DefaultPointSelection, PointSelection} from "../point-selection/point-selection";
-import {AppState} from "../services/local-storage.model";
-import {UserService} from "../user.service";
+import {DefaultPointSelection, PointSelection} from '../point-selection/point-selection';
+import {AppState} from '../services/local-storage.model';
+import {UserService} from '../user.service';
+import {SocketService} from '../services/socket.service';
+import {CelebrateMessage, CelebratePayload} from '../active-session/model/events.model';
 
 @Component({
   selector: 'control-panel',
@@ -27,6 +29,7 @@ export class ControlPanelComponent implements OnInit, OnChanges {
   @Output() pointSelectionChanged = new EventEmitter<PointSelection>();
 
   constructor(public userService: UserService,
+              private socketService: SocketService,
               private localStorage: LocalStorageService) {
   }
 
@@ -36,14 +39,8 @@ export class ControlPanelComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.localStorage.stateEventStream()
       .subscribe((state: AppState) => {
-        const maybeSession = state.getSessionBy(this.sessionId);
-
-        if (maybeSession) {
-          this.showAdminConsole = maybeSession.settings.showAdminConsole;
-          this.showEventLog = maybeSession.settings.showEventLog;
-        } else {
-          this.showEventLog = true;
-        }
+        this.showAdminConsole = state.globals.showAdminConsole;
+        this.showEventLog = state.globals.showEventLog;
       });
 
     this.pointSelectionChanged.emit(new DefaultPointSelection());
@@ -53,27 +50,33 @@ export class ControlPanelComponent implements OnInit, OnChanges {
     const you = this.userService.getLoginUser();
     const youAsAParticipantOfThisSession = new Participant(you.firstName);
     this.participantJoined.emit(youAsAParticipantOfThisSession);
-  };
+  }
 
   leaveSession = () => {
     this.participantLeft.emit(this.participant);
-  };
+  }
 
   changePointVisibility = (state: PointVisibilityChange) => {
     this.pointVisibilityEvent.emit(state);
-  };
+  }
 
   submitVote = (vote) => {
     this.voteSubmitted.emit(vote);
-  };
+  }
 
   setShowAdminConsole = (event) => {
-    this.localStorage.setShowAdminConsole(this.sessionId, event.checked);
-  };
+    this.localStorage.setShowAdminConsole(event.checked);
+  }
 
   setShowEventLog = (event) => {
-    this.localStorage.setShowEventLog(this.sessionId, event.checked);
-  };
+    this.localStorage.setShowEventLog(event.checked);
+  }
+
+  celebrate = () => {
+    const payload = new CelebratePayload('fireworks');
+    payload.sessionId = this.sessionId;
+    this.socketService.send(new CelebrateMessage(payload));
+  }
 
 }
 

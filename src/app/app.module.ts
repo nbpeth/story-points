@@ -55,6 +55,7 @@ import {UsernamePipe} from './pipe/username.pipe';
 import {ParseDatePipe} from './pipe/parse-date.pipe';
 import { ChangeLogComponent } from './change-log/change-log.component';
 import { CreateSessionTileComponent } from './create-session-tile/create-session-tile.component';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [
@@ -85,6 +86,8 @@ import { CreateSessionTileComponent } from './create-session-tile/create-session
     LoggedInUserComponent,
     ChangeLogComponent,
     CreateSessionTileComponent,
+    ChangeLogComponent,
+    CreateSessionTileComponent,
     // TestComponent,
   ],
   imports: [
@@ -105,6 +108,7 @@ import { CreateSessionTileComponent } from './create-session-tile/create-session
     MatInputModule,
     MatBadgeModule,
     MatRadioModule,
+    MatDividerModule,
     MatSlideToggleModule,
     MatSnackBarModule,
     MatSidenavModule,
