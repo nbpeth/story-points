@@ -1,5 +1,5 @@
 <div>
-<!-- todo  use theme color not this-->
+  <!-- todo  use theme color not this-->
   <mat-toolbar style="background-color: rgba(40, 40, 40, 0.4)">
     <mat-toolbar-row>
       <div class="items">
@@ -13,29 +13,29 @@
         <div class="item">
           <h2>
             <a [routerLink]="['']">
-                Story Points
+              Story Points
             </a>
           </h2>
         </div>
       </div>
       <div class="items icons">
-          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-            <mat-icon>menu</mat-icon>
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+          <mat-icon>menu</mat-icon>
+        </button>
+
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item [routerLink]="['']">
+            <mat-icon>home</mat-icon>
+            <span>Dashboard</span>
           </button>
+          <!--            <button mat-menu-item [routerLink]="['changes']">-->
+          <!--              <mat-icon>new_releases</mat-icon>-->
+          <!--              <span>What's New</span>-->
+          <!--            </button>-->
+          <mat-divider></mat-divider>
+          <app-theme-toggle></app-theme-toggle>
 
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item [routerLink]="['']">
-              <mat-icon>home</mat-icon>
-              <span>Dashboard</span>
-            </button>
-<!--            <button mat-menu-item [routerLink]="['changes']">-->
-<!--              <mat-icon>new_releases</mat-icon>-->
-<!--              <span>What's New</span>-->
-<!--            </button>-->
-            <mat-divider></mat-divider>
-            <app-theme-toggle></app-theme-toggle>
-
-          </mat-menu>
+        </mat-menu>
       </div>
     </mat-toolbar-row>
   </mat-toolbar>

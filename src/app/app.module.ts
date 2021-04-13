@@ -56,7 +56,6 @@ import {ParseDatePipe} from './pipe/parse-date.pipe';
 import { ChangeLogComponent } from './change-log/change-log.component';
 import { CreateSessionTileComponent } from './create-session-tile/create-session-tile.component';
 import { MatDividerModule } from '@angular/material/divider';
-import {MatGridListModule} from '@angular/material/grid-list';
 
 @NgModule({
   declarations: [
@@ -87,6 +86,9 @@ import {MatGridListModule} from '@angular/material/grid-list';
     LoggedInUserComponent,
     ChangeLogComponent,
     CreateSessionTileComponent,
+    ChangeLogComponent,
+    CreateSessionTileComponent,
+    // TestComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -111,7 +113,6 @@ import {MatGridListModule} from '@angular/material/grid-list';
     MatSnackBarModule,
     MatSidenavModule,
     MatSliderModule,
-    MatGridListModule,
     SocialLoginModule
   ],
   providers: [
