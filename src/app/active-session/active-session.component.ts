@@ -2,9 +2,11 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SocketService} from '../services/socket.service';
 import {flatMap, map} from 'rxjs/operators';
-import {combineLatest, Subject} from 'rxjs';
+import {combineLatest, Subject, of, from} from 'rxjs';
 import {Events} from './enum/events';
 import {
+  CelebrateMessage,
+  CelebratePayload,
   GetSessionNameMessage,
   GetSessionNamePayload,
   GetStateForSessionMessage,
@@ -75,15 +77,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       this.recoverUser(user, participants);
     });
 
-    this.successSound = new Audio('assets/sounds/ohyeah.mp3');
-
-    this.localStorage.stateEventStream().subscribe((state: AppState) => {
-      // const maybeSession = state.getSessionBy(this.session && this.session.sessionId);
-      //
-      // if (maybeSession) {
-      //   this.showLogs = maybeSession.settings.showEventLog;
-      // }
-    });
+    this.successSound = new Audio('assets/sounds/hawk.mp3');
 
     this.route.paramMap
       .pipe(
@@ -153,8 +147,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   revealPoints = () => {
     this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.session.sessionId)));
     const points = this.session.participants.map(p => p.point);
-    if (points.length > 1 && points.every(point => point === points[0])) {
-      this.successSound.play();
+
+    if (points && points.length && points.every(point => point === points[0])) {
+      const payload = new CelebratePayload('synergy');
+      payload.sessionId = this.session.sessionId;
+      this.socketService.send(new CelebrateMessage(payload));
     }
   }
 
@@ -243,10 +240,21 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         this.setSessionName(messageData as GetStateForSessionMessage);
         break;
       case Events.CELEBRATE:
-        confetti.start(2500);
+        this.handleCelebration(messageData as CelebrateMessage);
         break;
       default:
         console.log('not matched', messageData);
+    }
+  }
+
+  private handleCelebration = (messageData: CelebrateMessage) => {
+    switch (messageData.payload.celebration) {
+      case 'fireworks':
+        confetti.start(2500);
+        break;
+      case 'synergy':
+        this.successSound.play();
+        break;
     }
   }
 
