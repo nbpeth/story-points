@@ -146,9 +146,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   revealPoints = () => {
     this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.session.sessionId)));
-    const points = this.session.participants.map(p => p.point);
+    const points = this.session.participants.map(p => ({point: p.point, hasVoted: p.hasVoted}));
 
-    if (points && points.length && points.every(point => point === points[0])) {
+    if (points && points.length && points.every(point => {
+      return point.hasVoted && point.point === points[0].point;
+    })) {
       const payload = new CelebratePayload('synergy');
       payload.sessionId = this.session.sessionId;
       this.socketService.send(new CelebrateMessage(payload));
