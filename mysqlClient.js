@@ -23,7 +23,6 @@ runQuery = (statement, onComplete) => {
 
       con.release();
     });
-
   })
 }
 
@@ -192,17 +191,17 @@ incrementCelebration = (sessionId) => {
 }
 
 module.exports = {
-  initDB: initDB,
-  getAllSessions: getAllSessions,
-  createSession: createSession,
-  terminateSession: terminateSession,
-  getSessionState: getSessionState,
-  getSessionNameFor: getSessionNameFor,
-  addParticipantToSession: addParticipantToSession,
-  removeParticipantFromSession: removeParticipantFromSession,
-  pointWasSubmitted: pointWasSubmitted,
-  resetPointsForSession: resetPointsForSession,
-  revealPointsForSession: revealPointsForSession,
-  createUser: createUser,
-  incrementCelebration: incrementCelebration,
+  initDB,
+  getAllSessions,
+  createSession,
+  terminateSession,
+  getSessionState,
+  getSessionNameFor,
+  addParticipantToSession,
+  removeParticipantFromSession,
+  pointWasSubmitted,
+  resetPointsForSession,
+  revealPointsForSession,
+  createUser,
+  incrementCelebration,
 }

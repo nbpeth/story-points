@@ -83,7 +83,7 @@ export class CreateUserPayload extends SpMessagePayload {
   }
 }
 export class CelebratePayload extends SpMessagePayload {
-  constructor(public celebration: string) {
+  constructor(public celebration: string, public celebrator: string = '') {
     super();
   }
 }

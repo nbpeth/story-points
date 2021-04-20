@@ -262,10 +262,11 @@ const initHandlers = () => {
   };
 
   celebrate = (messageData) => {
-    const { celebration, sessionId } = messageData.payload;
+    const { celebration, celebrator, sessionId } = messageData.payload;
+
     mysqlClient.incrementCelebration(sessionId);
 
-    notifyClients(formatMessage("celebrate", {celebration: celebration, sessionId: sessionId}))
+    notifyClients(formatMessage("celebrate", {celebration, celebrator, sessionId}))
   }
 
   createNewSession = (messageData) => {

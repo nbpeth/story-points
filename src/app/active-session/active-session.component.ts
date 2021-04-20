@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SocketService} from '../services/socket.service';
 import {flatMap, map} from 'rxjs/operators';
-import {combineLatest, Subject, of, from} from 'rxjs';
+import {combineLatest, Subject} from 'rxjs';
 import {Events} from './enum/events';
 import {
   CelebrateMessage,
@@ -36,8 +36,8 @@ import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component
 import {PointVisibilityChange} from '../control-panel/control-panel.component';
 import {Ballot} from '../vote-display/ballot-display.component';
 import {LocalStorageService} from '../services/local-storage.service';
-import {AppState} from '../services/local-storage.model';
 import {User, UserService} from '../user.service';
+import {happy, RandomBuilder} from "../name-builder";
 
 declare const confetti: any;
 
@@ -252,6 +252,9 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private handleCelebration = (messageData: CelebrateMessage) => {
     switch (messageData.payload.celebration) {
       case 'fireworks':
+
+
+        this.logs.push(`${messageData.payload.celebrator} is ${RandomBuilder.generateFrom(happy)}`);
         confetti.start(2500);
         break;
       case 'synergy':
