@@ -37,7 +37,7 @@ import {PointVisibilityChange} from '../control-panel/control-panel.component';
 import {Ballot} from '../vote-display/ballot-display.component';
 import {LocalStorageService} from '../services/local-storage.service';
 import {User, UserService} from '../user.service';
-import {happy, RandomBuilder} from "../name-builder";
+import {happy, RandomBuilder} from '../name-builder';
 
 declare const confetti: any;
 
@@ -69,7 +69,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     combineLatest(
       this.userService.userChanges(),
       this.participantsInThisSession
@@ -254,7 +253,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       case 'fireworks':
 
 
-        this.logs.push(`${messageData.payload.celebrator} is ${RandomBuilder.generateFrom(happy)}`);
+        this.logs.unshift(`${messageData.payload.celebrator} is ${RandomBuilder.generateFrom(happy)}`);
         confetti.start(2500);
         break;
       case 'synergy':

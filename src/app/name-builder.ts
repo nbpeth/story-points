@@ -54,7 +54,7 @@ export const happy =
 // WIP, something to be more dynamic later
 export class RandomBuilder {
   static generateFrom = (fieldArray: string[]) => {
-    return fieldArray[Math.floor(Math.random() * fieldArray.length - 2)];
+    return fieldArray[Math.floor(Math.random() * fieldArray.length)];
   }
 }
 
