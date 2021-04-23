@@ -1,9 +1,7 @@
 <div class="container">
-  <ng-container *ngIf="locked || (userService.isLoggingIn | async); else controls">
+  <ng-container *ngIf="(userService.isLoggingIn | async); else controls">
       <div style="width:100%; display: flex; justify-content: center" class="mat-app-background">
-        <div style="padding: 20px" *ngIf="locked">
-          <mat-icon>update_disabled</mat-icon>
-        </div>
+
       </div>
     </ng-container>
   <ng-template #controls>

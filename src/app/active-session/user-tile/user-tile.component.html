@@ -22,7 +22,7 @@
     </mat-card-content>
 
     <mat-card-footer>
-      <div class="actions" *ngIf="!locked && userService.isLoggedIn() | async">
+      <div class="actions" *ngIf="userService.isLoggedIn() | async">
         <button (click)="removeUser()" mat-button>
           <mat-icon>delete_forever</mat-icon>
         </button>

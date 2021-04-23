@@ -17,7 +17,6 @@ export class UserTileComponent {
   @Input() firstReveal: boolean;
   @Input() myCard: boolean;
   @Input() isDarkTheme: boolean;
-  @Input() locked: boolean;
 
   constructor(private socketService: SocketService, public userService: UserService) {
   }
