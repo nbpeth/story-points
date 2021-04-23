@@ -27,31 +27,46 @@ runQuery = (statement, onComplete) => {
 }
 
 getAllSessions = (onComplete) => {
-  const sql = `select a.id as id, a.id, a.sessionName as sessionName, lastActive, participantCount from
-    (select s.id, s.session_name as sessionName from sessions s) as a
-    left join (select
-        s.id,
-        s.session_name as sessionName,
-        s.last_active as lastActive,
-        count(p.id) as participantCount
-        from sessions s, participant p
-        where s.id = p.session_id
-        group by s.session_name) as b
-    on a.id = b.id`
+  const sql = `
+    select sessions.id as id, sessions.session_name as sessionName, sessions.last_active, participantCount, badges
+from sessions
+         left join (SELECT s.id as session_id, (GROUP_CONCAT(sb.name)) as badges
+                    from session_badge sb,
+                         session_earned_badge seb,
+                         sessions s
+                    where s.id = seb.session_id
+                      and seb.badge_id = sb.id
+                    group by s.id) as seb on sessions.id = seb.session_id
+         left join (select s.id, s.session_name, s.last_active, count(p.id) as participantCount
+                    from sessions s,
+                         participant p
+                    where s.id = p.session_id
+                    group by s.session_name) as b
+                   on sessions.id = b.id;
+  `
 
   const statement = mysql.format(sql, []);
 
   runQuery(statement, onComplete)
 }
 
-createSession = (messageData, onComplete) => {
-  const payload = messageData.payload;
-  const sessionName = payload && payload.sessionName ? payload.sessionName : undefined;
+getIdBySessionName = (sessionName, onComplete) => {
+  const sql = `select id from sessions where session_name = ?;`;
 
-  if (!sessionName) {
-    // error!
-  }
+  const statement = mysql.format(sql, [sessionName]);
 
+  runQuery(statement, onComplete)
+}
+
+assignBadge = (sessionId, badgeId, onComplete) => {
+  const sql = `insert into session_earned_badge (session_id, badge_id) values (?,?)`
+
+  const statement = mysql.format(sql, [sessionId, badgeId]);
+
+  runQuery(statement, onComplete)
+}
+
+createSession = (sessionName, onComplete) => {
   const sql = 'INSERT INTO sessions (session_name) VALUES (?)';
   const statement = mysql.format(sql, [sessionName]);
 
@@ -204,4 +219,6 @@ module.exports = {
   revealPointsForSession,
   createUser,
   incrementCelebration,
+  assignBadge,
+  getIdBySessionName
 }

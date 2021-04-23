@@ -20,6 +20,18 @@ const startServer = () => {
   app.use(bodyParser.json());
   app.use(cors());
 
+  // app.get('/badges/session/:sessionId', (req, res) => {
+  //   const headers = req.headers
+  //   const validUser = validateAuth(headers)
+  //
+  //   if(!validUser) {
+  //     res.status(401);
+  //     res.send({error: "You shall not pass!"})
+  //   } else {
+  //     createUser(req, res)
+  //   }
+  // })
+
   app.post('/user', (req, res) => {
     const headers = req.headers
     const validUser = validateAuth(headers)

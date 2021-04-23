@@ -2,7 +2,7 @@ import {Component, Input} from '@angular/core';
 import {SocketService} from '../../services/socket.service';
 import {ParticipantRemovedSessionMessage, ParticipantRemovedSessionPayload} from '../model/events.model';
 import {Participant} from '../model/session.model';
-import {UserService} from "../../user.service";
+import {UserService} from '../../user.service';
 
 @Component({
   selector: 'user-tile',

@@ -5,7 +5,6 @@
   <active-session-tiles>
     <app-create-session-tile (createSession)="createNewSession($event)"></app-create-session-tile>
     <active-session-tile cdkDrag *ngFor="let tile of visibleSessions" [session]="tile">
-
     </active-session-tile>
   </active-session-tiles>
 </div>

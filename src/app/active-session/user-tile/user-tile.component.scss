@@ -58,6 +58,15 @@
   animation: glowing 5000ms infinite;
 }
 
+.flip {
+  animation: card-flip 1000ms;
+}
+
+.colorCycle {
+  animation: color-cycle 2000ms infinite;
+
+}
+
 @keyframes glowing {
   0% { box-shadow: 0 0 -10px #ffffff; }
   40% { box-shadow: 0 0 20px #ffffff; }
@@ -71,9 +80,30 @@
 }
 
 @keyframes color-cycle {
-  0%   {background-color:gold; }
-  25%  {background-color:purple; }
-  50%  {background-color:silver; }
-  75%  {background-color:purple; }
-  100%  {background-color:gold;}
+  0%   {background-color:#110100; }
+  4%  {background-color:#221200; }
+  8%  {background-color:#332300; }
+  12%  {background-color:#443400; }
+  16%  {background-color:#554500;}
+  20%  {background-color:#665600;}
+  24%  {background-color:#776700;}
+  28%  {background-color:#887800;}
+  32%  {background-color:#998900;}
+  36%  {background-color:#AA9A00;}
+  40%  {background-color:#BBAB00;}
+  44%  {background-color:#CCBC00;}
+  48%  {background-color:#DDCD00;}
+  52%  {background-color:#FFDF00;}
+  56%  {background-color:#DDCD00;}
+  60%  {background-color:#CCBC00;}
+  64%  {background-color:#BBAB00;}
+  68%  {background-color:#AA9A00;}
+  72%  {background-color:#998900;}
+  76%  {background-color:#887800;}
+  80%  {background-color:#776700;}
+  84%  {background-color:#665600;}
+  88%  {background-color:#554500;}
+  92%  {background-color:#443400;}
+  96%  {background-color:#332300;}
+  100%  {background-color:#221200;}
 }

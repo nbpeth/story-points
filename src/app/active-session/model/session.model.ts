@@ -14,9 +14,6 @@ export class Participant {
     public photoUrl?: string,
 
   ) {
-    if (!participantName) {
-      this.participantName = `Lurker${Math.floor(Math.random() * 1000000)}`;
-    }
   }
 
   setPoint = (point: any) => {
@@ -32,11 +29,11 @@ export class StoryPointSession {
 
   setName = (name: string) => {
     this.sessionName = name;
-  };
+  }
 
   loadParticipants = (participants: Participant[]): void => {
     this.participants = participants;
     const first = participants.find(p => p);
     this.pointsVisible = first ? !!first.pointsVisible : false;
-  };
+  }
 }

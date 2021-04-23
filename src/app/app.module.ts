@@ -47,15 +47,20 @@ import {BallotDisplayComponent} from './vote-display/ballot-display.component';
 import {ActivityLogComponent} from './activity-log/activity-log.component';
 import {AuthServiceConfig, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
 import {MatMenuModule} from '@angular/material/menu';
-import { LoginComponent } from './login/login.component';
-import { LoggedInUserComponent } from './logged-in-user/logged-in-user.component';
+import {LoginComponent} from './login/login.component';
+import {LoggedInUserComponent} from './logged-in-user/logged-in-user.component';
 import {UserService} from './user.service';
 import {HttpClientModule} from '@angular/common/http';
 import {UsernamePipe} from './pipe/username.pipe';
 import {ParseDatePipe} from './pipe/parse-date.pipe';
-import { ChangeLogComponent } from './change-log/change-log.component';
-import { CreateSessionTileComponent } from './create-session-tile/create-session-tile.component';
-import { MatDividerModule } from '@angular/material/divider';
+import {ChangeLogComponent} from './change-log/change-log.component';
+import {CreateSessionTileComponent} from './create-session-tile/create-session-tile.component';
+import {MatDividerModule} from '@angular/material/divider';
+import {BadgePipe} from './pipe/badge.pipe';
+import {SessionBadgeIconComponent} from './session-badge-icon/session-badge-icon.component';
+import {SplitStringPipe} from './pipe/split-string.pipe';
+import {TileBadgeBucketComponent} from './tile-badge-bucket/tile-badge-bucket.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -88,6 +93,10 @@ import { MatDividerModule } from '@angular/material/divider';
     CreateSessionTileComponent,
     ChangeLogComponent,
     CreateSessionTileComponent,
+    BadgePipe,
+    SessionBadgeIconComponent,
+    SplitStringPipe,
+    TileBadgeBucketComponent,
     // TestComponent,
   ],
   imports: [
@@ -113,6 +122,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatSnackBarModule,
     MatSidenavModule,
     MatSliderModule,
+    MatTooltipModule,
     SocialLoginModule
   ],
   providers: [

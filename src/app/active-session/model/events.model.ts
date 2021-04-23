@@ -1,6 +1,6 @@
 /* tslint:disable:max-line-length */
 import { Events } from 'src/app/active-session/enum/events';
-import {User} from "../../user.service";
+import {User} from '../../user.service';
 
 export class SpMessage {
   eventType: string;
@@ -8,7 +8,7 @@ export class SpMessage {
 
   constructor(payload?: SpMessagePayload) {
     this.payload = payload;
-  };
+  }
 }
 
 export class SpMessagePayload {

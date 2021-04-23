@@ -11,8 +11,8 @@ create table sessions
     (id)
 );
 
-    create table participant
-    (
+create table participant
+(
         id MEDIUMINT NOT NULL
         AUTO_INCREMENT,
     session_id MEDIUMINT NOT NULL,
@@ -22,14 +22,10 @@ create table sessions
         (100) NOT NULL,
     has_voted bool default false NOT NULL,
     is_admin bool default false NOT NULL,
-    FOREIGN KEY
-        (session_id)
-        REFERENCES sessions
-        (id)
-        ON
-        DELETE CASCADE,
+    FOREIGN KEY (session_id) REFERENCES sessions (id) ON DELETE CASCADE,
+
     PRIMARY KEY (id)
-        );
+);
 
 ALTER TABLE sessions CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 ALTER TABLE participant CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
@@ -56,12 +52,27 @@ ADD COLUMN last_active date;
 
 create table celebration
 (
-session_id MEDIUMINT NOT NULL UNIQUE ,
-count BIGINT NOT NULL,
-FOREIGN KEY
-    (session_id)
-    REFERENCES sessions
-    (id)
-    ON
-    DELETE CASCADE
+    session_id MEDIUMINT NOT NULL UNIQUE ,
+    count BIGINT NOT NULL,
+    FOREIGN KEY (session_id) REFERENCES sessions (id) ON DELETE CASCADE
 );
+
+create table session_badge
+(
+    id MEDIUMINT NOT NULL AUTO_INCREMENT,
+    name varchar(50),
+    value varchar(255),
+    PRIMARY KEY (id)
+);
+
+create table session_earned_badge
+(
+    id MEDIUMINT NOT NULL,
+    badge_id MEDIUMINT NOT NULL,
+    session_id MEDIUMINT NOT NULL,
+    FOREIGN KEY (session_id) REFERENCES sessions (id) ON DELETE CASCADE,
+    FOREIGN KEY (badge_id) REFERENCES session_badge (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+);
+
+insert into session_badge (id, name, value) values (1, 'NEW_SESSION', 'New Since Badges Became a Thing')

@@ -12,7 +12,7 @@ import {UserService} from '../../../user.service';
   styleUrls: ['./active-session-tile.component.scss']
 })
 export class ActiveSessionTileComponent {
-  @Input() session: { id: number, sessionName: string, participantCount: number, lastActive: any };
+  @Input() session: { id: number, sessionName: string, participantCount: number, lastActive: any, badges: string };
 
   constructor(private socketService: SocketService,
               private dialog: MatDialog,

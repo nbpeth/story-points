@@ -1,22 +1,43 @@
 <mat-card>
   <mat-card-title>
-    <a [routerLink]="['sessions', session.id]">
-      {{session.sessionName}}
-    </a>
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <div>
+        <a [routerLink]="['sessions', session.id]">
+          {{session.sessionName}}
+        </a>
+      </div>
+      <div *ngIf="userService.isLoggedIn() | async">
+
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu" >
+          <button (click)="closeSession()" mat-button>
+            <mat-icon>delete_forever</mat-icon>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
   </mat-card-title>
 
   <mat-card-content>
     <div style="align-items: flex-start; display: flex; flex-direction: column">
-    <div>Users: {{session.participantCount}}</div>
-    <div>Last Active: {{session.lastActive ? (session.lastActive | parseDatePipe | date) : "--"}}</div>
+      <div>Users: {{session.participantCount}}</div>
+      <div>Last Active: {{session.lastActive ? (session.lastActive | parseDatePipe | date) : "--"}}</div>
     </div>
   </mat-card-content>
 
   <mat-card-footer>
-    <div class="actions" *ngIf="session.id !== 311">
-      <button (click)="closeSession()" mat-button *ngIf="userService.isLoggedIn() | async">
-        <mat-icon>delete_forever</mat-icon>
-      </button>
+    <div class="actions">
+      <tile-badge-bucket>
+        <div *ngFor="let badge of (session.badges | splitString | badge)">
+          <session-badge-icon
+            [badge]="badge"
+          >
+          </session-badge-icon>
+        </div>
+      </tile-badge-bucket>
+
     </div>
   </mat-card-footer>
 </mat-card>

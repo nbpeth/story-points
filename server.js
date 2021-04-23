@@ -270,19 +270,41 @@ const initHandlers = () => {
   }
 
   createNewSession = (messageData) => {
+    const payload = messageData.payload;
+    const sessionName = payload && payload.sessionName ? payload.sessionName : undefined;
+
+    if (!sessionName) {
+      // error!
+      throw Error("woops")
+    }
+
     const createSessionCallback = (err) => {
       if (err) {
         sendErrorToCaller('Unable to create session', err.message);
       } else {
-        getAllSession()
+
+        // badge spike
+        mysqlClient.getIdBySessionName(sessionName, (err, results) => {
+          if(err){
+          }
+          try {
+            const sessionId = results[0].id
+            mysqlClient.assignBadge(sessionId, 1, () => {
+              // finally
+              getAllSession()
+            })
+          } catch (e) {
+            console.log("no session id?")
+          }
+        })
+        // badge spike
       }
     }
 
-    mysqlClient.createSession(messageData, createSessionCallback);
+    mysqlClient.createSession(sessionName, createSessionCallback);
   };
 
   sendErrorToCaller = (message, reason) => {
-    // console.error(`${message}: ${reason}`);
     notifyCaller(formatMessage('error', {message: message}))
   }
 
@@ -297,7 +319,7 @@ const initHandlers = () => {
   };
 
   notifyCaller = (message) => {
-    console.log('outgoing!!!', message)
+    // console.log('outgoing!!!', message)
     wss.clients
       .forEach(client => {
         const isTargeted = message.payload.sessionId !== undefined;
