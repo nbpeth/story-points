@@ -73,7 +73,7 @@ export class ControlPanelComponent implements OnInit, OnChanges {
   }
 
   celebrate = () => {
-    const payload = new CelebratePayload('fireworks');
+    const payload = new CelebratePayload('fireworks', this.userService.getLoginUser().firstName);
     payload.sessionId = this.sessionId;
     this.socketService.send(new CelebrateMessage(payload));
   }

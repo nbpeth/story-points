@@ -8,6 +8,56 @@ export class NameBuilder {
   }
 }
 
+export const happy =
+  ["cheerful",
+    "contented",
+    "delighted",
+    "ecstatic",
+    "elated",
+    "glad",
+    "joyful",
+    "joyous",
+    "jubilant",
+    "lively",
+    "merry",
+    "overjoyed",
+    "peaceful",
+    "pleased",
+    "thrilled",
+    "upbeat",
+    "blessed",
+    "blest",
+    "blissful",
+    "blithe",
+    "captivated",
+    "chipper",
+    "chirpy",
+    "content",
+    "convivial",
+    "exultant",
+    "flying high",
+    "gleeful",
+    "gratified",
+    "intoxicated",
+    "drunk with power and excitement",
+    "jolly",
+    "laughing",
+    "light",
+    "mirthful",
+    "on cloud nine",
+    "peppy",
+    "perky",
+    "sparkling",
+    "sunny",
+    "walking on air"];
+
+// WIP, something to be more dynamic later
+export class RandomBuilder {
+  static generateFrom = (fieldArray: string[]) => {
+    return fieldArray[Math.floor(Math.random() * fieldArray.length)];
+  }
+}
+
 class Names {
   static adjectives = [
     'attractive',

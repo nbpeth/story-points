@@ -53,3 +53,15 @@ create table user (
 
 ALTER TABLE sessions
 ADD COLUMN last_active date;
+
+create table celebration
+(
+session_id MEDIUMINT NOT NULL UNIQUE ,
+count BIGINT NOT NULL,
+FOREIGN KEY
+    (session_id)
+    REFERENCES sessions
+    (id)
+    ON
+    DELETE CASCADE
+);

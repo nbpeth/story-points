@@ -19,11 +19,10 @@ runQuery = (statement, onComplete) => {
     }
 
     con.query(statement, (err, results, fields) => {
-      onComplete(err, results, fields);
+      onComplete && onComplete(err, results, fields);
 
       con.release();
     });
-
   })
 }
 
@@ -177,17 +176,32 @@ createUser = (user, onComplete) => {
   }
 }
 
+incrementCelebration = (sessionId) => {
+  const sql = `
+    INSERT INTO CELEBRATION
+    (session_id, count)
+    VALUES
+    (?, ?)
+    ON DUPLICATE KEY UPDATE count = count + 1;
+  `
+
+  const statement = mysql.format(sql, [sessionId, 1]);
+
+  runQuery(statement);
+}
+
 module.exports = {
-  initDB: initDB,
-  getAllSessions: getAllSessions,
-  createSession: createSession,
-  terminateSession: terminateSession,
-  getSessionState: getSessionState,
-  getSessionNameFor: getSessionNameFor,
-  addParticipantToSession: addParticipantToSession,
-  removeParticipantFromSession: removeParticipantFromSession,
-  pointWasSubmitted: pointWasSubmitted,
-  resetPointsForSession: resetPointsForSession,
-  revealPointsForSession: revealPointsForSession,
-  createUser: createUser,
+  initDB,
+  getAllSessions,
+  createSession,
+  terminateSession,
+  getSessionState,
+  getSessionNameFor,
+  addParticipantToSession,
+  removeParticipantFromSession,
+  pointWasSubmitted,
+  resetPointsForSession,
+  revealPointsForSession,
+  createUser,
+  incrementCelebration,
 }
