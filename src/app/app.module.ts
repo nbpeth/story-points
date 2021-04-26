@@ -61,6 +61,7 @@ import {SessionBadgeIconComponent} from './session-badge-icon/session-badge-icon
 import {SplitStringPipe} from './pipe/split-string.pipe';
 import {TileBadgeBucketComponent} from './tile-badge-bucket/tile-badge-bucket.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { BadgePopupComponent } from './badge-popup/badge-popup.component';
 
 @NgModule({
   declarations: [
@@ -97,6 +98,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     SessionBadgeIconComponent,
     SplitStringPipe,
     TileBadgeBucketComponent,
+    BadgePopupComponent,
     // TestComponent,
   ],
   imports: [
