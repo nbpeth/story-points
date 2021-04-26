@@ -28,7 +28,7 @@ runQuery = (statement, onComplete) => {
 
 getAllSessions = (onComplete) => {
   const sql = `
-    select sessions.id as id, sessions.session_name as sessionName, sessions.last_active, participantCount, badges
+    select sessions.id as id, sessions.session_name as sessionName, sessions.last_active as lastActive, participantCount, badges
 from sessions
          left join (SELECT s.id as session_id, (GROUP_CONCAT(sb.name)) as badges
                     from session_badge sb,
@@ -191,7 +191,7 @@ createUser = (user, onComplete) => {
   }
 }
 
-incrementCelebration = (sessionId) => {
+incrementCelebration = (sessionId, onComplete) => {
   const sql = `
     INSERT INTO CELEBRATION
     (session_id, count)
@@ -202,7 +202,20 @@ incrementCelebration = (sessionId) => {
 
   const statement = mysql.format(sql, [sessionId, 1]);
 
-  runQuery(statement);
+  runQuery(statement, onComplete);
+}
+
+getCelebrationBadgeDataFor = (sessionId, onComplete) => {
+  const sql = `
+    select * from celebration c
+    left join session_earned_badge seb
+    on c.session_id = seb.session_id
+    where c.session_id = ?
+  `
+
+  const statement = mysql.format(sql, [sessionId]);
+
+  runQuery(statement, onComplete);
 }
 
 module.exports = {
@@ -220,5 +233,6 @@ module.exports = {
   createUser,
   incrementCelebration,
   assignBadge,
-  getIdBySessionName
+  getIdBySessionName,
+  getCelebrationBadgeDataFor
 }

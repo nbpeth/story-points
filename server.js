@@ -264,7 +264,11 @@ const initHandlers = () => {
   celebrate = (messageData) => {
     const { celebration, celebrator, sessionId } = messageData.payload;
 
-    mysqlClient.incrementCelebration(sessionId);
+    mysqlClient.incrementCelebration(sessionId, () => {
+      mysqlClient.getCelebrationBadgeDataFor(sessionId, () => {
+
+      })
+    });
 
     notifyClients(formatMessage("celebrate", {celebration, celebrator, sessionId}))
   }
