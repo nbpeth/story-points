@@ -76,7 +76,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       this.recoverUser(user, participants);
     });
 
-    this.successSound = new Audio('assets/sounds/hawk.mp3');
+    this.successSound = new Audio('assets/sounds/cheering.mp3');
 
     this.route.paramMap
       .pipe(
