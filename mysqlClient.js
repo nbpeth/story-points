@@ -48,13 +48,23 @@ createSession = (messageData, onComplete) => {
   const payload = messageData.payload;
 
   const { createWithPasscode, passCode, name } = payload && payload.sessionData || {};
-  console.log("####", createWithPasscode, passCode, name)
+
   if (!name) {
     throw Error("no session name")
   }
 
   const sql = 'INSERT INTO sessions (session_name) VALUES (?)';
   const statement = mysql.format(sql, [name]);
+
+  runQuery(statement, onComplete);
+}
+
+writePassCode = (sessionId, messageData, onComplete) => {
+  const payload = messageData.payload;
+  const { passCode } = payload && payload.sessionData || {};
+
+  const sql = 'INSERT INTO session_passcode (session_id, passcode) VALUES (?, ?)';
+  const statement = mysql.format(sql, [sessionId, passCode]);
 
   runQuery(statement, onComplete);
 }
@@ -205,4 +215,5 @@ module.exports = {
   revealPointsForSession,
   createUser,
   incrementCelebration,
+  writePassCode
 }

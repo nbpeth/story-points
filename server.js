@@ -270,14 +270,20 @@ const initHandlers = () => {
   }
 
   createNewSession = (messageData) => {
-    const createSessionCallback = (err) => {
+    const createSessionCallback = (err, results, fields) => {
       if (err) {
         sendErrorToCaller('Unable to create session', err.message);
       } else {
-        getAllSession()
+        mysqlClient.writePassCode(results["insertId"], messageData, (err) => {
+          // if (err) {
+          //   sendErrorToCaller('Unable to create session', err.message);
+          // } else {
+          console.log("we did it!")
+            getAllSession()
+          // }
+        })
       }
     }
-  console.log("IMA GONNA DO IT", messageData)
     mysqlClient.createSession(messageData, createSessionCallback);
   };
 

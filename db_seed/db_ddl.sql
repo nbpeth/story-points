@@ -54,6 +54,9 @@ create table user (
 ALTER TABLE sessions
 ADD COLUMN last_active date;
 
+ALTER TABLE sessions
+    ADD COLUMN passcode_enabled boolean;
+
 create table celebration
 (
 session_id MEDIUMINT NOT NULL UNIQUE ,
@@ -64,4 +67,19 @@ FOREIGN KEY
     (id)
     ON
     DELETE CASCADE
+);
+
+ALTER TABLE sessions
+    ADD COLUMN passcode_enabled boolean;
+
+create table session_passcode
+(
+    session_id MEDIUMINT NOT NULL UNIQUE ,
+    passcode varchar(250),
+    FOREIGN KEY
+        (session_id)
+        REFERENCES sessions
+            (id)
+        ON
+            DELETE CASCADE
 );
