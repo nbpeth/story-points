@@ -1,13 +1,83 @@
 <mat-dialog-content>
-    Start a New Session
+  Start a New Session
 </mat-dialog-content>
 
-
 <mat-form-field>
-    <input matInput #name placeholder="Session Name">
+  <input matInput #name placeholder="Session Name">
 </mat-form-field>
 
 <mat-dialog-actions>
-    <button class="mat-raised-button" (click)="cancel()">Cancel</button>
-    <button (click)="create(name.value)" mat-flat-button color="accent">Create</button>
+  <div style="display: flex; flex-direction: column">
+
+    <div>
+      <div>
+        <label id="passcodeEnabled">Secure session with passcode</label>
+      </div>
+      <div>
+        <mat-radio-group
+          aria-labelledby="passcodeEnabled"
+          class="passcodeEnabled">
+          <div style="display: flex; flex-direction: row;">
+            <div style="padding-right: 10px;">
+              <mat-radio-button (click)="setPasscodeEnabled(true)"
+                                [value]="createWithPasscode"
+                                [checked]="createWithPasscode">
+                Yes
+              </mat-radio-button>
+            </div>
+            <div>
+              <mat-radio-button (click)="setPasscodeEnabled(false)"
+                                [value]="!createWithPasscode"
+                                [checked]="!createWithPasscode">
+                No
+              </mat-radio-button>
+            </div>
+          </div>
+        </mat-radio-group>
+      </div>
+    </div>
+
+    <ng-container *ngIf="createWithPasscode">
+      <div style="display: flex; flex-direction: column">
+        <div>
+          <mat-form-field>
+            <input matInput type="password" #name [(ngModel)]="passCode" (ngModelChange)=passCodeChanged($event)
+                   placeholder="Enter Passcode">
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field>
+            <input matInput type="password" #name [(ngModel)]="verifyPassCode"
+                   (ngModelChange)=verifyPassCodeChanged($event) placeholder="Verify Passcode">
+          </mat-form-field>
+        </div>
+      </div>
+      <ng-container *ngIf="!passCodesAreEqual">
+        <div class="mat-warn" style="max-width: 250px; font-size: .7rem; color:#ff6262 ">
+          Passcodes must match and must not be blank.
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="!createWithPasscode">
+      <div class="mat-warn" style="max-width: 250px; font-size: .7rem; display: flex; justify-content: center;">
+        <!--        warning color -->
+        <div>
+          Keep in mind that without a passcode anyone may join, view and make changes to your session.
+        </div>
+      </div>
+    </ng-container>
+
+    <div style="padding-top: 10px; padding-bottom: 10px">
+      <mat-divider></mat-divider>
+    </div>
+
+    <div style="display: flex; justify-content: space-between">
+      <button class="mat-raised-button" (click)="cancel()">Cancel</button>
+      <button (click)="create(name.value)" mat-flat-button color="accent" [disabled]="!formValid()">Create</button>
+    </div>
+
+
+  </div>
 </mat-dialog-actions>
+

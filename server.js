@@ -277,7 +277,7 @@ const initHandlers = () => {
         getAllSession()
       }
     }
-
+  console.log("IMA GONNA DO IT", messageData)
     mysqlClient.createSession(messageData, createSessionCallback);
   };
 

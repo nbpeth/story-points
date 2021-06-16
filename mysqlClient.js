@@ -46,14 +46,17 @@ getAllSessions = (onComplete) => {
 
 createSession = (messageData, onComplete) => {
   const payload = messageData.payload;
-  const sessionName = payload && payload.sessionName ? payload.sessionName : undefined;
+  // const name = payload && payload.sessionData ? payload.sessionData.name : undefined;
+  // const sessionName = payload && payload.sessionName ? payload.sessionName : undefined;
 
-  if (!sessionName) {
-    // error!
+  const { createWithPasscode, passCode, name } = payload && payload.sessionData || {};
+  console.log("####", createWithPasscode, passCode, name)
+  if (!name) {
+    throw Error("no session name")
   }
 
   const sql = 'INSERT INTO sessions (session_name) VALUES (?)';
-  const statement = mysql.format(sql, [sessionName]);
+  const statement = mysql.format(sql, [name]);
 
   runQuery(statement, onComplete);
 }
