@@ -46,8 +46,6 @@ getAllSessions = (onComplete) => {
 
 createSession = (messageData, onComplete) => {
   const payload = messageData.payload;
-  // const name = payload && payload.sessionData ? payload.sessionData.name : undefined;
-  // const sessionName = payload && payload.sessionName ? payload.sessionName : undefined;
 
   const { createWithPasscode, passCode, name } = payload && payload.sessionData || {};
   console.log("####", createWithPasscode, passCode, name)

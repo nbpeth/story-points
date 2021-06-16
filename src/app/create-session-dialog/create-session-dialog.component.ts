@@ -18,10 +18,16 @@ export class CreateSessionDialogComponent {
   constructor(private dialogRef: MatDialogRef<CreateSessionDialogComponent>) {
   }
 
+  // key listener for "enter" to submit
+
   create = (name: string) => {
     const newSessionName = name ? name : NameBuilder.generate();
 
-    const message = { createWithPasscode: this.createWithPasscode, passCode: this.createWithPasscode ? this.passCode : undefined, name: newSessionName };
+    const message = {
+      createWithPasscode: this.createWithPasscode,
+      passCode: this.createWithPasscode ? this.passCode : undefined,
+      name: newSessionName
+    };
 
     this.dialogRef.close(message);
   }

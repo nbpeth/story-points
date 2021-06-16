@@ -33,5 +33,4 @@ export class CreateSessionTileComponent implements OnInit {
   createNewSession = (withName: string) => {
     this.createSession.emit(withName);
   }
-
 }
