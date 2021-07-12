@@ -12,7 +12,19 @@
         <mat-drawer #menu class="options-sidenav" mode="side">
           <div class="settings-items">
 
+
             <div class="item">Control Panel</div>
+
+            <div style="display: flex; cursor: pointer" class="sub-item" (click)="toggleAudio()">
+              <div *ngIf="audioEnabled">
+                <mat-icon>volume_up</mat-icon>
+              </div>
+              <div *ngIf="!audioEnabled">
+                <mat-icon>volume_off</mat-icon>
+              </div>
+              <div>Audio</div>
+            </div>
+
             <div>
               <mat-checkbox class="item" (change)="setShowAdminConsole($event)" id="showAdminConsole"
                             [(ngModel)]="showAdminConsole">

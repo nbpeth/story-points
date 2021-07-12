@@ -37,6 +37,7 @@ import {Ballot} from '../vote-display/ballot-display.component';
 import {LocalStorageService} from '../services/local-storage.service';
 import {User, UserService} from '../user.service';
 import {happy, RandomBuilder} from '../name-builder';
+import {SoundService} from "../services/sound-service";
 
 declare const confetti: any;
 
@@ -55,7 +56,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   ballots: Ballot[] = [];
   participant: Participant;
   isDarkTheme: boolean;
-  successSound: HTMLAudioElement;
+  // successSound: HTMLAudioElement;
 
   session: StoryPointSession = new StoryPointSession();
 
@@ -65,6 +66,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
               private themeService: ThemeService,
               private snackBar: MatSnackBar,
               private localStorage: LocalStorageService,
+              private soundService: SoundService,
               private userService: UserService) {
   }
 
@@ -76,7 +78,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       this.recoverUser(user, participants);
     });
 
-    this.successSound = new Audio('assets/sounds/hawk.mp3');
+    // this.successSound = new Audio('assets/sounds/hawk.mp3');
 
     this.route.paramMap
       .pipe(
@@ -250,7 +252,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         confetti.start(2500);
         break;
       case 'synergy':
-        this.successSound.play();
+        this.soundService.playSuccess();
+        // this.successSound.play();
         break;
     }
   }

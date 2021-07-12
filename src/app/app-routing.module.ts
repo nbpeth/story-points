@@ -9,7 +9,7 @@ import {ChangeLogComponent} from './change-log/change-log.component';
 const routes: Routes = [
   { path: '', component: DashboardComponent},
   { path: 'changes', component: ChangeLogComponent},
-  { path: 'sessions/:id', component: ActiveSessionComponent, canActivate },
+  { path: 'sessions/:id', component: ActiveSessionComponent },
 
 ];
 
