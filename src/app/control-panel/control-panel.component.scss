@@ -8,8 +8,14 @@
 
   .settings-items {
     flex-direction: column;
+
     .item {
       padding: 10px
+    }
+
+    .sub-item {
+      padding-left: 10px;
+      padding-right: 10px
     }
   }
 
