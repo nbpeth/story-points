@@ -1,10 +1,10 @@
-<div style=" display: flex; flex-direction: column; justify-content: space-between; height: 100%">
+<div style=" display: flex; flex-direction: column; justify-content: space-between; height: 100%" *ngIf="authorized; else unauthorized">
   <div style="width:100%; display: flex; justify-content: center" class="mat-app-background">
     <div style="padding: 20px" *ngIf="session && session.sessionName">
       <h3>{{session.sessionName}}</h3>
     </div>
   </div>
-  <div class="content">
+  <div class="content" *ngIf="authorized; else unauthorized">
 
     <div class="tiles">
       <user-tiles>
@@ -36,3 +36,36 @@
     </control-panel>
   </div>
 </div>
+
+<!--extract auth-->
+
+<ng-template #unauthorized>
+  <div style="width:100%; height:100%; display: flex; justify-content: center; align-items: center" class="mat-app-background">
+    <mat-card>
+      <mat-card-title>
+        This session requires a passcode to enter
+      </mat-card-title>
+
+      <mat-card-subtitle>
+        <div *ngIf="queryParams() | async as qp">
+            {{errors[qp['error']]}}
+        </div>
+      </mat-card-subtitle>
+
+      <mat-card-content>
+        <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-evenly;">
+          <div>
+        <mat-form-field  appearance="fill">
+          <mat-label>Input</mat-label>
+          <input [(ngModel)]="passcode"  type="password" matInput>
+        </mat-form-field>
+          </div>
+          <div>
+        <button (click)="enterPasscodeForSession() "mat-raised-button color="primary">Submit</button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+</ng-template>

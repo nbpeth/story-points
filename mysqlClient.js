@@ -217,6 +217,14 @@ incrementCelebration = (sessionId) => {
   runQuery(statement);
 }
 
+verifySessionPassword = (sessionId, onComplete) => {
+  const sql = `select * from sessions s left join session_passcode p on p.session_id = s.id where s.id = ?;`
+
+  const statement = mysql.format(sql, [sessionId]);
+
+  runQuery(statement, onComplete);
+}
+
 module.exports = {
   initDB,
   getAllSessions,
@@ -231,5 +239,6 @@ module.exports = {
   createUser,
   incrementCelebration,
   writePassCode,
-  getSessionData
+  getSessionData,
+  verifySessionPassword
 }
