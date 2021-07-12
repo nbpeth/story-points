@@ -61,47 +61,67 @@ const initHandlers = () => {
     getAllSession()
   }
 
-  getSessionState = (sessionId, notifier) => {
-    mysqlClient.getSessionParticipants(sessionId, (err, results) => {
-      if (err) {
-        sendErrorToCaller('Unable to get session state', err.message);
+  getSessionState = (sessionId, notifier, overrideEvent, extraProps) => {
+    mysqlClient.getSessionData(sessionId, (err, sessionStateResults) => {
+
+      if (err || !sessionStateResults || sessionStateResults.length < 1) {
+        sendErrorToCaller('Unable to fetch session state', err.message);
+      } else {
+        mysqlClient.getSessionParticipants(sessionId, (err, results) => {
+          if (err) {
+            sendErrorToCaller('Unable to fetch session participants', err.message);
+          } else {
+            notifyCaller(formatMessage(overrideEvent ? overrideEvent : 'session-state', {
+              ...extraProps,
+              sessionId: sessionId, sessionName:sessionStateResults[0].sessionName,
+              participants: results, passcodeEnabled: sessionStateResults[0].passcodeEnabled}
+            ));
+          }
+        })
       }
-      notifier(formatMessage('session-state', {sessionId: sessionId, participants: results}, sessionId));
     })
+
   }
 
-  getSessionStateForParticipantJoined = (sessionId, userName, loginId, loginEmail, notifier) => {
-    mysqlClient.getSessionParticipants(sessionId, (err, results) => {
-      if (err) {
-        sendErrorToCaller('Unable to get session state', err.message);
-      }
+  // getSessionStateForParticipantJoined = (sessionId, userName, loginId, loginEmail, notifier) => {
+  //   mysqlClient.getSessionParticipants(sessionId, (err, results) => {
+  //     if (err) {
+  //       sendErrorToCaller('Unable to get session state', err.message);
+  //     }
+  //
+  //     console.log("res", results)
+  //
+  //     const { sessionName } = results[0];
+  //
+  //     notifier(formatMessage('participant-joined', {
+  //       sessionName,
+  //       sessionId: sessionId,
+  //       userName: userName,
+  //       loginId: loginId,
+  //       loginEmail: loginEmail,
+  //       participants: results
+  //     }, sessionId));
+  //   })
+  // }
 
-      console.log("res", results)
-
-      notifier(formatMessage('participant-joined', {
-        sessionId: sessionId,
-        userName: userName,
-        loginId: loginId,
-        loginEmail: loginEmail,
-        participants: results
-      }, sessionId));
-    })
-  }
-
-  getSessionStateForParticipantRemoved = (sessionId, userName, loginId, loginEmail, notifier) => {
-    mysqlClient.getSessionData(sessionId, (err, results) => {
-      if (err) {
-        sendErrorToCaller('Unable to get session state', err.message);
-      }
-      notifier(formatMessage('participant-removed', {
-        sessionId: sessionId,
-        userName: userName,
-        loginId: loginId,
-        loginEmail: loginEmail,
-        participants: results
-      }, sessionId));
-    })
-  }
+  // getSessionStateForParticipantRemoved = (sessionId, userName, loginId, loginEmail, notifier) => {
+  //
+  //   mysqlClient.getSessionData(sessionId, (err, results) => {
+  //     if (err) {
+  //       sendErrorToCaller('Unable to get session state', err.message);
+  //     }
+  //     const { sessionName } = results[0];
+  //
+  //     notifier(formatMessage('participant-removed', {
+  //       sessionName,
+  //       sessionId: sessionId,
+  //       userName: userName,
+  //       loginId: loginId,
+  //       loginEmail: loginEmail,
+  //       participants: results
+  //     }, sessionId));
+  //   })
+  // }
 
   getStateOfTheAppForClients = () => {
     getAllSession()
@@ -232,8 +252,10 @@ const initHandlers = () => {
         sendErrorToCaller('Unable to add participant', err.message);
       }
 
-      getSessionStateForParticipantJoined(sessionId, userName, loginId, loginEmail, notifyClients);
-      getAllSession();
+      getSessionState(sessionId, notifyClients, "participant-joined", {userName, loginId});
+
+      // increment counts on the dash
+      // getAllSession();
 
     }
     mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, loginId, loginEmail, callback)
@@ -246,11 +268,11 @@ const initHandlers = () => {
       if (err) {
         sendErrorToCaller('Unable to remove participant', err.message);
       } else {
-        getSessionState(sessionId, notifyClients);
-        // getSessionStateForParticipantRemoved(sessionId, userName, loginId, loginEmail, notifyClients);
+        getSessionState(sessionId, notifyClients, "participant-removed", {userName, loginId});
       }
 
-      getAllSession();
+      // increment counts on the dash
+      // getAllSession();
     })
   };
 
