@@ -8,7 +8,7 @@ import {
   NewSessionPayload,
   SpMessage
 } from '../active-session/model/events.model';
-import {NewSession} from "../create-session-dialog/create-session-dialog.component";
+import {NewSession} from '../create-session-dialog/create-session-dialog.component';
 
 @Component({
   selector: 'app-dashboard',

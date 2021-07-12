@@ -1,5 +1,5 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {CreateSessionDialogComponent} from '../create-session-dialog/create-session-dialog.component';
+import {Component, EventEmitter, Output} from '@angular/core';
+import {CreateSessionDialogComponent, NewSession} from '../create-session-dialog/create-session-dialog.component';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 
 @Component({
@@ -7,14 +7,11 @@ import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
   templateUrl: './create-session-tile.component.html',
   styleUrls: ['./create-session-tile.component.scss']
 })
-export class CreateSessionTileComponent implements OnInit {
+export class CreateSessionTileComponent  {
 
-  @Output() createSession: EventEmitter<string> = new EventEmitter<string>();
+  @Output() createSession: EventEmitter<NewSession> = new EventEmitter<NewSession>();
 
   constructor(private dialog: MatDialog) { }
-
-  ngOnInit() {
-  }
 
   create = () => {
     const dialogConfig = new MatDialogConfig();
@@ -23,14 +20,12 @@ export class CreateSessionTileComponent implements OnInit {
 
     const dialogRef = this.dialog.open(CreateSessionDialogComponent, dialogConfig);
 
-    dialogRef.afterClosed().subscribe((sessionName: string) => {
-      if (sessionName) {
-        this.createNewSession(sessionName);
-      }
+    dialogRef.afterClosed().subscribe((sessionData: NewSession) => {
+      this.createNewSession(sessionData);
     });
   }
 
-  createNewSession = (withName: string) => {
-    this.createSession.emit(withName);
+  createNewSession = (sessionData: NewSession) => {
+    this.createSession.emit(sessionData);
   }
 }

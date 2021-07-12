@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {NameBuilder} from '../name-builder';
+import {PasswordService} from '../password-service/password.service';
 
 @Component({
   selector: 'app-create-session-dialog',
@@ -22,10 +23,11 @@ export class CreateSessionDialogComponent {
 
   create = (name: string) => {
     const newSessionName = name ? name : NameBuilder.generate();
+    const passCode = this.createWithPasscode ? PasswordService.encode(this.passCode) : undefined;
 
     const message = {
       createWithPasscode: this.createWithPasscode,
-      passCode: this.createWithPasscode ? this.passCode : undefined,
+      passCode,
       name: newSessionName
     };
 

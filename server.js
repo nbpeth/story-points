@@ -62,7 +62,7 @@ const initHandlers = () => {
   }
 
   getSessionState = (sessionId, notifier) => {
-    mysqlClient.getSessionState(sessionId, (err, results) => {
+    mysqlClient.getSessionParticipants(sessionId, (err, results) => {
       if (err) {
         sendErrorToCaller('Unable to get session state', err.message);
       }
@@ -71,10 +71,13 @@ const initHandlers = () => {
   }
 
   getSessionStateForParticipantJoined = (sessionId, userName, loginId, loginEmail, notifier) => {
-    mysqlClient.getSessionState(sessionId, (err, results) => {
+    mysqlClient.getSessionParticipants(sessionId, (err, results) => {
       if (err) {
         sendErrorToCaller('Unable to get session state', err.message);
       }
+
+      console.log("res", results)
+
       notifier(formatMessage('participant-joined', {
         sessionId: sessionId,
         userName: userName,
@@ -86,7 +89,7 @@ const initHandlers = () => {
   }
 
   getSessionStateForParticipantRemoved = (sessionId, userName, loginId, loginEmail, notifier) => {
-    mysqlClient.getSessionState(sessionId, (err, results) => {
+    mysqlClient.getSessionData(sessionId, (err, results) => {
       if (err) {
         sendErrorToCaller('Unable to get session state', err.message);
       }
@@ -136,9 +139,9 @@ const initHandlers = () => {
       case 'terminate-session':
         terminateSession(messageData);
         break;
-      case 'get-session-name':
-        getSessionNameFor(messageData);
-        break;
+      // case 'get-session-name':
+      //   getSessionNameFor(messageData);
+      //   break;
       case 'celebrate':
         celebrate(messageData)
         break
@@ -188,32 +191,21 @@ const initHandlers = () => {
     })
   };
 
-  getSessionNameFor = (messageData) => {
-    const eventType = messageData.eventType;
-    const {sessionId} = messageData.payload;
-
-    mysqlClient.getSessionNameFor(sessionId, (err, sessionNameResults) => {
-      if (err) {
-        sendErrorToCaller('Unable to resolve session name', err.message);
-      } else {
-        const maybeSessionName = sessionNameResults && sessionNameResults.length > 0 ? sessionNameResults[0].sessionName : undefined;
-
-        if (maybeSessionName) {
-          notifyCaller(formatMessage(eventType, {sessionId: sessionId, sessionName: maybeSessionName}, sessionId));
-        }
-      }
-    })
-  }
-
   getSessionStateUsing = (messageData) => {
     const eventType = messageData.eventType;
     const {sessionId} = messageData.payload;
 
-    mysqlClient.getSessionState(sessionId, (err, results) => {
-      if (err) {
+    mysqlClient.getSessionData(sessionId, (err, sessionStateResults) => {
+      if (err || !sessionStateResults || sessionStateResults.length < 1) {
         sendErrorToCaller('Unable to fetch session state', err.message);
       } else {
-        notifyCaller(formatMessage(eventType, {sessionId: sessionId, participants: results}));
+        mysqlClient.getSessionParticipants(sessionId, (err, results) => {
+          if (err) {
+            sendErrorToCaller('Unable to fetch session participants', err.message);
+          } else {
+            notifyCaller(formatMessage(eventType, {sessionId: sessionId, sessionName:sessionStateResults[0].sessionName, participants: results, passcodeEnabled: sessionStateResults[0].passcodeEnabled}));
+          }
+        })
       }
     })
   };

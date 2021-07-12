@@ -6,7 +6,4 @@ import {Component} from '@angular/core';
   styleUrls: ['./titlebar.component.scss']
 })
 export class TitlebarComponent  {
-  constructor() {
-  }
-
 }

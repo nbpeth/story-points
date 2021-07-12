@@ -27,17 +27,18 @@ runQuery = (statement, onComplete) => {
 }
 
 getAllSessions = (onComplete) => {
-  const sql = `select a.id as id, a.id, a.sessionName as sessionName, lastActive, participantCount from
-    (select s.id, s.session_name as sessionName from sessions s) as a
-    left join (select
-        s.id,
-        s.session_name as sessionName,
-        s.last_active as lastActive,
-        count(p.id) as participantCount
-        from sessions s, participant p
-        where s.id = p.session_id
-        group by s.session_name) as b
-    on a.id = b.id`
+  const sql = `select a.id as id, a.id, a.sessionName, a.passcodeEnabled, lastActive, participantCount
+               from (select s.id, s.session_name as sessionName, s.passcode_enabled as passcodeEnabled from sessions s) as a
+                      left join (select s.id,
+                                        s.session_name     as sessionName,
+                                        s.last_active      as lastActive,
+                                        s.passcode_enabled as x,
+                                        count(p.id)        as participantCount
+                                 from sessions s,
+                                      participant p
+                                 where s.id = p.session_id
+                                 group by s.session_name) as b
+                                on a.id = b.id`
 
   const statement = mysql.format(sql, []);
 
@@ -47,21 +48,21 @@ getAllSessions = (onComplete) => {
 createSession = (messageData, onComplete) => {
   const payload = messageData.payload;
 
-  const { createWithPasscode, passCode, name } = payload && payload.sessionData || {};
+  const {createWithPasscode, name} = payload && payload.sessionData || {};
 
   if (!name) {
     throw Error("no session name")
   }
 
-  const sql = 'INSERT INTO sessions (session_name) VALUES (?)';
-  const statement = mysql.format(sql, [name]);
+  const sql = 'INSERT INTO sessions (session_name, passcode_enabled) VALUES (?, ?)';
+  const statement = mysql.format(sql, [name, createWithPasscode]);
 
   runQuery(statement, onComplete);
 }
 
 writePassCode = (sessionId, messageData, onComplete) => {
   const payload = messageData.payload;
-  const { passCode } = payload && payload.sessionData || {};
+  const {passCode} = payload && payload.sessionData || {};
 
   const sql = 'INSERT INTO session_passcode (session_id, passcode) VALUES (?, ?)';
   const statement = mysql.format(sql, [sessionId, passCode]);
@@ -76,37 +77,45 @@ terminateSession = (sessionId, onComplete) => {
   runQuery(statement, onComplete);
 }
 
-getSessionState = (sessionId, onComplete) => {
+getSessionParticipants = (sessionId, onComplete) => {
   const sql = `
-        SELECT s.id,
-        s.points_visible as pointsVisible,
-        s.session_name as sessionName,
-        p.participant_name as participantName,
-        p.id as participantId,
-        p.point,
-        p.is_admin as isAdmin,
-        p.has_voted as hasVoted,
-        p.has_revoted as hasAlreadyVoted,
-        p.login_id as loginId,
-        p.login_email as loginEmail,
-        u.photo_url as photoUrl,
-        u.first_name as firstName,
-        u.last_name as lastName
-        FROM sessions s, participant p, user u
-        WHERE s.id = ?
-        AND s.id = p.session_id
-        AND p.login_id = u.provider_id;
-    `;
+    SELECT s.id,
+           s.points_visible   as pointsVisible,
+           s.session_name     as sessionName,
+           s.passcode_enabled as passcodeEnabled,
+           p.participant_name as participantName,
+           p.id               as participantId,
+           p.point,
+           p.is_admin         as isAdmin,
+           p.has_voted        as hasVoted,
+           p.has_revoted      as hasAlreadyVoted,
+           p.login_id         as loginId,
+           p.login_email      as loginEmail,
+           u.photo_url        as photoUrl,
+           u.first_name       as firstName,
+           u.last_name        as lastName
+    FROM sessions s,
+         participant p,
+         user u
+    WHERE s.id = ?
+      AND s.id = p.session_id
+      AND p.login_id = u.provider_id;
+  `;
 
   const statement = mysql.format(sql, [sessionId]);
 
   runQuery(statement, onComplete);
 }
 
-getSessionNameFor = (sessionId, onComplete) => {
+
+getSessionData = (sessionId, onComplete) => {
   const sql = `
-        SELECT s.session_name as sessionName FROM sessions s WHERE s.id = ?
-    `;
+    SELECT
+           s.session_name as sessionName,
+           s.passcode_enabled as passcodeEnabled
+    FROM sessions s
+    WHERE s.id = ?
+  `;
 
   const statement = mysql.format(sql, [sessionId]);
 
@@ -115,10 +124,9 @@ getSessionNameFor = (sessionId, onComplete) => {
 
 addParticipantToSession = (sessionId, userName, isAdmin, loginId, loginEmail, onComplete) => {
   const sql = `
-        INSERT INTO participant (session_id, participant_name, point, is_admin, login_id, login_email)
-        VALUES
-        (?, ?, ?, ?, ?, ?);
-    `;
+    INSERT INTO participant (session_id, participant_name, point, is_admin, login_id, login_email)
+    VALUES (?, ?, ?, ?, ?, ?);
+  `;
 
   const statement = mysql.format(sql, [sessionId, userName, 0, isAdmin, loginId, loginEmail]);
 
@@ -127,8 +135,11 @@ addParticipantToSession = (sessionId, userName, isAdmin, loginId, loginEmail, on
 
 removeParticipantFromSession = (participantId, sessionId, onComplete) => {
   const sql = `
-        DELETE FROM participant WHERE id = ? AND session_id = ?
-    `;
+    DELETE
+    FROM participant
+    WHERE id = ?
+      AND session_id = ?
+  `;
 
   const statement = mysql.format(sql, [participantId, sessionId]);
 
@@ -137,8 +148,12 @@ removeParticipantFromSession = (participantId, sessionId, onComplete) => {
 
 pointWasSubmitted = (participantId, value, hasAlreadyVoted, onComplete) => {
   const sql = `
-        UPDATE participant SET point = ?, has_voted = true, has_revoted = ? WHERE id = ?
-    `
+    UPDATE participant
+    SET point       = ?,
+        has_voted   = true,
+        has_revoted = ?
+    WHERE id = ?
+  `
 
   const statement = mysql.format(sql, [value, hasAlreadyVoted, participantId]);
 
@@ -147,11 +162,11 @@ pointWasSubmitted = (participantId, value, hasAlreadyVoted, onComplete) => {
 
 resetPointsForSession = (sessionId, onComplete) => {
   const sql = `
-        UPDATE participant p, sessions s
-        SET p.point = 0, p.has_voted = false, s.points_visible = false, p.has_revoted = false
-        WHERE p.session_id = ?
-        AND s.id = ?
-    `
+    UPDATE participant p, sessions s
+    SET p.point = 0, p.has_voted = false, s.points_visible = false, p.has_revoted = false
+    WHERE p.session_id = ?
+      AND s.id = ?
+  `
 
   const statement = mysql.format(sql, [sessionId, sessionId]);
 
@@ -159,7 +174,10 @@ resetPointsForSession = (sessionId, onComplete) => {
 }
 
 revealPointsForSession = (sessionId, onComplete) => {
-  const sql = `UPDATE sessions SET points_visible = true, last_active = ? WHERE id = ?`
+  const sql = `UPDATE sessions
+               SET points_visible = true,
+                   last_active    = ?
+               WHERE id = ?`
 
   const statement = mysql.format(sql, [new Date(), sessionId]);
 
@@ -167,17 +185,16 @@ revealPointsForSession = (sessionId, onComplete) => {
 }
 
 createUser = (user, onComplete) => {
-  const { firstName, lastName, id, name, photoUrl, provider } = user;
-  if(!id || !provider) {
+  const {firstName, lastName, id, name, photoUrl, provider} = user;
+  if (!id || !provider) {
     // didn't write user
     onComplete();
   } else {
     const sql = `
-        INSERT INTO USER
-        (first_name, last_name, provider_id, name, photo_url, provider, date_joined, updated)
-        VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE
+      INSERT INTO USER
+      (first_name, last_name, provider_id, name, photo_url, provider, date_joined, updated)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY
+      UPDATE
         first_name = ?, last_name = ?, name = ?, photo_url = ?, provider = ?, updated = ?
     `
     const now = new Date();
@@ -190,10 +207,9 @@ createUser = (user, onComplete) => {
 incrementCelebration = (sessionId) => {
   const sql = `
     INSERT INTO CELEBRATION
-    (session_id, count)
-    VALUES
-    (?, ?)
-    ON DUPLICATE KEY UPDATE count = count + 1;
+      (session_id, count)
+    VALUES (?, ?) ON DUPLICATE KEY
+    UPDATE count = count + 1;
   `
 
   const statement = mysql.format(sql, [sessionId, 1]);
@@ -206,8 +222,7 @@ module.exports = {
   getAllSessions,
   createSession,
   terminateSession,
-  getSessionState,
-  getSessionNameFor,
+  getSessionParticipants,
   addParticipantToSession,
   removeParticipantFromSession,
   pointWasSubmitted,
@@ -215,5 +230,6 @@ module.exports = {
   revealPointsForSession,
   createUser,
   incrementCelebration,
-  writePassCode
+  writePassCode,
+  getSessionData
 }

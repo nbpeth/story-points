@@ -29,6 +29,7 @@ export class StoryPointSession {
   sessionId: number;
   sessionName: string;
   pointsVisible: boolean;
+  passcodeEnabled: boolean;
 
   setName = (name: string) => {
     this.sessionName = name;

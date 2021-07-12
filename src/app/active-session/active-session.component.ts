@@ -8,7 +8,6 @@ import {
   CelebrateMessage,
   CelebratePayload,
   GetSessionNameMessage,
-  GetSessionNamePayload,
   GetStateForSessionMessage,
   GetStateForSessionPayload,
   ParticipantJoinedSessionMessage,
@@ -50,6 +49,7 @@ declare const confetti: any;
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
   private participantsInThisSession = new Subject<any>();
+  private passcodeEnabled: boolean;
   logs: string[] = [];
   showLogs: boolean;
   ballots: Ballot[] = [];
@@ -199,11 +199,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.session.participants.filter((p: Participant) => p.hasVoted).map((p: Participant) => p.point)
 
   private requestInitialStateOfSessionBy = (id: number): void => {
-    this.socketService.send(
-      new GetSessionNameMessage(
-        new GetSessionNamePayload(id)
-      )
-    );
+
     this.socketService.send(
       new GetStateForSessionMessage(
         new GetStateForSessionPayload(id)
@@ -216,11 +212,10 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.logs.push(`Welcome to ${this.session.sessionName}`);
   }
 
-
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
-    // console.log("message!", eventType)
+    console.log("message!", eventType, payload)
     switch (eventType) {
       // add event types back for logging, at least
       // each event can still do a whole refresh for now
@@ -232,7 +227,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         this.verifyPayloadAndUpdate(payload, this.participantJoined, messageData);
         break;
       case Events.SESSION_STATE:
-        this.verifyPayloadAndUpdate(payload, this.updateSession, messageData);
+        this.updateParticipants(payload, messageData);
         break;
       case Events.PARTICIPANT_REMOVED:
         this.verifyPayloadAndUpdate(payload, this.participantRemoved, messageData);
@@ -251,8 +246,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private handleCelebration = (messageData: CelebrateMessage) => {
     switch (messageData.payload.celebration) {
       case 'fireworks':
-
-
         this.logs.unshift(`${messageData.payload.celebrator} is ${RandomBuilder.generateFrom(happy)}`);
         confetti.start(2500);
         break;
@@ -271,11 +264,27 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     }
   }
 
-  private updateSession = (messageData: GetStateForSessionMessage | ParticipantJoinedSessionMessage) => {
+  private updateSession = (messageData: GetStateForSessionMessage) => {
+    // if (!payload) {
+    //   this.router.navigate(['/'], {queryParams: {error: 1}});
+    // } else {
+    //   updateFunction(messageData);
+    //   this.ballots = this.collectBallots();
+    // }
     const session = Object.assign(new StoryPointSession(), messageData.payload);
-    const previousName = this.session.sessionName;
     this.session = session;
-    this.session.setName(previousName); // the name gets set every. time. no.
+    console.log("sess", this.session)
+
+    // this.session.setName(previousName); // the name gets set every. time. no.
+    this.refreshParticipants(session);
+  }
+
+  private updateParticipants = (messageData: ParticipantJoinedSessionMessage) => {
+    const session = Object.assign(new StoryPointSession(), messageData.payload);
+    this.session = session;
+    console.log("updateParticipants", this.session)
+
+    // this.session.setName(previousName); // the name gets set every. time. no.
     this.refreshParticipants(session);
   }
 
