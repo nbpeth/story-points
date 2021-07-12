@@ -26,6 +26,7 @@ export class ActiveSessionTileComponent {
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
       id: this.session.id,
+      passcodeEnabled: this.session.passcodeEnabled,
       sessionName: this.session.sessionName,
       message: 'Destroy Session - Be You Certain?'
     };

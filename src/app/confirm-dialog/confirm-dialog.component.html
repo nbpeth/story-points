@@ -5,6 +5,22 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-    <button class="mat-raised-button" (click)="close(false)">Cancel</button>
-    <button class="mat-raised-button mat-warn" (click)="close(true)">Yes</button>
+  <div style="display: flex; flex-direction: column">
+    <div>
+      <mat-form-field>
+        <input matInput type="text" #name [(ngModel)]="verifySessionName" placeholder="Confirm Session Name">
+      </mat-form-field>
+    </div>
+    <div *ngIf="passcodeEnabled">
+      <mat-form-field>
+        <input matInput type="password" #name [(ngModel)]="verifyPassCode" placeholder="Session Passcode">
+      </mat-form-field>
+      <mat-error *ngIf="error">{{error}}</mat-error>
+    </div>
+
+    <div>
+      <button class="mat-raised-button" (click)="close(false)">Cancel</button>
+      <button class="mat-raised-button mat-warn" [disabled]="!okToDelete()" (click)="close(true)">Yes</button>
+    </div>
+  </div>
 </mat-dialog-actions>
