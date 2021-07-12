@@ -264,15 +264,16 @@ const initHandlers = () => {
   createNewSession = (messageData) => {
     const createSessionCallback = (err, results, fields) => {
       if (err) {
+        console.log("createSessionCallback error?", err)
         sendErrorToCaller('Unable to create session', err.message);
       } else {
         mysqlClient.writePassCode(results["insertId"], messageData, (err) => {
-          // if (err) {
-          //   sendErrorToCaller('Unable to create session', err.message);
-          // } else {
+          if (err) {
+            sendErrorToCaller('Unable to create session', err.message);
+          } else {
           console.log("we did it!")
             getAllSession()
-          // }
+          }
         })
       }
     }
@@ -280,7 +281,6 @@ const initHandlers = () => {
   };
 
   sendErrorToCaller = (message, reason) => {
-    // console.error(`${message}: ${reason}`);
     notifyCaller(formatMessage('error', {message: message}))
   }
 

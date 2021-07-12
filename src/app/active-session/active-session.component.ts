@@ -227,7 +227,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         this.verifyPayloadAndUpdate(payload, this.participantJoined, messageData);
         break;
       case Events.SESSION_STATE:
-        this.updateParticipants(payload, messageData);
+        this.updateSession(messageData as GetStateForSessionMessage);
         break;
       case Events.PARTICIPANT_REMOVED:
         this.verifyPayloadAndUpdate(payload, this.participantRemoved, messageData);
@@ -265,12 +265,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   private updateSession = (messageData: GetStateForSessionMessage) => {
-    // if (!payload) {
-    //   this.router.navigate(['/'], {queryParams: {error: 1}});
-    // } else {
-    //   updateFunction(messageData);
-    //   this.ballots = this.collectBallots();
-    // }
     const session = Object.assign(new StoryPointSession(), messageData.payload);
     this.session = session;
     console.log("sess", this.session)
