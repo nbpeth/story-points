@@ -246,7 +246,8 @@ const initHandlers = () => {
       if (err) {
         sendErrorToCaller('Unable to remove participant', err.message);
       } else {
-        getSessionStateForParticipantRemoved(sessionId, userName, loginId, loginEmail, notifyClients);
+        getSessionState(sessionId, notifyClients);
+        // getSessionStateForParticipantRemoved(sessionId, userName, loginId, loginEmail, notifyClients);
       }
 
       getAllSession();
