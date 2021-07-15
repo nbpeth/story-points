@@ -25,6 +25,7 @@ export class ControlPanelComponent implements OnInit, OnChanges {
 
   showAdminConsole: boolean;
   showEventLog: boolean;
+  audioEnabled: boolean;
 
   @Output() pointSelectionChanged = new EventEmitter<PointSelection>();
 
@@ -41,6 +42,7 @@ export class ControlPanelComponent implements OnInit, OnChanges {
       .subscribe((state: AppState) => {
         this.showAdminConsole = state.globals.showAdminConsole;
         this.showEventLog = state.globals.showEventLog;
+        this.audioEnabled = state.globals.audioEnabled;
       });
 
     this.pointSelectionChanged.emit(new DefaultPointSelection());
@@ -78,6 +80,7 @@ export class ControlPanelComponent implements OnInit, OnChanges {
     this.socketService.send(new CelebrateMessage(payload));
   }
 
+  toggleAudio = () => this.localStorage.toggleAudio();
 }
 
 export declare type PointVisibilityChange = 'reset' | 'reveal' | 'hide';

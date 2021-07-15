@@ -104,6 +104,14 @@ export class LocalStorageService {
 
     this.setState(updatedState);
   }
+
+  toggleAudio = () => {
+    const appState: AppState = this.getState();
+    const isAudioEnabled = appState.globals.audioEnabled;
+    const updatedState = {...appState, globals: {...appState.globals, audioEnabled: !isAudioEnabled}} as AppState;
+
+    this.setState(updatedState);
+  }
 }
 
 
