@@ -116,14 +116,14 @@ import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
     MatSidenavModule,
     MatSliderModule,
     SocialLoginModule,
-    AuthModule.forRoot({
-      domain: 'proud-recipe-3564.us.auth0.com',
-      clientId: 'nqBp54zHH9Dl2Vm69NGDORg8QdU8c7lL'
-    }),
+    // AuthModule.forRoot({
+    //   domain: 'proud-recipe-3564.us.auth0.com',
+    //   clientId: 'nqBp54zHH9Dl2Vm69NGDORg8QdU8c7lL'
+    // }),
   ],
   providers: [
-    AbstractNavigator,
-    AuthClientConfig,
+    // AbstractNavigator,
+    // AuthClientConfig,
     UserService,
     {
       provide: AuthServiceConfig,

@@ -22,7 +22,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   visibleSessions = [];
   error: string;
 
-  constructor(private socketService: SocketService, public auth: AuthService) {
+  constructor(private socketService: SocketService) {
   }
 
   ngOnInit() {
