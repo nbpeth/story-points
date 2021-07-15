@@ -56,6 +56,8 @@ import {ParseDatePipe} from './pipe/parse-date.pipe';
 import { ChangeLogComponent } from './change-log/change-log.component';
 import { CreateSessionTileComponent } from './create-session-tile/create-session-tile.component';
 import { MatDividerModule } from '@angular/material/divider';
+import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
+import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
 
 @NgModule({
   declarations: [
@@ -113,9 +115,15 @@ import { MatDividerModule } from '@angular/material/divider';
     MatSnackBarModule,
     MatSidenavModule,
     MatSliderModule,
-    SocialLoginModule
+    SocialLoginModule,
+    AuthModule.forRoot({
+      domain: 'proud-recipe-3564.us.auth0.com',
+      clientId: 'nqBp54zHH9Dl2Vm69NGDORg8QdU8c7lL'
+    }),
   ],
   providers: [
+    AbstractNavigator,
+    AuthClientConfig,
     UserService,
     {
       provide: AuthServiceConfig,
@@ -142,6 +150,8 @@ export class AppModule {
     this.overlayContainer.getContainerElement().classList.add(theme);
   }
 }
+
+
 
 // google provider should be injected from env
 export function provideConfig() {

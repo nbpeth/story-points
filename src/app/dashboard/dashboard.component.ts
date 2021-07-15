@@ -8,6 +8,7 @@ import {
   NewSessionPayload,
   SpMessage
 } from '../active-session/model/events.model';
+import {AuthService} from "@auth0/auth0-angular";
 
 @Component({
   selector: 'app-dashboard',
@@ -21,7 +22,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   visibleSessions = [];
   error: string;
 
-  constructor(private socketService: SocketService) {
+  constructor(private socketService: SocketService, public auth: AuthService) {
   }
 
   ngOnInit() {
