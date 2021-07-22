@@ -9,8 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "ng build --aot --configuration=$( if [ $ENV == \"production\" ]; then echo \"production\"; else echo \"test\"; fi)\n",
-    "heroku-postbuild": "ng build --configuration=$( if [ $ENV == \"production\" ]; then echo \"production\"; else echo \"test\"; fi)\n"
+    "postinstall": "ng build --aot --$ENV",
+    "heroku-postbuild": "ng build --$ENV"
   },
   "private": true,
   "dependencies": {
