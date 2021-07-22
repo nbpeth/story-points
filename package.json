@@ -9,8 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "ng build --aot --$ENV",
-    "heroku-postbuild": "ng build --$ENV"
+    "postinstall": "ng build --aot --configuration=$ENV",
+    "heroku-postbuild": "ng build --configuration=$ENV"
   },
   "private": true,
   "dependencies": {
