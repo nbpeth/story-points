@@ -5,7 +5,8 @@ const mysqlClient = require('./mysqlClient')
 const startServer = () => {
   const server = require('http').createServer();
   const app = require('./http-server');
-  app.use(function(req, res, next) {
+
+  app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
@@ -18,7 +19,7 @@ const startServer = () => {
 
   setInterval(() => {
     // keep connections alive
-    console.log('clients', wss.clients.size);
+    // console.log('clients', wss.clients.size);
     wss.clients.forEach((client) => {
       client.send(JSON.stringify({}))
     });
