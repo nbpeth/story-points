@@ -29,9 +29,11 @@ const startServer = () => {
   app.use(cors());
 
   app.post('/user', (req, res) => {
+    console.log()
+    console.log("###### Create user?!")
+    console.log()
     const headers = req.headers
     const validUser = validateAuth(headers)
-    console.log("###### Create user?!")
     if(!validUser) {
       res.status(401);
       res.send({error: "You shall not pass!"})
@@ -54,7 +56,7 @@ const validateAuth = (headers) => {
     const { aud, exp } = decoded
     const expiration = new Date(exp * 1000)
     const tokenIsNotExpired = expiration > new Date()
-    const tokenAudienceIsCorrectClient =  aud === clientId
+    const tokenAudienceIsCorrectClient = aud === clientId
 
     return tokenIsNotExpired && tokenAudienceIsCorrectClient
   } catch(e) {
