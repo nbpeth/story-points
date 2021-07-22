@@ -8,9 +8,17 @@ const mysqlClient = require('./mysqlClient');
 const clientId = process.env.SP_CLIENT_ID;
 
 const startServer = () => {
-  app.use(function(req, res, next) {
+  app.use((req, res, next) => {
+    console.log("##### startServer proto:", process.env.ENV, req.headers['x-forwarded-proto'])
+
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+    if(['prod','test'].includes(process.env.ENV) && req.headers['x-forwarded-proto'] !== 'https') {
+      console.log("### redirecting to " + ['https://', req.get('Host'), req.url].join(''))
+      res.redirect(['https://', req.get('Host'), req.url].join(''));
+    }
+
     next();
   });
 
