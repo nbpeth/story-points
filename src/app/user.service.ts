@@ -18,7 +18,7 @@ export class UserService {
   isLoggingIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
 
-  constructor(private authService: AuthService,
+  constructor(private  authService: AuthService,
               private socketService: SocketService,
               private http: HttpClient,
               private lss: LocalStorageService,

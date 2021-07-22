@@ -56,8 +56,8 @@ import {ParseDatePipe} from './pipe/parse-date.pipe';
 import { ChangeLogComponent } from './change-log/change-log.component';
 import { CreateSessionTileComponent } from './create-session-tile/create-session-tile.component';
 import { MatDividerModule } from '@angular/material/divider';
-import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
-import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
+// import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
+// import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
 
 @NgModule({
   declarations: [

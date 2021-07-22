@@ -8,7 +8,7 @@ import {
   NewSessionPayload,
   SpMessage
 } from '../active-session/model/events.model';
-import {AuthService} from "@auth0/auth0-angular";
+// import {AuthService} from "@auth0/auth0-angular";
 
 @Component({
   selector: 'app-dashboard',
