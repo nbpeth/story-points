@@ -29,19 +29,14 @@ const startServer = () => {
   app.use(cors());
 
   app.post('/user', (req, res) => {
-    console.log()
-    console.log("###### Create user?!")
-    console.log()
     const headers = req.headers
     const validUser = validateAuth(headers)
     if(!validUser) {
-      console.log("###### Create user INVALID USER?!?!?!")
+      console.error(`Invalid user: ${headers}`)
 
       res.status(401);
       res.send({error: "You shall not pass!"})
     } else {
-      console.log("###### Create user VALID USER")
-
       createUser(req, res)
     }
   })
@@ -69,17 +64,13 @@ const validateAuth = (headers) => {
 }
 
 const createUser = (req, res) => {
-  console.log("Create user createUsercreateUser")
 
-  mysqlClient.createUser(req.body, (err, results, x) => {
-    console.log("Create user mysql callback", results, x)
-
+  mysqlClient.createUser(req.body, (err, results) => {
     if (err) {
       console.error("Error creating user", err)
       res.status(500);
       res.send({error: err})
     } else {
-      console.log("Created user", results, results, x)
       res.send(req.body);
     }
   })

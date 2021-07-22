@@ -156,13 +156,10 @@ revealPointsForSession = (sessionId, onComplete) => {
 }
 
 createUser = (user, onComplete) => {
-  console.log("MYSQL CREATE USER", user)
   const { firstName, lastName, id, name, photoUrl, provider } = user;
-
   if(!id || !provider) {
-    // didn't write user
-    onComplete();
-    console.log("MYSQL CREATE USER didn't write user !id || !provider", `id: ${id}. provider: ${provider}`, !id || !provider)
+    console.error(`No ID or Provider, unable to write user. ID: '${id}', Provider: '${provider}'`)
+    onComplete("Missing user id or provider id");
   } else {
     const sql = `
         INSERT INTO USER

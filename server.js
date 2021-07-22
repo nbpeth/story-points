@@ -143,9 +143,6 @@ const initHandlers = () => {
       case 'celebrate':
         celebrate(messageData)
         break
-      // case 'create-user':
-      //   createUser(messageData)
-      //   break;
     }
   };
 
