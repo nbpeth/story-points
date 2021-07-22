@@ -28,10 +28,12 @@
             <mat-icon>home</mat-icon>
             <span>Dashboard</span>
           </button>
-          <!--            <button mat-menu-item [routerLink]="['changes']">-->
-          <!--              <mat-icon>new_releases</mat-icon>-->
-          <!--              <span>What's New</span>-->
-          <!--            </button>-->
+
+          <button mat-menu-item (click)="openChangeLog()">
+            <mat-icon>new_releases</mat-icon>
+            <span>Change Log</span>
+          </button>
+
           <mat-divider></mat-divider>
           <app-theme-toggle></app-theme-toggle>
 

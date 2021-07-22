@@ -29,6 +29,7 @@ export class ActiveSessionTileComponent {
       sessionName: this.session.sessionName,
       message: 'Destroy Session - Be You Certain?'
     };
+
     const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(this.destroySessionIfItIsWilled);

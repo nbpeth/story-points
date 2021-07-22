@@ -5,6 +5,7 @@ import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {CreateNewSessionMessage, NewSessionPayload} from '../active-session/model/events.model';
 import {SocketService} from '../services/socket.service';
 import {Router} from '@angular/router';
+import {ChangelogDialogComponent} from '../changelog-dialog/changelog-dialog.component';
 
 @Component({
   selector: 'app-titlebar',
@@ -34,19 +35,27 @@ export class TitlebarComponent implements OnInit {
     return this.userService.isLoggedIn();
   }
 
-  create = () => {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = false;
-    dialogConfig.autoFocus = true;
+  openChangeLog = () => {
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.disableClose = false;
+      dialogConfig.autoFocus = true;
 
-    const dialogRef = this.dialog.open(CreateSessionDialogComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe((sessionName: string) => {
-      if (sessionName) {
-        this.createNewSession(sessionName);
-      }
-    });
+      this.dialog.open(ChangelogDialogComponent, dialogConfig);
   }
+
+  // create = () => {
+  //   const dialogConfig = new MatDialogConfig();
+  //   dialogConfig.disableClose = false;
+  //   dialogConfig.autoFocus = true;
+  //
+  //   const dialogRef = this.dialog.open(CreateSessionDialogComponent, dialogConfig);
+  //
+  //   dialogRef.afterClosed().subscribe((sessionName: string) => {
+  //     if (sessionName) {
+  //       this.createNewSession(sessionName);
+  //     }
+  //   });
+  // }
 
   createNewSession = (newSessionName: string) => {
     const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));

@@ -56,6 +56,7 @@ import {ParseDatePipe} from './pipe/parse-date.pipe';
 import { ChangeLogComponent } from './change-log/change-log.component';
 import { CreateSessionTileComponent } from './create-session-tile/create-session-tile.component';
 import { MatDividerModule } from '@angular/material/divider';
+import { ChangelogDialogComponent } from './changelog-dialog/changelog-dialog.component';
 // import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
 // import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
 
@@ -90,6 +91,7 @@ import { MatDividerModule } from '@angular/material/divider';
     CreateSessionTileComponent,
     ChangeLogComponent,
     CreateSessionTileComponent,
+    ChangelogDialogComponent,
     // TestComponent,
   ],
   imports: [
@@ -132,7 +134,7 @@ import { MatDividerModule } from '@angular/material/divider';
     {provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig},
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ConfirmDialogComponent, JoinSessionDialogComponent, CreateSessionDialogComponent, AlertSnackbarComponent]
+  entryComponents: [ConfirmDialogComponent, ChangelogDialogComponent, JoinSessionDialogComponent, CreateSessionDialogComponent, AlertSnackbarComponent]
 
 })
 
