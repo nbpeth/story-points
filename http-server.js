@@ -35,9 +35,13 @@ const startServer = () => {
     const headers = req.headers
     const validUser = validateAuth(headers)
     if(!validUser) {
+      console.log("###### Create user INVALID USER?!?!?!")
+
       res.status(401);
       res.send({error: "You shall not pass!"})
     } else {
+      console.log("###### Create user VALID USER")
+
       createUser(req, res)
     }
   })
@@ -65,6 +69,8 @@ const validateAuth = (headers) => {
 }
 
 const createUser = (req, res) => {
+  console.log("Create user createUsercreateUser")
+
   mysqlClient.createUser(req.body, (err, results, x) => {
     console.log("Create user mysql callback", results, x)
 
