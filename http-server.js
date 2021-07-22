@@ -14,7 +14,7 @@ const startServer = () => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-    if(['prod','test'].includes(process.env.ENV) && req.headers['x-forwarded-proto'] !== 'https') {
+    if(['production','test'].includes(process.env.ENV) && req.headers['x-forwarded-proto'] !== 'https') {
       console.log("### redirecting to " + ['https://', req.get('Host'), req.url].join(''))
       res.redirect(['https://', req.get('Host'), req.url].join(''));
     }
