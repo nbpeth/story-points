@@ -142,10 +142,13 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   resetPoints = () => {
+
+    this.session.pointsVisible = false;
     this.socketService.send(new ResetPointsForSessionMessage(new ResetPointsForSessionPayload(this.session.sessionId)));
   }
 
   revealPoints = () => {
+    this.session.pointsVisible = true;
     this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.session.sessionId)));
     const points = this.session.participants.map(p => ({point: p.point, hasVoted: p.hasVoted}));
 

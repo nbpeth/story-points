@@ -70,6 +70,7 @@
 
       <div>
         <admin-controls *ngIf="showAdminConsole"
+                        [pointsVisible]="pointsVisible"
                         (pointVisibilityEvent)="changePointVisibility($event)">
         </admin-controls>
       </div>

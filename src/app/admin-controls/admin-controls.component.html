@@ -1,5 +1,9 @@
   <div class="admin-console">
-    <button (click)="changePointVisibility('reveal')" mat-button color="primary">Reveal</button>
-    <button (click)="changePointVisibility('reset')" mat-button color="warn">Reset</button>
+    <ng-container *ngIf="!pointsVisible">
+      <button (click)="changePointVisibility('reveal')" mat-button color="primary"><h1>Reveal</h1></button>
+    </ng-container>
+    <ng-container *ngIf="pointsVisible">
+      <button (click)="changePointVisibility('reset')" mat-button color="warn"><h1>Reset</h1></button>
+    </ng-container>
   </div>
 
