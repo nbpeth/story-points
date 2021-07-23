@@ -24,12 +24,7 @@ import {
   SpMessage
 } from './model/events.model';
 import {Participant, StoryPointSession} from './model/session.model';
-import {
-  MatSelectChange,
-  MatSnackBar,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition
-} from '@angular/material';
+
 import {ThemeService} from '../services/theme.service';
 import {ParticipantFilterPipe} from '../pipe/participant-filter.pipe';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
@@ -39,6 +34,8 @@ import {LocalStorageService} from '../services/local-storage.service';
 import {User, UserService} from '../user.service';
 import {happy, RandomBuilder} from '../name-builder';
 import {SoundService} from "../services/sound-service";
+import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from "@angular/material/snack-bar";
+import {MatSelectChange} from "@angular/material/select";
 
 declare const confetti: any;
 

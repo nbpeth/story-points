@@ -1,11 +1,10 @@
 import {Injectable} from '@angular/core';
-import {WebSocketSubjectConfig} from 'rxjs/src/internal/observable/dom/WebSocketSubject';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
-import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material';
 import {map, catchError, flatMap, filter} from 'rxjs/operators';
 import {SpMessage} from '../active-session/model/events.model';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {AlertSnackbarComponent} from '../alert-snackbar/alert-snackbar.component';
+import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +38,7 @@ export class SocketService {
             this.connectionObserver$.next(false);
           }
         },
-      } as WebSocketSubjectConfig<any>;
+      };
 
       this.socket$ = webSocket(config);
       this.messages$ = this.socket$.asObservable();
