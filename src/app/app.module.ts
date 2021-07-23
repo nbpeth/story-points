@@ -8,23 +8,7 @@ import {ActiveSessionTileComponent} from './active-session/active-session-tiles/
 import {ActiveSessionTilesComponent} from './active-session/active-session-tiles/active-session-tiles.component';
 import {ActiveSessionComponent} from './active-session/active-session.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {
-  GestureConfig,
-  MatBadgeModule,
-  MatButtonModule,
-  MatCardModule,
-  MatCheckboxModule,
-  MatDialogModule,
-  MatIconModule,
-  MatInputModule,
-  MatRadioModule,
-  MatSelectModule,
-  MatSidenavModule,
-  MatSliderModule,
-  MatSlideToggleModule,
-  MatSnackBarModule,
-  MatToolbarModule
-} from '@angular/material';
+
 import {UserTileComponent} from './active-session/user-tile/user-tile.component';
 import {UserTilesComponent} from './active-session/user-tiles/user-tiles.component';
 import {DragDropModule} from '@angular/cdk/drag-drop';
@@ -57,6 +41,21 @@ import { ChangeLogComponent } from './change-log/change-log.component';
 import { CreateSessionTileComponent } from './create-session-tile/create-session-tile.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { ChangelogDialogComponent } from './changelog-dialog/changelog-dialog.component';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatIconModule} from '@angular/material/icon';
+import {MatCardModule} from '@angular/material/card';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatSelectModule} from '@angular/material/select';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatBadgeModule} from '@angular/material/badge';
+import {MatInputModule} from '@angular/material/input';
+import {MatSliderModule} from '@angular/material/slider';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {GestureConfig} from "@angular/material/core";
 // import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
 // import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
 
@@ -134,6 +133,7 @@ import { ChangelogDialogComponent } from './changelog-dialog/changelog-dialog.co
     {provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig},
   ],
   bootstrap: [AppComponent],
+  // tslint:disable-next-line:max-line-length
   entryComponents: [ConfirmDialogComponent, ChangelogDialogComponent, JoinSessionDialogComponent, CreateSessionDialogComponent, AlertSnackbarComponent]
 
 })

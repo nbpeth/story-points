@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {SocketService} from '../../../services/socket.service';
 import {TerminateSessionMessage, TerminateSessionPayload} from '../../model/events.model';
-import {MatDialog, MatDialogConfig} from '@angular/material';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from 'src/app/confirm-dialog/confirm-dialog.component';
 import {LocalStorageService} from '../../../services/local-storage.service';
 import {UserService} from '../../../user.service';

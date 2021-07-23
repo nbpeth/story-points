@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
 import {Participant} from "../active-session/model/session.model";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-join-session-dialog',
