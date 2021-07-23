@@ -3,7 +3,7 @@
 <!--</div>-->
 
 
-<ng-container *ngIf="auth.isAuthenticated$ | async; else loggedOut">
+<ng-container *ngIf="isAuthenticated() | async; else loggedOut">
   <div [matMenuTriggerFor]="menu">
     <img *ngIf="user.picture" height="40" width="40" [src]="user.picture" class="photo">
     <!--    photo can be its own component-->
@@ -21,7 +21,7 @@
   <button
     id="qsLoginBtn"
     class="btn btn-primary btn-margin"
-    (click)="auth.loginWithRedirect()"
+    (click)="login()"
   >
     Log in
   </button></ng-template>

@@ -1,7 +1,7 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {User, UserService} from '../user.service';
 import {AuthService} from "@auth0/auth0-angular";
-import {DOCUMENT} from "@angular/common";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-logged-in-user',
@@ -12,7 +12,7 @@ export class LoggedInUserComponent implements OnInit {
   @Input() enableMenu = true;
   user: User;
 
-  constructor(public userService: UserService, public auth: AuthService, @Inject(DOCUMENT) private doc: Document
+  constructor(public userService: UserService
   ) {
   }
 
@@ -22,8 +22,15 @@ export class LoggedInUserComponent implements OnInit {
     });
   }
 
-  logout() {
-    this.auth.logout({ returnTo: this.doc.location.origin });
+  isAuthenticated(): Observable<boolean> {
+    return this.userService.isAuthenticated();
   }
 
+  logout() {
+    this.userService.logout();
+  }
+
+  login() {
+    this.userService.login();
+  }
 }

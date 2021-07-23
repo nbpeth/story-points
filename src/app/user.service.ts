@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {SocketService} from './services/socket.service';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
@@ -7,6 +7,7 @@ import {LocalStorageService} from './services/local-storage.service';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
 import {AlertSnackbarComponent} from './alert-snackbar/alert-snackbar.component';
 import {AuthService} from "@auth0/auth0-angular";
+import {DOCUMENT} from "@angular/common";
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class UserService {
 
 
   constructor(public authService: AuthService,
+              @Inject(DOCUMENT) private doc: Document,
               private socketService: SocketService,
               private http: HttpClient,
               private lss: LocalStorageService,
@@ -58,6 +60,10 @@ export class UserService {
     this.authService.loginWithRedirect();
   }
 
+  isAuthenticated() {
+    return this.authService.isAuthenticated$;
+  }
+
   logoutWithPrejudice(message: string) {
     this.snackBar.openFromComponent(AlertSnackbarComponent, {
       duration: 5000,
@@ -72,7 +78,7 @@ export class UserService {
   }
 
   logout() {
-    this.authService.logout();
+    this.authService.logout({ returnTo: this.doc.location.origin });
   }
 
   isLoggedIn(): Observable<boolean> {
