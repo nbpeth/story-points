@@ -27,7 +27,7 @@ import {JoinSessionDialogComponent} from './join-session-dialog/join-session-dia
 import {FormsModule} from '@angular/forms';
 import {AdminControlsComponent} from './admin-controls/admin-controls.component';
 import {VotingBoothComponent} from './voting-booth/voting-booth.component';
-import {BallotDisplayComponent} from './vote-display/ballot-display.component';
+// import {BallotDisplayComponent} from './vote-display/ballot-display.component';
 import {ActivityLogComponent} from './activity-log/activity-log.component';
 import {AuthServiceConfig, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
 import {MatMenuModule} from '@angular/material/menu';
@@ -55,7 +55,7 @@ import {MatBadgeModule} from '@angular/material/badge';
 import {MatInputModule} from '@angular/material/input';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatSidenavModule} from '@angular/material/sidenav';
-import {GestureConfig} from "@angular/material/core";
+import {GestureConfig} from '@angular/material/core';
 // import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
 // import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
 
@@ -82,7 +82,7 @@ import {GestureConfig} from "@angular/material/core";
     JoinSessionDialogComponent,
     AdminControlsComponent,
     VotingBoothComponent,
-    BallotDisplayComponent,
+    // BallotDisplayComponent,
     ActivityLogComponent,
     LoginComponent,
     LoggedInUserComponent,
