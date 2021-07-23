@@ -33,9 +33,9 @@ import {Ballot} from '../vote-display/ballot-display.component';
 import {LocalStorageService} from '../services/local-storage.service';
 import {User, UserService} from '../user.service';
 import {happy, RandomBuilder} from '../name-builder';
-import {SoundService} from "../services/sound-service";
-import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from "@angular/material/snack-bar";
-import {MatSelectChange} from "@angular/material/select";
+import {SoundService} from '../services/sound-service';
+import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
+import {MatSelectChange} from '@angular/material/select';
 
 declare const confetti: any;
 
