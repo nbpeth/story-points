@@ -123,7 +123,7 @@ import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
     }),
   ],
   providers: [
-    AbstractNavigator,
+    // AbstractNavigator,
     // AuthClientConfig,
     UserService,
     {
