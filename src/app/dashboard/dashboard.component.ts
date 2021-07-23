@@ -8,7 +8,6 @@ import {
   NewSessionPayload,
   SpMessage
 } from '../active-session/model/events.model';
-import {AuthService} from "@auth0/auth0-angular";
 import { DOCUMENT } from '@angular/common';
 
 // import {AuthService} from "@auth0/auth0-angular";
@@ -26,22 +25,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   error: string;
   document = DOCUMENT;
 
-  constructor(private socketService: SocketService, public auth: AuthService) {
+  constructor(private socketService: SocketService) {
   }
-
-  logoutDirect = () => document.location.origin
 
   ngOnInit() {
     this.socketService.messages()
       .subscribe(this.handleEvents);
-
-    this.auth.user$.subscribe(options => {
-      console.log("user$user$", options)
-    })
-
-    this.auth.getAccessTokenSilently().subscribe(options => {
-      console.log("getAccessTokenSilently", options)
-    })
 
     this.socketService.send(new GetCompleteStateMessage());
   }

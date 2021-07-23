@@ -8,14 +8,4 @@
 
     </active-session-tile>
   </active-session-tiles>
-
-  <ng-container *ngIf="auth.isAuthenticated$ | async; else loggedOut">
-    <button (click)="auth.logout({ returnTo: logoutDirect() })">
-      Log out
-    </button>
-  </ng-container>
-
-  <ng-template #loggedOut>
-    <button (click)="auth.loginWithRedirect()">Log in</button>
-  </ng-template>
 </div>

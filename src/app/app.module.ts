@@ -57,6 +57,7 @@ import {MatSliderModule} from '@angular/material/slider';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {GestureConfig} from '@angular/material/core';
 import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
+import {environment} from "../environments/environment";
 // import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
 
 @NgModule({
@@ -118,8 +119,8 @@ import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
     MatSliderModule,
     SocialLoginModule,
     AuthModule.forRoot({
-      domain: 'proud-recipe-3564.us.auth0.com',
-      clientId: 'nqBp54zHH9Dl2Vm69NGDORg8QdU8c7lL'
+      domain: environment.auth0Domain,
+      clientId: environment.auth0ClientId
     }),
   ],
   providers: [

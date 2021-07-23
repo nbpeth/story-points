@@ -5,6 +5,8 @@
 export const environment = {
   production: false,
   host: 'http://localhost:4200',
+  auth0Domain: 'nameless-meadow-6569.us.auth0.com',
+  auth0ClientId: 'kWz9HeVKHzflLtRHcZDuSijmnH4m22WJ'
 };
 
 /*
