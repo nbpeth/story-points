@@ -230,11 +230,11 @@ const initHandlers = () => {
   };
 
   addParticipantToSession = (messageData) => {
-    const {sessionId, userName, isAdmin, loginEmail} = messageData.payload;
+    const {sessionId, userName, isAdmin, providerId, loginEmail} = messageData.payload;
 
     const callback = (err) => {
       if (err) {
-        console.error('Unable to add participant', JSON.stringify(err))
+        console.error('Unable to add participant', err.message)
         sendErrorToCaller('Unable to add participant', err.message);
       }
 
@@ -242,7 +242,7 @@ const initHandlers = () => {
       getAllSession();
 
     }
-    mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, loginEmail, callback)
+    mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, providerId, loginEmail, callback)
   };
 
   removeParticipantFromSession = (messageData) => {

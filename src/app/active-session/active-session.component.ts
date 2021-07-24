@@ -161,11 +161,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   joinSession = (maybeNewParticipant: Participant, isAdmin: boolean = false) => {
     if (maybeNewParticipant) {
       this.participant = maybeNewParticipant;
-      const {aud, email} = this.userService.getLoginUser();
-
-
-      console.log("participantparticipantparticipant", this.participant)
-      // console.log("maybeNewParticipantmaybeNewParticipantmaybeNewParticipantid, emailid, email", this.userService.getLoginUser())
+      const {email, sub} = this.userService.getLoginUser();
 
       this.socketService.send(
         new ParticipantJoinedSessionMessage(
@@ -173,7 +169,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
             this.session.sessionId,
             maybeNewParticipant.participantName,
             isAdmin,
-            aud,
+            sub,
             email
           )
         )
@@ -189,7 +185,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
           this.participant.participantId,
           this.participant.participantName,
           this.session.sessionId,
-          // id,
           email
         )
       )

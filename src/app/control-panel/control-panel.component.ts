@@ -36,7 +36,6 @@ export class ControlPanelComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: any) {
-    console.log("CP", this.participant)
   }
 
   ngOnInit(): void {
@@ -55,9 +54,6 @@ export class ControlPanelComponent implements OnInit, OnChanges {
     const participantName = you.given_name ? you.given_name : you.nickname;
     const youAsAParticipantOfThisSession = new Participant(participantName);
     youAsAParticipantOfThisSession.loginEmail = you.email;
-
-    console.log("youAsAParticipantOfThisSessionyouAsAParticipantOfThisSession", youAsAParticipantOfThisSession)
-
 
     this.participantJoined.emit(youAsAParticipantOfThisSession);
   }

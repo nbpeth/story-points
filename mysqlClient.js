@@ -83,7 +83,7 @@ getSessionState = (sessionId, onComplete) => {
         FROM sessions s, participant p, user u
         WHERE s.id = ?
         AND s.id = p.session_id
-        AND p.login_email = u.email;
+        AND p.provider_id = u.provider_id;
     `;
 
   const statement = mysql.format(sql, [sessionId]);
@@ -101,14 +101,14 @@ getSessionNameFor = (sessionId, onComplete) => {
   runQuery(statement, onComplete);
 }
 
-addParticipantToSession = (sessionId, userName, isAdmin, loginEmail, onComplete) => {
+addParticipantToSession = (sessionId, userName, isAdmin, providerId, loginEmail, onComplete) => {
   const sql = `
-        INSERT INTO participant (session_id, participant_name, point, is_admin, login_email)
+        INSERT INTO participant (session_id, participant_name, provider_id, point, is_admin, login_email)
         VALUES
-        (?, ?, ?, ?, ?);
+        (?, ?, ?, ?, ?, ?);
     `;
 
-  const statement = mysql.format(sql, [sessionId, userName, 0, isAdmin, loginEmail]);
+  const statement = mysql.format(sql, [sessionId, userName, providerId, 0, isAdmin, loginEmail]);
 
   runQuery(statement, onComplete);
 }
@@ -166,14 +166,14 @@ createUser = (user, onComplete) => {
 
     const sql = `
         INSERT INTO USER
-        (first_name, last_name, provider_id, name, photo_url, provider, date_joined, updated, email)
+        (first_name, last_name, provider_id, name, photo_url, date_joined, updated, email)
         VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
-        first_name = ?, last_name = ?, name = ?, photo_url = ?, provider = ?, updated = ?, email = ?
+        first_name = ?, last_name = ?, name = ?, photo_url = ?, updated = ?, email = ?
     `
     const now = new Date();
-    const statement = mysql.format(sql, [given_name, family_name, email, name, picture, sub, now, now, email, given_name, family_name, name, picture, sub, now, email]);
+    const statement = mysql.format(sql, [given_name, family_name, sub, name, picture, now, now, email, given_name, family_name, name, picture, now, email]);
 
     runQuery(statement, onComplete);
   }
