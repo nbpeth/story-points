@@ -68,6 +68,5 @@ FOREIGN KEY
 
 ## Patches
 alter table user add column email varchar(255);
-alter table user drop primary key;
-alter table user add column id MEDIUMINT NOT NULL AUTO_INCREMENT PRIMARY KEY ;
-alter table participant drop column login_id;
+alter table user drop column provider;
+alter table participant drop column login_id; -- unique email
