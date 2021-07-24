@@ -26,6 +26,10 @@ export class LoggedInUserComponent implements OnInit {
     return this.userService.isAuthenticated();
   }
 
+  isAuthenticating(): Observable<boolean> {
+    return this.userService.isLoading();
+  }
+
   logout() {
     this.userService.logout();
   }

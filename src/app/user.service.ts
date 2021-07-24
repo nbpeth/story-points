@@ -89,7 +89,7 @@ export class UserService {
         labelClass: 'warn',
       }
     });
-    // this.logout();
+    this.logout();
   }
 
   logout() {

@@ -1,3 +1,4 @@
+
 <ng-container *ngIf="isAuthenticated() | async; else loggedOut">
   <div [matMenuTriggerFor]="menu">
     <img *ngIf="user.picture" height="40" width="40" [src]="user.picture" class="photo">
@@ -13,10 +14,19 @@
 </ng-container>
 
 <ng-template #loggedOut>
-  <button
-    id="qsLoginBtn"
-    class="btn btn-primary btn-margin"
-    (click)="login()"
-  >
-    Log in
-  </button></ng-template>
+
+  <ng-container *ngIf="isAuthenticating() | async; else notLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </ng-container>
+
+  <ng-template #notLoading>
+
+    <button
+      id="qsLoginBtn"
+      class="btn btn-primary btn-margin"
+      (click)="login()"
+    >
+      Log in
+    </button>
+  </ng-template>
+</ng-template>

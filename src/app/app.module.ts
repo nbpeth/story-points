@@ -58,6 +58,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {GestureConfig} from '@angular/material/core';
 import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
 import {environment} from "../environments/environment";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 // import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
 
 @NgModule({
@@ -117,6 +118,7 @@ import {environment} from "../environments/environment";
     MatSnackBarModule,
     MatSidenavModule,
     MatSliderModule,
+    MatProgressSpinnerModule,
     AuthModule.forRoot({
       domain: environment.auth0Domain,
       clientId: environment.auth0ClientId
