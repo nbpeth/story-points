@@ -8,6 +8,7 @@ import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition}
 import {AlertSnackbarComponent} from './alert-snackbar/alert-snackbar.component';
 import {AuthService} from '@auth0/auth0-angular';
 import {DOCUMENT} from '@angular/common';
+import {flatMap, map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -44,13 +45,22 @@ export class UserService {
   }
 
   createUser(user: User) {
-    const idToken = this.lss.get('idToken');
-    this.http.post(`${environment.host}/user`, user, { headers: new HttpHeaders().append('Authorization', idToken) })
-      .subscribe((res) => {
-      }, error => {
-        console.error('Error creating user', error);
-        this.logoutWithPrejudice('An error occurred during login or you are not authorized to use this app');
-      });
+    // const idToken = this.lss.get('idToken');
+    // dont store token any more
+
+    this.authService.idTokenClaims$.pipe(
+      flatMap( (t: any) => {
+          const idToken = t && t.__raw ? t.__raw : '';
+          return this.http.post(`${environment.host}/user`, user, { headers: new HttpHeaders().append('Authorization', idToken) });
+        }
+      )
+    ).subscribe((res) => {
+    }, error => {
+      console.error('Error creating user', error);
+      this.logoutWithPrejudice('An error occurred during login or you are not authorized to use this app');
+    });
+
+
   }
 
   userChanges(): Observable<User> {
