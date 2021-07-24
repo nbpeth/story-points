@@ -168,8 +168,6 @@ addParticipantToSession = (sessionId, userName, isAdmin, providerId, loginEmail,
         (?, ?, ?, ?, ?, ?);
     `;
 
-  console.log("ADDING PARTICIPANT")
-
   const statement = mysql.format(sql, [sessionId, userName, providerId, 0, isAdmin, loginEmail]);
 
   runQuery(statement, onComplete);

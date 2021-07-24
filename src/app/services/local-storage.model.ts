@@ -24,7 +24,7 @@ export class Sessions {
 }
 
 export class Session {
-  constructor(public user: Participant, public settings: SessionSettings) {
+  constructor(public user: Participant, public settings: SessionSettings, public auth: string) {
   }
 }
 

@@ -18,7 +18,7 @@ export class LocalStorageService {
     this.storage.set(key, value);
   }
 
-  get = (key: string): string => this.storage.get(key)
+  get = (key: string): string => this.storage.get(key);
 
   private getState = (): AppState => {
     const appState = this.storage.get(this.key);
@@ -63,10 +63,21 @@ export class LocalStorageService {
     this.setState(appState);
   }
 
-  // getUser = (sessionId: number): Participant => {
-  //   const appState: AppState = this.getState();
-  //   return appState.sessions[sessionId].user;
-  // }
+  createOrGetSession = (sessionId: number) => {
+    const appState: AppState = this.getState();
+    if (!appState.sessions[sessionId]) {
+      appState.sessions[sessionId] = {} as Session;
+    }
+
+    this.setState(appState);
+
+    return appState.sessions[sessionId];
+  }
+
+  getUser = (sessionId: number): Participant => {
+    const appState: AppState = this.getState();
+    return appState.sessions[sessionId].user;
+  }
 
   setUser = (sessionId: number, user: Participant) => {
     const appState: AppState = this.getState();
@@ -74,7 +85,6 @@ export class LocalStorageService {
     if (maybeSession) {
       maybeSession.user = user;
     }
-    console.log("set user??", user, maybeSession)
     this.setState(appState);
   }
 
@@ -87,10 +97,10 @@ export class LocalStorageService {
     }
   }
 
-  // getShowAdminConsole = (sessionId: number) => {
-  //   const appState: AppState = this.getState();
-  //   return appState.globals.showAdminConsole;
-  // }
+  getShowAdminConsole = (sessionId: number) => {
+    const appState: AppState = this.getState();
+    return appState.globals.showAdminConsole;
+  }
 
   setShowAdminConsole = (showAdminConsole: boolean) => {
     const appState: AppState = this.getState();
@@ -112,6 +122,28 @@ export class LocalStorageService {
     const updatedState = {...appState, globals: {...appState.globals, audioEnabled: !isAudioEnabled}} as AppState;
 
     this.setState(updatedState);
+  }
+
+  cacheSessionPasscode = (sessionId: number, password: string) => {
+    if (password) {
+      const appState: AppState = this.getState();
+
+      const session = this.createOrGetSession(sessionId) as Session;
+      session.auth = password;
+
+      const updatedState = {
+        ...appState, sessions: {
+          ...appState.sessions,
+          [sessionId]: session
+        }
+      } as AppState;
+
+      this.setState(updatedState);
+    }
+  }
+
+  getCachedPasscodeForSession = (sesssionId: any): string | undefined | null => {
+    return this.createOrGetSession(sesssionId).auth;
   }
 }
 

@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SocketService} from '../services/socket.service';
 import {flatMap, map} from 'rxjs/operators';
 import {combineLatest, Subject} from 'rxjs';
@@ -8,7 +8,6 @@ import {
   CelebrateMessage,
   CelebratePayload,
   GetSessionNameMessage,
-  GetSessionNamePayload,
   GetStateForSessionMessage,
   GetStateForSessionPayload,
   ParticipantJoinedSessionMessage,
@@ -36,6 +35,7 @@ import {happy, RandomBuilder} from '../name-builder';
 import {SoundService} from '../services/sound-service';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
 import {MatSelectChange} from '@angular/material/select';
+import {PasswordService} from "../services/password.service";
 
 declare const confetti: any;
 
@@ -48,13 +48,20 @@ declare const confetti: any;
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
   private participantsInThisSession = new Subject<any>();
+  authorized = true;
   logs: string[] = [];
   showLogs: boolean;
   ballots: Ballot[] = [];
   participant: Participant;
   isDarkTheme: boolean;
-  // successSound: HTMLAudioElement;
 
+
+  //auth
+  passcode: string;
+  errors = {
+    1: 'Invalid passcode'
+  };
+  //
   session: StoryPointSession = new StoryPointSession();
 
   constructor(private route: ActivatedRoute,
@@ -63,8 +70,18 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
               private themeService: ThemeService,
               private snackBar: MatSnackBar,
               private localStorage: LocalStorageService,
+              private passwordService: PasswordService,
               private soundService: SoundService,
               private userService: UserService) {
+  }
+
+  private getSessionPassword = (queryParams: ParamMap, sessionId: number | string): string | undefined | null => {
+    const queryPassword = queryParams.get('auth');
+    if (queryPassword) {
+      return queryPassword;
+    }
+
+    return this.localStorage.getCachedPasscodeForSession(sessionId);
   }
 
   ngOnInit() {
@@ -75,8 +92,36 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       this.recoverUser(user, participants);
     });
 
-    // this.successSound = new Audio('assets/sounds/hawk.mp3');
 
+    combineLatest(
+      this.route.queryParamMap,
+      this.route.paramMap
+    ).pipe(
+      flatMap(([queryParams, pathParams]) => {
+        const sessionId = pathParams.get('id');
+        const password = this.getSessionPassword(queryParams, sessionId);
+        this.localStorage.cacheSessionPasscode(+sessionId, password);
+
+        return this.passwordService.authorizeSession(sessionId, password);
+      })
+    ).subscribe((_) => {
+      this.connect();
+    }, error => {
+      console.error(error);
+      this.authorized = false;
+    });
+
+    this.themeService.isDarkTheme.subscribe(isIt => this.isDarkTheme = isIt);
+  }
+
+
+  queryParams = () => this.route.queryParamMap
+    .pipe(map((paramMap: any) => {
+      return paramMap.params;
+    })
+  )
+
+  connect = () => {
     this.route.paramMap
       .pipe(
         flatMap((paramMap: any) => {
@@ -105,7 +150,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   submit = () => {
 
     const vote = this.participant && this.participant.point ? this.participant.point as string : 'Abstain';
-    const me = this.session.participants.find(p => p.loginEmail === this.participant.loginEmail);
+    const me = this.session.participants.find(p => p.providerId === this.participant.providerId);
     // ew, ew ew. need to keep "this.participant" up to date maybe - this is nasty
     this.socketService.send(
       new PointSubmittedForParticipantMessage(
@@ -139,13 +184,10 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   resetPoints = () => {
-
-    this.session.pointsVisible = false;
     this.socketService.send(new ResetPointsForSessionMessage(new ResetPointsForSessionPayload(this.session.sessionId)));
   }
 
   revealPoints = () => {
-    this.session.pointsVisible = true;
     this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.session.sessionId)));
     const points = this.session.participants.map(p => ({point: p.point, hasVoted: p.hasVoted}));
 
@@ -199,12 +241,27 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   collectBallots = (): Ballot[] =>
     this.session.participants.filter((p: Participant) => p.hasVoted).map((p: Participant) => p.point)
 
+
+  // move to separate component, auth
+  enterPasscodeForSession = () => {
+    this.route.paramMap.pipe(
+      flatMap((params: ParamMap) => {
+        const sessionId = params.get("id");
+        this.localStorage.cacheSessionPasscode(+sessionId, this.passcode);
+
+        return this.passwordService.authorizeSession(sessionId, this.passcode);
+      })
+    ).subscribe((res) => {
+      this.connect();
+      this.authorized = true;
+    }, error => {
+      this.router.navigate([], {queryParams: {error: 1}});
+    });
+  }
+
+  //
+
   private requestInitialStateOfSessionBy = (id: number): void => {
-    this.socketService.send(
-      new GetSessionNameMessage(
-        new GetSessionNamePayload(id)
-      )
-    );
     this.socketService.send(
       new GetStateForSessionMessage(
         new GetStateForSessionPayload(id)
@@ -217,7 +274,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.logs.push(`Welcome to ${this.session.sessionName}`);
   }
 
-
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
@@ -228,7 +284,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         this.verifyPayloadAndUpdate(payload, this.participantJoined, messageData);
         break;
       case Events.SESSION_STATE:
-        this.verifyPayloadAndUpdate(payload, this.updateSession, messageData);
+        this.updateSession(messageData as GetStateForSessionMessage);
         break;
       case Events.PARTICIPANT_REMOVED:
         this.verifyPayloadAndUpdate(payload, this.participantRemoved, messageData);
@@ -246,8 +302,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private handleCelebration = (messageData: CelebrateMessage) => {
     switch (messageData.payload.celebration) {
       case 'fireworks':
-
-
         this.logs.unshift(`${messageData.payload.celebrator} is ${RandomBuilder.generateFrom(happy)}`);
         confetti.start(2500);
         break;
@@ -268,13 +322,15 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   private updateSession = (messageData: GetStateForSessionMessage | ParticipantJoinedSessionMessage) => {
     const session = Object.assign(new StoryPointSession(), messageData.payload);
-    const previousName = this.session.sessionName;
+    console.log('U)DATE', session)
+    // const previousName = this.session.sessionName;
     this.session = session;
-    this.session.setName(previousName); // the name gets set every. time. no.
+    // this.session.setName(previousName); // the name gets set every. time. no.
     this.refreshParticipants(session);
   }
 
   private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
+    // providerId
     const {userName, loginEmail} = messageData.payload;
     const itWasMe = this.userService.isLoginUser(loginEmail);
     const message = itWasMe ? `You joined as ${userName}` : `${userName} joined.`;
@@ -286,6 +342,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   private participantRemoved = (messageData: ParticipantRemovedSessionMessage) => {
+    // providerId
     const {userName, loginEmail} = messageData.payload;
     const itWasMe = this.userService.isLoginUser(loginEmail);
     const message = itWasMe ? 'You left' : `${userName} left.`;
