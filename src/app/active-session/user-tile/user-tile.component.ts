@@ -28,8 +28,9 @@ export class UserTileComponent {
         this.participant.participantId,
         this.participant.participantName,
         this.sessionId,
-        this.participant.loginId,
-        this.participant.loginEmail
+
+        // this.participant.loginId,
+        this.participant.email
       )
     );
     this.socketService.send(message);

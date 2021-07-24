@@ -6,8 +6,8 @@ import {environment} from '../environments/environment';
 import {LocalStorageService} from './services/local-storage.service';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
 import {AlertSnackbarComponent} from './alert-snackbar/alert-snackbar.component';
-import {AuthService} from "@auth0/auth0-angular";
-import {DOCUMENT} from "@angular/common";
+import {AuthService} from '@auth0/auth0-angular';
+import {DOCUMENT} from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,6 @@ export class UserService {
   private user: User;
   private userChanged: BehaviorSubject<User> = new BehaviorSubject<User>(this.user);
   loggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  // isLoggingIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
 
   constructor(public authService: AuthService,
@@ -26,12 +25,14 @@ export class UserService {
               private lss: LocalStorageService,
               private snackBar: MatSnackBar) {
     this.authService.user$.subscribe((user: User) => {
-      // const idToken = user ? user.idToken : null;
-      // this.lss.set('idToken', idToken);
-      console.log('new user', user)
       this.user = user;
       this.userChanged.next(user);
       this.loggedIn.next(user != null);
+
+      this.authService.idTokenClaims$.subscribe(x => {
+        const idToken = x.__raw;
+        this.lss.set('idToken', idToken);
+      });
     });
 
 
@@ -43,8 +44,8 @@ export class UserService {
   }
 
   createUser(user: User) {
-    // const idToken = this.lss.get('idToken');
-    this.http.post(`${environment.host}/user`, user, { headers: new HttpHeaders().append('Authorization', "idToken") })
+    const idToken = this.lss.get('idToken');
+    this.http.post(`${environment.host}/user`, user, { headers: new HttpHeaders().append('Authorization', idToken) })
       .subscribe((res) => {
       }, error => {
         console.error(error);
@@ -74,11 +75,12 @@ export class UserService {
         labelClass: 'warn',
       }
     });
-    // this.logout();
+    this.logout();
   }
 
   logout() {
-    this.authService.logout({ returnTo: this.doc.location.origin });
+    this.authService.logout({ returnTo: `${this.doc.location.origin}` });
+    // this.authService.logout({ returnTo: `${this.doc.location.origin}/logout?unauthorized` });
   }
 
   isLoggedIn(): Observable<boolean> {
@@ -89,8 +91,9 @@ export class UserService {
     return this.user;
   }
 
-  isLoginUser(loginId: string): boolean {
-    return this.user && this.user.sub === loginId; // need a better less sensitive way to identify?
+  isLoginUser(loginEmail: string): boolean {
+    // console.log("isLoginUser", this.user.email, loginEmail)
+    return this.user && this.user.email === loginEmail; // need a better less sensitive way to identify?
   }
 }
 

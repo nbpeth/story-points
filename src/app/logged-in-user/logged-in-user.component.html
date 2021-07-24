@@ -1,8 +1,3 @@
-<!--<div *ngIf="user; else loggedOut">-->
-
-<!--</div>-->
-
-
 <ng-container *ngIf="isAuthenticated() | async; else loggedOut">
   <div [matMenuTriggerFor]="menu">
     <img *ngIf="user.picture" height="40" width="40" [src]="user.picture" class="photo">

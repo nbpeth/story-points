@@ -5,7 +5,6 @@ import {CreateNewSessionMessage, NewSessionPayload} from '../active-session/mode
 import {SocketService} from '../services/socket.service';
 import {Router} from '@angular/router';
 import {ChangelogDialogComponent} from '../changelog-dialog/changelog-dialog.component';
-import {AuthService} from '@auth0/auth0-angular';
 
 @Component({
   selector: 'app-titlebar',
@@ -16,7 +15,6 @@ export class TitlebarComponent implements OnInit {
   @Output() createSession: EventEmitter<string> = new EventEmitter<string>();
   user: User;
   constructor(private dialog: MatDialog,
-              public auth: AuthService,
               private userService: UserService,
               private socketService: SocketService,
               private router: Router) {

@@ -71,7 +71,7 @@ const initHandlers = () => {
     })
   }
 
-  getSessionStateForParticipantJoined = (sessionId, userName, loginId, loginEmail, notifier) => {
+  getSessionStateForParticipantJoined = (sessionId, userName, loginEmail, notifier) => {
     mysqlClient.getSessionState(sessionId, (err, results) => {
       if (err) {
         sendErrorToCaller('Unable to get session state', err.message);
@@ -79,7 +79,6 @@ const initHandlers = () => {
       notifier(formatMessage('participant-joined', {
         sessionId: sessionId,
         userName: userName,
-        loginId: loginId,
         loginEmail: loginEmail,
         participants: results
       }, sessionId));
@@ -108,7 +107,7 @@ const initHandlers = () => {
   handleIncomingMessages = (message) => {
     const messageData = JSON.parse(message);
     const eventType = messageData.eventType;
-    console.log('incoming!', messageData)
+    // console.log('incoming!', messageData)
     switch (eventType) {
       case 'state-of-the-state':
         getStateOfTheAppForCaller();
@@ -231,18 +230,19 @@ const initHandlers = () => {
   };
 
   addParticipantToSession = (messageData) => {
-    const {sessionId, userName, isAdmin, loginId, loginEmail} = messageData.payload;
+    const {sessionId, userName, isAdmin, loginEmail} = messageData.payload;
 
     const callback = (err) => {
       if (err) {
+        console.error('Unable to add participant', JSON.stringify(err))
         sendErrorToCaller('Unable to add participant', err.message);
       }
 
-      getSessionStateForParticipantJoined(sessionId, userName, loginId, loginEmail, notifyClients);
+      getSessionStateForParticipantJoined(sessionId, userName, loginEmail, notifyClients);
       getAllSession();
 
     }
-    mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, loginId, loginEmail, callback)
+    mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, loginEmail, callback)
   };
 
   removeParticipantFromSession = (messageData) => {
@@ -295,7 +295,7 @@ const initHandlers = () => {
   };
 
   notifyCaller = (message) => {
-    console.log('outgoing!!!', message)
+    // console.log('outgoing!!!', message)
     wss.clients
       .forEach(client => {
         const isTargeted = message.payload.sessionId !== undefined;
