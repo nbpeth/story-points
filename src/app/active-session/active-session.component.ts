@@ -159,9 +159,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   joinSession = (maybeNewParticipant: Participant, isAdmin: boolean = false) => {
-    // console.log("joinSessionjoinSessionjoinSession", maybeNewParticipant)
     if (maybeNewParticipant) {
-
       this.participant = maybeNewParticipant;
       const {aud, email} = this.userService.getLoginUser();
 

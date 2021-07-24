@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {User, UserService} from '../user.service';
-import {AuthService} from "@auth0/auth0-angular";
-import {Observable} from "rxjs";
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-logged-in-user',

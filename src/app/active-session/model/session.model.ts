@@ -11,11 +11,10 @@ export class Participant {
     public firstName?: string,
     public lastName?: string,
     public photoUrl?: string,
+    public nickName?: string,
 
   ) {
-    if (!participantName) {
-      this.participantName = `Lurker${Math.floor(Math.random() * 1000000)}`;
-    }
+    this.nickName = participantName;
   }
 }
 
