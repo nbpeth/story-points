@@ -45,20 +45,6 @@ getAllSessions = (onComplete) => {
   runQuery(statement, onComplete)
 }
 
-// createSession = (messageData, onComplete) => {
-//   const payload = messageData.payload;
-//   const sessionName = payload && payload.sessionName ? payload.sessionName : undefined;
-//
-//   if (!sessionName) {
-//     // error!
-//   }
-//
-//   const sql = 'INSERT INTO sessions (session_name) VALUES (?)';
-//   const statement = mysql.format(sql, [sessionName]);
-//
-//   runQuery(statement, onComplete);
-// }
-
 createSession = (messageData, onComplete) => {
   const payload = messageData.payload;
 
@@ -103,7 +89,7 @@ getSessionParticipants = (sessionId, onComplete) => {
            p.is_admin         as isAdmin,
            p.has_voted        as hasVoted,
            p.has_revoted      as hasAlreadyVoted,
-           p.login_id         as loginId,
+           p.provider_id      as providerId,
            p.login_email      as loginEmail,
            u.photo_url        as photoUrl,
            u.first_name       as firstName,
@@ -113,7 +99,7 @@ getSessionParticipants = (sessionId, onComplete) => {
          user u
     WHERE s.id = ?
       AND s.id = p.session_id
-      AND p.login_id = u.provider_id;
+      AND p.provider_id = u.provider_id;
   `;
 
   const statement = mysql.format(sql, [sessionId]);
@@ -181,6 +167,8 @@ addParticipantToSession = (sessionId, userName, isAdmin, providerId, loginEmail,
         VALUES
         (?, ?, ?, ?, ?, ?);
     `;
+
+  console.log("ADDING PARTICIPANT")
 
   const statement = mysql.format(sql, [sessionId, userName, providerId, 0, isAdmin, loginEmail]);
 

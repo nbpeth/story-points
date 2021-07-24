@@ -82,44 +82,6 @@ const initHandlers = () => {
     })
   }
 
-  // getSessionState = (sessionId, notifier) => {
-  //   mysqlClient.getSessionState(sessionId, (err, results) => {
-  //     if (err) {
-  //       sendErrorToCaller('Unable to get session state', err.message);
-  //     }
-  //     notifier(formatMessage('session-state', {sessionId: sessionId, participants: results}, sessionId));
-  //   })
-  // }
-
-  // getSessionStateForParticipantJoined = (sessionId, userName, loginEmail, notifier) => {
-  //   mysqlClient.getSessionState(sessionId, (err, results) => {
-  //     if (err) {
-  //       sendErrorToCaller('Unable to get session state', err.message);
-  //     }
-  //     notifier(formatMessage('participant-joined', {
-  //       sessionId: sessionId,
-  //       userName: userName,
-  //       loginEmail: loginEmail,
-  //       participants: results
-  //     }, sessionId));
-  //   })
-  // }
-  //
-  // getSessionStateForParticipantRemoved = (sessionId, userName, loginId, loginEmail, notifier) => {
-  //   mysqlClient.getSessionState(sessionId, (err, results) => {
-  //     if (err) {
-  //       sendErrorToCaller('Unable to get session state', err.message);
-  //     }
-  //     notifier(formatMessage('participant-removed', {
-  //       sessionId: sessionId,
-  //       userName: userName,
-  //       loginId: loginId,
-  //       loginEmail: loginEmail,
-  //       participants: results
-  //     }, sessionId));
-  //   })
-  // }
-
   getStateOfTheAppForClients = () => {
     getAllSession()
   }
