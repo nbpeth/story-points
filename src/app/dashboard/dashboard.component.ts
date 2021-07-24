@@ -10,8 +10,6 @@ import {
 } from '../active-session/model/events.model';
 import { DOCUMENT } from '@angular/common';
 
-// import {AuthService} from "@auth0/auth0-angular";
-
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -63,7 +61,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
-    console.log('message!', payload);
 
     switch (eventType) {
       case Events.COMPLETE_STATE:

@@ -7,6 +7,7 @@ export class Participant {
     public hasAlreadyVoted?: boolean,
     public isAdmin?: boolean,
     public pointsVisible?: boolean,
+    public providerId?: string,
     public loginEmail?: string,
     public firstName?: string,
     public lastName?: string,
