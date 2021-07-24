@@ -12,7 +12,7 @@ import {UserService} from '../../../user.service';
   styleUrls: ['./active-session-tile.component.scss']
 })
 export class ActiveSessionTileComponent {
-  @Input() session: { id: number, sessionName: string, participantCount: number, lastActive: any };
+  @Input() session: { id: number, sessionName: string, participantCount: number, lastActive: any, passcodeEnabled: boolean };
 
   constructor(private socketService: SocketService,
               private dialog: MatDialog,
@@ -26,8 +26,9 @@ export class ActiveSessionTileComponent {
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
       id: this.session.id,
+      passcodeEnabled: this.session.passcodeEnabled,
       sessionName: this.session.sessionName,
-      message: 'Destroy Session - Be You Certain?'
+      message: 'What is done cannot be undone.'
     };
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig);
