@@ -77,6 +77,7 @@ getSessionState = (sessionId, onComplete) => {
         p.has_voted as hasVoted,
         p.has_revoted as hasAlreadyVoted,
         p.login_email as loginEmail,
+        p.provider_id as providerId,
         u.photo_url as photoUrl,
         u.first_name as firstName,
         u.last_name as lastName
