@@ -34,7 +34,7 @@ export class UserTileComponent {
       )
     );
     this.socketService.send(message);
-  };
+  }
 
 }
 

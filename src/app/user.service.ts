@@ -29,8 +29,8 @@ export class UserService {
       this.userChanged.next(user);
       this.loggedIn.next(user != null);
 
-      this.authService.idTokenClaims$.subscribe(x => {
-        const idToken = x.__raw;
+      this.authService.idTokenClaims$.subscribe(claims => {
+        const idToken = claims && claims.__raw;
         this.lss.set('idToken', idToken);
       });
     });
@@ -48,7 +48,7 @@ export class UserService {
     this.http.post(`${environment.host}/user`, user, { headers: new HttpHeaders().append('Authorization', idToken) })
       .subscribe((res) => {
       }, error => {
-        console.error(error);
+        console.error('Error creating user', error);
         this.logoutWithPrejudice('An error occurred during login or you are not authorized to use this app');
       });
   }
@@ -79,7 +79,7 @@ export class UserService {
         labelClass: 'warn',
       }
     });
-    this.logout();
+    // this.logout();
   }
 
   logout() {
