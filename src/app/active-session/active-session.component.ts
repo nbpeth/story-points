@@ -310,7 +310,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private recoverUser = (user: User, participants: any[]): void => {
     if (user && participants) {
       this.participant = participants.find((p: Participant) => {
-          return p && p.loginEmail === user.email;
+          return p && p.providerId === user.sub; // this is duplicated all over the place, unify this so
         }
       );
     }
