@@ -65,6 +65,10 @@ export class UserService {
     return this.authService.isAuthenticated$;
   }
 
+  isLoading() {
+    return this.authService.isLoading$;
+  }
+
   logoutWithPrejudice(message: string) {
     this.snackBar.openFromComponent(AlertSnackbarComponent, {
       duration: 5000,

@@ -105,7 +105,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   submit = () => {
 
     const vote = this.participant && this.participant.point ? this.participant.point as string : 'Abstain';
-    const me = this.session.participants.find(p => p.email === this.participant.email);
+    const me = this.session.participants.find(p => p.loginEmail === this.participant.loginEmail);
     // ew, ew ew. need to keep "this.participant" up to date maybe - this is nasty
     this.socketService.send(
       new PointSubmittedForParticipantMessage(

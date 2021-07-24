@@ -30,7 +30,7 @@ export class UserTileComponent {
         this.sessionId,
 
         // this.participant.loginId,
-        this.participant.email
+        this.participant.loginEmail
       )
     );
     this.socketService.send(message);
