@@ -24,13 +24,13 @@ export class GetCompleteStatePayload extends SpMessagePayload {
 export class NewSessionPayload extends SpMessagePayload {
   sessions: any;
 
-  constructor(public sessionName: string) {
+  constructor(public sessionData: NewSession) {
     super();
   }
 }
 
 export class GetStateForSessionPayload extends SpMessagePayload {
-  constructor(public sessionId: number, participants?: any[], sessionName?: string, pointsVisible?: boolean) {
+  constructor(public sessionId: number, participants?: any[], sessionName?: string, pointsVisible?: boolean, passcodeEnabled?: boolean) {
     super();
   }
 }
@@ -172,3 +172,8 @@ export class CelebrateMessage extends SpMessage {
   }
 }
 
+interface NewSession {
+  createWithPasscode: boolean;
+  passCode: boolean;
+  name: boolean;
+}

@@ -27,33 +27,59 @@ runQuery = (statement, onComplete) => {
 }
 
 getAllSessions = (onComplete) => {
-  const sql = `select a.id as id, a.id, a.sessionName as sessionName, lastActive, participantCount from
-    (select s.id, s.session_name as sessionName from sessions s) as a
-    left join (select
-        s.id,
-        s.session_name as sessionName,
-        s.last_active as lastActive,
-        count(p.id) as participantCount
-        from sessions s, participant p
-        where s.id = p.session_id
-        group by s.session_name) as b
-    on a.id = b.id`
+  const sql = `select a.id as id, a.id, a.sessionName, a.passcodeEnabled, lastActive, participantCount
+               from (select s.id, s.session_name as sessionName, s.passcode_enabled as passcodeEnabled from sessions s) as a
+                      left join (select s.id,
+                                        s.session_name     as sessionName,
+                                        s.last_active      as lastActive,
+                                        s.passcode_enabled as x,
+                                        count(p.id)        as participantCount
+                                 from sessions s,
+                                      participant p
+                                 where s.id = p.session_id
+                                 group by s.session_name) as b
+                                on a.id = b.id`
 
   const statement = mysql.format(sql, []);
 
   runQuery(statement, onComplete)
 }
 
+// createSession = (messageData, onComplete) => {
+//   const payload = messageData.payload;
+//   const sessionName = payload && payload.sessionName ? payload.sessionName : undefined;
+//
+//   if (!sessionName) {
+//     // error!
+//   }
+//
+//   const sql = 'INSERT INTO sessions (session_name) VALUES (?)';
+//   const statement = mysql.format(sql, [sessionName]);
+//
+//   runQuery(statement, onComplete);
+// }
+
 createSession = (messageData, onComplete) => {
   const payload = messageData.payload;
-  const sessionName = payload && payload.sessionName ? payload.sessionName : undefined;
 
-  if (!sessionName) {
-    // error!
+  const {createWithPasscode, name} = payload && payload.sessionData || {};
+
+  if (!name) {
+    throw Error("no session name")
   }
 
-  const sql = 'INSERT INTO sessions (session_name) VALUES (?)';
-  const statement = mysql.format(sql, [sessionName]);
+  const sql = 'INSERT INTO sessions (session_name, passcode_enabled) VALUES (?, ?)';
+  const statement = mysql.format(sql, [name, createWithPasscode]);
+
+  runQuery(statement, onComplete);
+}
+
+writePassCode = (sessionId, messageData, onComplete) => {
+  const payload = messageData.payload;
+  const {passCode} = payload && payload.sessionData || {};
+
+  const sql = 'INSERT INTO session_passcode (session_id, passcode) VALUES (?, ?)';
+  const statement = mysql.format(sql, [sessionId, passCode]);
 
   runQuery(statement, onComplete);
 }
@@ -65,11 +91,43 @@ terminateSession = (sessionId, onComplete) => {
   runQuery(statement, onComplete);
 }
 
+getSessionParticipants = (sessionId, onComplete) => {
+  const sql = `
+    SELECT s.id,
+           s.points_visible   as pointsVisible,
+           s.session_name     as sessionName,
+           s.passcode_enabled as passcodeEnabled,
+           p.participant_name as participantName,
+           p.id               as participantId,
+           p.point,
+           p.is_admin         as isAdmin,
+           p.has_voted        as hasVoted,
+           p.has_revoted      as hasAlreadyVoted,
+           p.login_id         as loginId,
+           p.login_email      as loginEmail,
+           u.photo_url        as photoUrl,
+           u.first_name       as firstName,
+           u.last_name        as lastName
+    FROM sessions s,
+         participant p,
+         user u
+    WHERE s.id = ?
+      AND s.id = p.session_id
+      AND p.login_id = u.provider_id;
+  `;
+
+  const statement = mysql.format(sql, [sessionId]);
+
+  runQuery(statement, onComplete);
+}
+
+
 getSessionState = (sessionId, onComplete) => {
   const sql = `
         SELECT s.id,
         s.points_visible as pointsVisible,
         s.session_name as sessionName,
+        s.passcode_enabled as passcodeEnabled,
         p.participant_name as participantName,
         p.id as participantId,
         p.point,
@@ -101,6 +159,21 @@ getSessionNameFor = (sessionId, onComplete) => {
 
   runQuery(statement, onComplete);
 }
+
+getSessionData = (sessionId, onComplete) => {
+  const sql = `
+    SELECT
+           s.session_name as sessionName,
+           s.passcode_enabled as passcodeEnabled
+    FROM sessions s
+    WHERE s.id = ?
+  `;
+
+  const statement = mysql.format(sql, [sessionId]);
+
+  runQuery(statement, onComplete);
+}
+
 
 addParticipantToSession = (sessionId, userName, isAdmin, providerId, loginEmail, onComplete) => {
   const sql = `
@@ -157,7 +230,7 @@ revealPointsForSession = (sessionId, onComplete) => {
 
 createUser = (user, onComplete) => {
   const { given_name, family_name, email, name, picture, sub } = user;
-  console.log("user...", user)
+
   if(!email || !sub) {
     console.error(`No ID or Provider, unable to write user. ID: '${id}', Provider: '${provider}'`)
     onComplete("Missing user id or provider id");
@@ -194,13 +267,20 @@ incrementCelebration = (sessionId) => {
   runQuery(statement);
 }
 
+verifySessionPassword = (sessionId, onComplete) => {
+  const sql = `select * from sessions s left join session_passcode p on p.session_id = s.id where s.id = ?;`
+
+  const statement = mysql.format(sql, [sessionId]);
+
+  runQuery(statement, onComplete);
+}
+
 module.exports = {
   initDB,
   getAllSessions,
   createSession,
   terminateSession,
-  getSessionState,
-  getSessionNameFor,
+  getSessionParticipants,
   addParticipantToSession,
   removeParticipantFromSession,
   pointWasSubmitted,
@@ -208,4 +288,7 @@ module.exports = {
   revealPointsForSession,
   createUser,
   incrementCelebration,
+  writePassCode,
+  getSessionData,
+  verifySessionPassword
 }

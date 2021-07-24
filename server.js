@@ -5,8 +5,7 @@ const mysqlClient = require('./mysqlClient')
 const startServer = () => {
   const server = require('http').createServer();
   const app = require('./http-server');
-
-  app.use((req, res, next) => {
+  app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
@@ -62,43 +61,64 @@ const initHandlers = () => {
     getAllSession()
   }
 
-  getSessionState = (sessionId, notifier) => {
-    mysqlClient.getSessionState(sessionId, (err, results) => {
-      if (err) {
-        sendErrorToCaller('Unable to get session state', err.message);
+  getSessionState = (sessionId, notifier, overrideEvent, extraProps) => {
+    mysqlClient.getSessionData(sessionId, (err, sessionStateResults) => {
+
+      if (err || !sessionStateResults || sessionStateResults.length < 1) {
+        sendErrorToCaller('Unable to fetch session state', err.message);
+      } else {
+        mysqlClient.getSessionParticipants(sessionId, (err, results) => {
+          if (err) {
+            sendErrorToCaller('Unable to fetch session participants', err.message);
+          } else {
+            notifyCaller(formatMessage(overrideEvent ? overrideEvent : 'session-state', {
+              ...extraProps,
+              sessionId: sessionId, sessionName:sessionStateResults[0].sessionName,
+              participants: results, passcodeEnabled: sessionStateResults[0].passcodeEnabled}
+            ));
+          }
+        })
       }
-      notifier(formatMessage('session-state', {sessionId: sessionId, participants: results}, sessionId));
     })
   }
 
-  getSessionStateForParticipantJoined = (sessionId, userName, loginEmail, notifier) => {
-    mysqlClient.getSessionState(sessionId, (err, results) => {
-      if (err) {
-        sendErrorToCaller('Unable to get session state', err.message);
-      }
-      notifier(formatMessage('participant-joined', {
-        sessionId: sessionId,
-        userName: userName,
-        loginEmail: loginEmail,
-        participants: results
-      }, sessionId));
-    })
-  }
+  // getSessionState = (sessionId, notifier) => {
+  //   mysqlClient.getSessionState(sessionId, (err, results) => {
+  //     if (err) {
+  //       sendErrorToCaller('Unable to get session state', err.message);
+  //     }
+  //     notifier(formatMessage('session-state', {sessionId: sessionId, participants: results}, sessionId));
+  //   })
+  // }
 
-  getSessionStateForParticipantRemoved = (sessionId, userName, loginId, loginEmail, notifier) => {
-    mysqlClient.getSessionState(sessionId, (err, results) => {
-      if (err) {
-        sendErrorToCaller('Unable to get session state', err.message);
-      }
-      notifier(formatMessage('participant-removed', {
-        sessionId: sessionId,
-        userName: userName,
-        loginId: loginId,
-        loginEmail: loginEmail,
-        participants: results
-      }, sessionId));
-    })
-  }
+  // getSessionStateForParticipantJoined = (sessionId, userName, loginEmail, notifier) => {
+  //   mysqlClient.getSessionState(sessionId, (err, results) => {
+  //     if (err) {
+  //       sendErrorToCaller('Unable to get session state', err.message);
+  //     }
+  //     notifier(formatMessage('participant-joined', {
+  //       sessionId: sessionId,
+  //       userName: userName,
+  //       loginEmail: loginEmail,
+  //       participants: results
+  //     }, sessionId));
+  //   })
+  // }
+  //
+  // getSessionStateForParticipantRemoved = (sessionId, userName, loginId, loginEmail, notifier) => {
+  //   mysqlClient.getSessionState(sessionId, (err, results) => {
+  //     if (err) {
+  //       sendErrorToCaller('Unable to get session state', err.message);
+  //     }
+  //     notifier(formatMessage('participant-removed', {
+  //       sessionId: sessionId,
+  //       userName: userName,
+  //       loginId: loginId,
+  //       loginEmail: loginEmail,
+  //       participants: results
+  //     }, sessionId));
+  //   })
+  // }
 
   getStateOfTheAppForClients = () => {
     getAllSession()
@@ -136,12 +156,15 @@ const initHandlers = () => {
       case 'terminate-session':
         terminateSession(messageData);
         break;
-      case 'get-session-name':
-        getSessionNameFor(messageData);
-        break;
+      // case 'get-session-name':
+      //   getSessionNameFor(messageData);
+      //   break;
       case 'celebrate':
         celebrate(messageData)
         break
+      // case 'create-user':
+      //   createUser(messageData)
+      //   break;
     }
   };
 
@@ -185,32 +208,21 @@ const initHandlers = () => {
     })
   };
 
-  getSessionNameFor = (messageData) => {
-    const eventType = messageData.eventType;
-    const {sessionId} = messageData.payload;
-
-    mysqlClient.getSessionNameFor(sessionId, (err, sessionNameResults) => {
-      if (err) {
-        sendErrorToCaller('Unable to resolve session name', err.message);
-      } else {
-        const maybeSessionName = sessionNameResults && sessionNameResults.length > 0 ? sessionNameResults[0].sessionName : undefined;
-
-        if (maybeSessionName) {
-          notifyCaller(formatMessage(eventType, {sessionId: sessionId, sessionName: maybeSessionName}, sessionId));
-        }
-      }
-    })
-  }
-
   getSessionStateUsing = (messageData) => {
     const eventType = messageData.eventType;
     const {sessionId} = messageData.payload;
 
-    mysqlClient.getSessionState(sessionId, (err, results) => {
-      if (err) {
+    mysqlClient.getSessionData(sessionId, (err, sessionStateResults) => {
+      if (err || !sessionStateResults || sessionStateResults.length < 1) {
         sendErrorToCaller('Unable to fetch session state', err.message);
       } else {
-        notifyCaller(formatMessage(eventType, {sessionId: sessionId, participants: results}));
+        mysqlClient.getSessionParticipants(sessionId, (err, results) => {
+          if (err) {
+            sendErrorToCaller('Unable to fetch session participants', err.message);
+          } else {
+            notifyCaller(formatMessage(eventType, {sessionId: sessionId, sessionName:sessionStateResults[0].sessionName, participants: results, passcodeEnabled: sessionStateResults[0].passcodeEnabled}));
+          }
+        })
       }
     })
   };
@@ -238,23 +250,27 @@ const initHandlers = () => {
         sendErrorToCaller('Unable to add participant', err.message);
       }
 
-      getSessionStateForParticipantJoined(sessionId, userName, loginEmail, notifyClients);
-      getAllSession();
+      getSessionState(sessionId, notifyClients, "participant-joined", {userName, providerId});
+
+      // increment counts on the dash
+      // getAllSession();
 
     }
+
     mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, providerId, loginEmail, callback)
   };
 
   removeParticipantFromSession = (messageData) => {
-    const {participantId, userName, sessionId, loginId, loginEmail} = messageData.payload;
+    const {participantId, userName, sessionId, providerId, loginEmail} = messageData.payload;
 
     mysqlClient.removeParticipantFromSession(participantId, sessionId, (err) => {
       if (err) {
         sendErrorToCaller('Unable to remove participant', err.message);
       } else {
-        getSessionStateForParticipantRemoved(sessionId, userName, loginId, loginEmail, notifyClients);
+        getSessionState(sessionId, notifyClients, "participant-removed", {userName, providerId});
       }
 
+      // increment counts on the dash
       getAllSession();
     })
   };
@@ -268,16 +284,36 @@ const initHandlers = () => {
   }
 
   createNewSession = (messageData) => {
-    const createSessionCallback = (err) => {
+    const createSessionCallback = (err, results, fields) => {
       if (err) {
+        console.log("createSessionCallback error?", err)
         sendErrorToCaller('Unable to create session', err.message);
       } else {
-        getAllSession()
+        mysqlClient.writePassCode(results["insertId"], messageData, (err) => {
+          if (err) {
+            sendErrorToCaller('Unable to create session', err.message);
+          } else {
+            console.log("we did it!")
+            getAllSession()
+          }
+        })
       }
     }
-
     mysqlClient.createSession(messageData, createSessionCallback);
   };
+
+  // createNewSession = (messageData) => {
+  //   const createSessionCallback = (err) => {
+  //     if (err) {
+  //       console.error(`Unable to create session: ${err}`)
+  //       sendErrorToCaller('Unable to create session', err.message);
+  //     } else {
+  //       getAllSession()
+  //     }
+  //   }
+  //
+  //   mysqlClient.createSession(messageData, createSessionCallback);
+  // };
 
   sendErrorToCaller = (message, reason) => {
     // console.error(`${message}: ${reason}`);

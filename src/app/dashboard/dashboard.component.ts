@@ -9,6 +9,7 @@ import {
   SpMessage
 } from '../active-session/model/events.model';
 import { DOCUMENT } from '@angular/common';
+import {NewSession} from '../create-session-dialog/create-session-dialog.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -37,8 +38,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.socketService.close();
   }
 
-  createNewSession = (newSessionName: string) => {
-    const message = new CreateNewSessionMessage(new NewSessionPayload(newSessionName));
+  createNewSession = (sessionData: NewSession) => {
+    const message = new CreateNewSessionMessage(new NewSessionPayload(sessionData));
     this.socketService.send(message);
   }
 
@@ -52,8 +53,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     const matches = sessions.filter((session: { id: number, sessionName: string }) =>
       session.sessionName ?
-        session.sessionName.toLowerCase().includes(this.sessionSearchTerm && this.sessionSearchTerm.toLowerCase()) : false
+        session.sessionName.toLowerCase().includes(this.sessionSearchTerm && this.sessionSearchTerm.toLowerCase()) :
+        false
     );
+
+    console.log("SESS", sessions)
 
     this.visibleSessions = matches;
   }
