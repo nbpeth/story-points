@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {PasswordService} from '../services/password.service';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-confirm-dialog',
@@ -16,7 +17,7 @@ export class ConfirmDialogComponent {
 
   error: string;
 
-  constructor(private dialogRef: MatDialogRef<ConfirmDialogComponent>,
+  constructor(private passwordService: PasswordService, private dialogRef: MatDialogRef<ConfirmDialogComponent>,
               @Inject(MAT_DIALOG_DATA) data: any) {
     this.id = data.id;
     this.passcodeEnabled = data.passcodeEnabled;
@@ -26,11 +27,11 @@ export class ConfirmDialogComponent {
 
 
   close = (shouldClose: boolean) => {
-    // this.passwordService.authorizeSession(this.id, this.verifyPassCode).subscribe((_) => {
+    this.passwordService.authorizeSession(this.id, this.verifyPassCode).subscribe((_) => {
       this.dialogRef.close(shouldClose);
-    // }, error => {
-    //   this.error = "Invalid passcode";
-    // })
+    }, error => {
+      this.error = 'Invalid passcode';
+    });
   }
 
   okToDelete = (): boolean =>

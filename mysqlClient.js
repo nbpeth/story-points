@@ -60,6 +60,17 @@ createSession = (messageData, onComplete) => {
   runQuery(statement, onComplete);
 }
 
+setSessionAdmin = (sessionId, providerId) => {
+  const sql = 'INSERT INTO session_admin (session_id, provider_id) VALUES (?, ?)';
+  const statement = mysql.format(sql, [sessionId, providerId]);
+
+  runQuery(statement, (err) => {
+    if(err) {
+      console.error(`Unable to set session admin: '${providerId}' for session '${sessionId}'`)
+    }
+  });
+}
+
 writePassCode = (sessionId, messageData, onComplete) => {
   const payload = messageData.payload;
   const {passCode} = payload && payload.sessionData || {};
@@ -276,5 +287,6 @@ module.exports = {
   incrementCelebration,
   writePassCode,
   getSessionData,
-  verifySessionPassword
+  verifySessionPassword,
+  setSessionAdmin
 }

@@ -56,6 +56,7 @@ export class CreateSessionDialogComponent {
 }
 
 export interface NewSession {
+  createdBy: string;
   createWithPasscode: boolean;
   passCode: boolean;
   name: boolean;

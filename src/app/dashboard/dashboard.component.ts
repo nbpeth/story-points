@@ -8,8 +8,9 @@ import {
   NewSessionPayload,
   SpMessage
 } from '../active-session/model/events.model';
-import { DOCUMENT } from '@angular/common';
+import {DOCUMENT} from '@angular/common';
 import {NewSession} from '../create-session-dialog/create-session-dialog.component';
+import {UserService} from "../user.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -24,7 +25,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   error: string;
   document = DOCUMENT;
 
-  constructor(private socketService: SocketService) {
+  constructor(private socketService: SocketService, private userService: UserService) {
   }
 
   ngOnInit() {
@@ -39,6 +40,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   createNewSession = (sessionData: NewSession) => {
+    sessionData.createdBy = this.userService.getLoginUser().sub;
     const message = new CreateNewSessionMessage(new NewSessionPayload(sessionData));
     this.socketService.send(message);
   }
@@ -56,8 +58,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         session.sessionName.toLowerCase().includes(this.sessionSearchTerm && this.sessionSearchTerm.toLowerCase()) :
         false
     );
-
-    console.log("SESS", sessions)
 
     this.visibleSessions = matches;
   }

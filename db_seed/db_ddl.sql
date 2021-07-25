@@ -70,3 +70,22 @@ FOREIGN KEY
 alter table user add column email varchar(255);
 alter table user drop column provider;
 alter table participant drop column login_id; -- unique email
+
+create table session_admin
+(
+    session_id  MEDIUMINT NOT NULL,
+    provider_id varchar(255),
+    FOREIGN KEY
+        (session_id)
+        REFERENCES sessions
+            (id)
+        ON
+            DELETE CASCADE,
+    FOREIGN KEY
+        (provider_id)
+        REFERENCES user
+            (provider_id)
+        ON
+            DELETE CASCADE,
+    PRIMARY KEY (session_id, provider_id)
+);

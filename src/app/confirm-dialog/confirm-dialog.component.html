@@ -11,12 +11,12 @@
         <input matInput type="text" #name [(ngModel)]="verifySessionName" placeholder="Confirm Session Name">
       </mat-form-field>
     </div>
-<!--    <div *ngIf="passcodeEnabled">-->
-<!--      <mat-form-field>-->
-<!--        <input matInput type="password" #name [(ngModel)]="verifyPassCode" placeholder="Session Passcode">-->
-<!--      </mat-form-field>-->
-<!--      <mat-error *ngIf="error">{{error}}</mat-error>-->
-<!--    </div>-->
+    <div *ngIf="passcodeEnabled">
+      <mat-form-field>
+        <input matInput type="password" #name [(ngModel)]="verifyPassCode" placeholder="Session Passcode">
+      </mat-form-field>
+      <mat-error *ngIf="error">{{error}}</mat-error>
+    </div>
 
     <div>
       <button class="mat-raised-button" (click)="close(false)">Cancel</button>

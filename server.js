@@ -246,12 +246,16 @@ const initHandlers = () => {
   }
 
   createNewSession = (messageData) => {
+
     const createSessionCallback = (err, results, fields) => {
       if (err) {
         console.log("createSessionCallback error?", err)
         sendErrorToCaller('Unable to create session', err.message);
       } else {
-        mysqlClient.writePassCode(results["insertId"], messageData, (err) => {
+        const sessionId = results["insertId"]
+
+        mysqlClient.setSessionAdmin(sessionId, messageData["payload"]["sessionData"]["createdBy"])
+        mysqlClient.writePassCode(sessionId, messageData, (err) => {
           if (err) {
             sendErrorToCaller('Unable to create session', err.message);
           } else {
@@ -261,6 +265,7 @@ const initHandlers = () => {
         })
       }
     }
+
     mysqlClient.createSession(messageData, createSessionCallback);
   };
 

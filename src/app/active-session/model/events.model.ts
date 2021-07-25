@@ -173,6 +173,7 @@ export class CelebrateMessage extends SpMessage {
 }
 
 interface NewSession {
+  createdBy: string;
   createWithPasscode: boolean;
   passCode: boolean;
   name: boolean;
