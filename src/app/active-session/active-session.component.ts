@@ -35,7 +35,7 @@ import {happy, RandomBuilder} from '../name-builder';
 import {SoundService} from '../services/sound-service';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
 import {MatSelectChange} from '@angular/material/select';
-import {PasswordService} from "../services/password.service";
+import {PasswordService} from '../services/password.service';
 
 declare const confetti: any;
 
@@ -56,7 +56,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   isDarkTheme: boolean;
 
 
-  //auth
+  // auth
   passcode: string;
   errors = {
     1: 'Invalid passcode'
@@ -75,14 +75,14 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
               private userService: UserService) {
   }
 
-  private getSessionPassword = (queryParams: ParamMap, sessionId: number | string): string | undefined | null => {
-    const queryPassword = queryParams.get('auth');
-    if (queryPassword) {
-      return queryPassword;
-    }
-
-    return this.localStorage.getCachedPasscodeForSession(sessionId);
-  }
+  // private getSessionPassword = (queryParams: ParamMap, sessionId: number | string): string | undefined | null => {
+  //   const queryPassword = queryParams.get('auth');
+  //   if (queryPassword) {
+  //     return queryPassword;
+  //   }
+  //
+  //   return this.localStorage.getCachedPasscodeForSession(sessionId);
+  // }
 
   ngOnInit() {
     combineLatest(
@@ -93,23 +93,23 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     });
 
 
-    combineLatest(
-      this.route.queryParamMap,
-      this.route.paramMap
-    ).pipe(
-      flatMap(([queryParams, pathParams]) => {
-        const sessionId = pathParams.get('id');
-        const password = this.getSessionPassword(queryParams, sessionId);
-        this.localStorage.cacheSessionPasscode(+sessionId, password);
-
-        return this.passwordService.authorizeSession(sessionId, password);
-      })
-    ).subscribe((_) => {
-      this.connect();
-    }, error => {
-      console.error(error);
-      this.authorized = false;
-    });
+    // combineLatest(
+    //   this.route.queryParamMap,
+    //   this.route.paramMap
+    // ).pipe(
+    //   flatMap(([queryParams, pathParams]) => {
+    //     const sessionId = pathParams.get('id');
+    //     const password = this.getSessionPassword(queryParams, sessionId);
+    //     this.localStorage.cacheSessionPasscode(+sessionId, password);
+    //
+    //     return this.passwordService.authorizeSession(sessionId, password);
+    //   })
+    // ).subscribe((_) => {
+    //   this.connect();
+    // }, error => {
+    //   console.error(error);
+    //   this.authorized = false;
+    // });
 
     this.themeService.isDarkTheme.subscribe(isIt => this.isDarkTheme = isIt);
   }
@@ -246,7 +246,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   enterPasscodeForSession = () => {
     this.route.paramMap.pipe(
       flatMap((params: ParamMap) => {
-        const sessionId = params.get("id");
+        const sessionId = params.get('id');
         this.localStorage.cacheSessionPasscode(+sessionId, this.passcode);
 
         return this.passwordService.authorizeSession(sessionId, this.passcode);
@@ -322,7 +322,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   private updateSession = (messageData: GetStateForSessionMessage | ParticipantJoinedSessionMessage) => {
     const session = Object.assign(new StoryPointSession(), messageData.payload);
-    console.log('U)DATE', session)
+    console.log('U)DATE', session);
     // const previousName = this.session.sessionName;
     this.session = session;
     // this.session.setName(previousName); // the name gets set every. time. no.

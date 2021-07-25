@@ -57,6 +57,8 @@ import {GestureConfig} from '@angular/material/core';
 import {AuthModule} from '@auth0/auth0-angular';
 import {environment} from '../environments/environment';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { SessionAuthorizationComponent } from './session-authorization/session-authorization.component';
+import {CanActivateSession} from "./canactivate/can-activate-session";
 
 @NgModule({
   declarations: [
@@ -89,6 +91,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     ChangeLogComponent,
     CreateSessionTileComponent,
     ChangelogDialogComponent,
+    SessionAuthorizationComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -120,6 +123,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     }),
   ],
   providers: [
+    CanActivateSession,
     UserService,
     {provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig},
   ],
