@@ -75,14 +75,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
               private userService: UserService) {
   }
 
-  // private getSessionPassword = (queryParams: ParamMap, sessionId: number | string): string | undefined | null => {
-  //   const queryPassword = queryParams.get('auth');
-  //   if (queryPassword) {
-  //     return queryPassword;
-  //   }
-  //
-  //   return this.localStorage.getCachedPasscodeForSession(sessionId);
-  // }
 
   ngOnInit() {
     combineLatest(
@@ -92,24 +84,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       this.recoverUser(user, participants);
     });
 
-
-    // combineLatest(
-    //   this.route.queryParamMap,
-    //   this.route.paramMap
-    // ).pipe(
-    //   flatMap(([queryParams, pathParams]) => {
-    //     const sessionId = pathParams.get('id');
-    //     const password = this.getSessionPassword(queryParams, sessionId);
-    //     this.localStorage.cacheSessionPasscode(+sessionId, password);
-    //
-    //     return this.passwordService.authorizeSession(sessionId, password);
-    //   })
-    // ).subscribe((_) => {
-    //   this.connect();
-    // }, error => {
-    //   console.error(error);
-    //   this.authorized = false;
-    // });
 
     this.themeService.isDarkTheme.subscribe(isIt => this.isDarkTheme = isIt);
   }
