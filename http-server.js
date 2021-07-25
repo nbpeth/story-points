@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mysqlClient = require('./mysqlClient');
+const { validateIdToken } = require('./authClient')
 
 const clientId = process.env.SP_LOGIN_AUD;
 
@@ -27,16 +28,14 @@ const startServer = () => {
 
   app.post('/user', (req, res) => {
     const headers = req.headers
-    const validUser = validateAuth(headers)
+    const userInfo = validateAuth(headers)
 
-    if(!validUser) {
-      console.error(`Invalid user: ${JSON.stringify(headers || {})}`)
-
+    userInfo.then((validUserInfo) => {
+      createUser(req, res)
+    }).catch((error) => {
       res.status(401);
       res.send({error: "You shall not pass!"})
-    } else {
-      createUser(req, res)
-    }
+    })
   })
 
   app.post("/:sessionId/auth", (req, res) => {
@@ -78,16 +77,8 @@ const startServer = () => {
 
 const validateAuth = (headers) => {
   try {
-    const authorizationToken = headers["authorization"]
-    const tokenClaims = authorizationToken.split(".")[1]
-    const decoded = JSON.parse(new Buffer(tokenClaims, "base64").toString('ascii'))
-
-    const { aud, exp } = decoded
-    const expiration = new Date(exp * 1000)
-    const tokenIsNotExpired = expiration > new Date()
-    const tokenAudienceIsCorrectClient = aud === clientId
-
-    return tokenIsNotExpired && tokenAudienceIsCorrectClient
+    const authHeader = headers["authorization"]
+    return validateIdToken(authHeader)
   } catch(e) {
     console.error("Validate Auth Error:", e)
     return false

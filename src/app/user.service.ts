@@ -30,11 +30,18 @@ export class UserService {
       this.userChanged.next(user);
       this.loggedIn.next(user != null);
 
-      this.authService.idTokenClaims$.subscribe(claims => {
-        const idToken = claims && claims.__raw;
-        this.lss.set('idToken', idToken);
-      });
+      // this.authService.idTokenClaims$.subscribe(claims => {
+      //   console.log("!!!!!!!", claims)
+      //   const idToken = claims && claims.__raw;
+      //   this.lss.set('idToken', idToken);
+      // });
+
+      this.authService.getAccessTokenSilently().subscribe(x => {
+        console.log("ACCESS", x)
+      })
     });
+
+    //EdSfCHm7PVNeHpejW4CLWVKpDW51ougu
 
 
     this.userChanges().subscribe((user: User) => {
@@ -48,10 +55,12 @@ export class UserService {
     // const idToken = this.lss.get('idToken');
     // dont store token any more
 
-    this.authService.idTokenClaims$.pipe(
-      flatMap((t: any) => {
-          const idToken = t && t.__raw ? t.__raw : '';
-          return this.http.post(`${environment.host}/user`, user, {headers: new HttpHeaders().append('Authorization', idToken)});
+    this.authService.getAccessTokenSilently().pipe(
+      flatMap((accessToken: any) => {
+          return this.http.post(
+            `${environment.host}/user`, user,
+            {headers: new HttpHeaders().append('Authorization', `Bearer ${accessToken}`)}
+          );
         }
       )
     ).subscribe((res) => {

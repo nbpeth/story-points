@@ -18,7 +18,7 @@ const startServer = () => {
 
   setInterval(() => {
     // keep connections alive
-    // console.log('clients', wss.clients.size);
+    console.log('clients', wss.clients.size);
     wss.clients.forEach((client) => {
       client.send(JSON.stringify({}))
     });
