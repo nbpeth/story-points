@@ -59,6 +59,7 @@ import {environment} from '../environments/environment';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { SessionAuthorizationComponent } from './session-authorization/session-authorization.component';
 import {CanActivateSession} from "./canactivate/can-activate-session";
+import {LoggedInGuard} from "./canactivate/logged-in-guard";
 
 @NgModule({
   declarations: [
@@ -124,6 +125,7 @@ import {CanActivateSession} from "./canactivate/can-activate-session";
   ],
   providers: [
     CanActivateSession,
+    LoggedInGuard,
     UserService,
     {provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig},
   ],

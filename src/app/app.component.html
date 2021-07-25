@@ -1,7 +1,23 @@
 <!--https://material.angular.io/components/grid-list/examples-->
-<!--switch app to grid layout-->
-<div id="content"
-     style="background-color: transparent; height: 100%; display: flex; flex-direction: column;">
-  <app-titlebar></app-titlebar>
-  <router-outlet></router-outlet>
+
+<div id="content" style="background-color: transparent; height: 100%; display: flex; flex-direction: column;">
+  <ng-container *ngIf="userService.isAuthenticated() | async; else notLoggedIn">
+    <app-titlebar></app-titlebar>
+    <router-outlet></router-outlet>
+  </ng-container>
+  <ng-template #notLoggedIn>
+    <div style="
+      display: flex;
+      justify-content: center;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);">
+      <div>
+        <mat-spinner></mat-spinner>
+      </div>
+    </div>
+  </ng-template>
 </div>
+

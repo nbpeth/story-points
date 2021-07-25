@@ -29,7 +29,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   ];
   konamiCount = 0;
 
-  constructor(private elementRef: ElementRef, private themeService: ThemeService, private userService: UserService) {
+  constructor(private elementRef: ElementRef, private themeService: ThemeService, public userService: UserService) {
   }
 
   ngOnInit() {

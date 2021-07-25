@@ -49,9 +49,9 @@ export class UserService {
     // dont store token any more
 
     this.authService.idTokenClaims$.pipe(
-      flatMap( (t: any) => {
+      flatMap((t: any) => {
           const idToken = t && t.__raw ? t.__raw : '';
-          return this.http.post(`${environment.host}/user`, user, { headers: new HttpHeaders().append('Authorization', idToken) });
+          return this.http.post(`${environment.host}/user`, user, {headers: new HttpHeaders().append('Authorization', idToken)});
         }
       )
     ).subscribe((res) => {
@@ -93,7 +93,7 @@ export class UserService {
   }
 
   logout() {
-    this.authService.logout({ returnTo: `${this.doc.location.origin}` });
+    this.authService.logout({returnTo: `${this.doc.location.origin}`});
     // this.authService.logout({ returnTo: `${this.doc.location.origin}/logout?unauthorized` });
   }
 
@@ -107,8 +107,10 @@ export class UserService {
 
   isLoginUser(loginEmail: string): boolean {
     // console.log("isLoginUser", this.user.email, loginEmail)
-    return this.user && this.user.email === loginEmail; // need a better less sensitive way to identify?
+    return this.user && this.user.email === loginEmail; // change to providerId
   }
+
+
 }
 
 export interface User {
@@ -132,5 +134,6 @@ export interface User {
   address?: string;
   updated_at?: string;
   sub?: string;
+
   [key: string]: any;
 }
