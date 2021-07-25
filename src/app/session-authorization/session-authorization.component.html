@@ -5,12 +5,6 @@
         This session requires a passcode to enter
       </mat-card-title>
 
-      <mat-card-subtitle>
-<!--        <div *ngIf="queryParams() | async as qp">-->
-<!--          {{errors[qp['error']]}}-->
-<!--        </div>-->
-      </mat-card-subtitle>
-
       <mat-card-content>
         <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-evenly;">
           <div>
@@ -18,6 +12,9 @@
               <mat-label>Input</mat-label>
               <input [(ngModel)]="passcode"  type="password" matInput>
             </mat-form-field>
+            <mat-error *ngIf="error">
+              {{error}}
+            </mat-error>
           </div>
           <div>
             <button (click)="enterPasscodeForSession() "mat-raised-button color="primary">Submit</button>

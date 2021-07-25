@@ -48,20 +48,11 @@ declare const confetti: any;
 
 export class ActiveSessionComponent implements OnInit, OnDestroy {
   private participantsInThisSession = new Subject<any>();
-  authorized = true;
   logs: string[] = [];
   showLogs: boolean;
   ballots: Ballot[] = [];
   participant: Participant;
   isDarkTheme: boolean;
-
-
-  // auth
-  passcode: string;
-  errors = {
-    1: 'Invalid passcode'
-  };
-  //
   session: StoryPointSession = new StoryPointSession();
 
   constructor(private route: ActivatedRoute,
@@ -215,25 +206,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   collectBallots = (): Ballot[] =>
     this.session.participants.filter((p: Participant) => p.hasVoted).map((p: Participant) => p.point)
 
-
-  // move to separate component, auth
-  enterPasscodeForSession = () => {
-    this.route.paramMap.pipe(
-      flatMap((params: ParamMap) => {
-        const sessionId = params.get('id');
-        this.localStorage.cacheSessionPasscode(+sessionId, this.passcode);
-
-        return this.passwordService.authorizeSession(sessionId, this.passcode);
-      })
-    ).subscribe((res) => {
-      this.connect();
-      this.authorized = true;
-    }, error => {
-      this.router.navigate([], {queryParams: {error: 1}});
-    });
-  }
-
-  //
 
   private requestInitialStateOfSessionBy = (id: number): void => {
     this.socketService.send(
