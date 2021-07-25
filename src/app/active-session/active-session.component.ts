@@ -35,7 +35,6 @@ import {happy, RandomBuilder} from '../name-builder';
 import {SoundService} from '../services/sound-service';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
 import {MatSelectChange} from '@angular/material/select';
-import {PasswordService} from '../services/password.service';
 
 declare const confetti: any;
 
@@ -53,6 +52,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   ballots: Ballot[] = [];
   participant: Participant;
   isDarkTheme: boolean;
+  // successSound: HTMLAudioElement;
+
   session: StoryPointSession = new StoryPointSession();
 
   constructor(private route: ActivatedRoute,
@@ -61,11 +62,9 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
               private themeService: ThemeService,
               private snackBar: MatSnackBar,
               private localStorage: LocalStorageService,
-              private passwordService: PasswordService,
               private soundService: SoundService,
               private userService: UserService) {
   }
-
 
   ngOnInit() {
     combineLatest(
@@ -75,18 +74,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       this.recoverUser(user, participants);
     });
 
+    // this.successSound = new Audio('assets/sounds/hawk.mp3');
 
-    this.themeService.isDarkTheme.subscribe(isIt => this.isDarkTheme = isIt);
-  }
-
-
-  queryParams = () => this.route.queryParamMap
-    .pipe(map((paramMap: any) => {
-      return paramMap.params;
-    })
-  )
-
-  connect = () => {
     this.route.paramMap
       .pipe(
         flatMap((paramMap: any) => {
