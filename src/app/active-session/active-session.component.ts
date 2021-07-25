@@ -52,7 +52,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   ballots: Ballot[] = [];
   participant: Participant;
   isDarkTheme: boolean;
-  // successSound: HTMLAudioElement;
 
   session: StoryPointSession = new StoryPointSession();
 
@@ -73,8 +72,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     ).subscribe(([user, participants]) => {
       this.recoverUser(user, participants);
     });
-
-    // this.successSound = new Audio('assets/sounds/hawk.mp3');
 
     this.route.paramMap
       .pipe(
