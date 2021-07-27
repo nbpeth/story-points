@@ -36,12 +36,16 @@ export class ConfirmDialogComponent {
   }
 
   close = (shouldClose: boolean) => {
-    this.passwordService.authorizeSession(this.id, this.verifyPassCode).subscribe((_) => {
+    if (this.passcodeEnabled) {
+      this.passwordService.authorizeSession(this.id, this.verifyPassCode).subscribe((_) => {
+        this.dialogRef.close(shouldClose);
+      }, error => {
+        console.error(error);
+        this.error = 'Invalid passcode';
+      });
+    } else {
       this.dialogRef.close(shouldClose);
-    }, error => {
-      console.error(error);
-      this.error = 'Invalid passcode';
-    });
+    }
   }
 
   okToDelete = (): boolean =>
