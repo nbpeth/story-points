@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { NameBuilder } from '../name-builder';
+import {Component, HostListener} from '@angular/core';
+import {MatDialogRef} from '@angular/material/dialog';
+import {NameBuilder} from '../name-builder';
 import {PasswordService} from '../services/password.service';
 
 @Component({
@@ -12,17 +12,23 @@ export class CreateSessionDialogComponent {
   public createWithPasscode = true;
   public passCode: string;
   public verifyPassCode: string;
-
   public passCodesAreEqual: boolean;
+  sessionName: string;
 
 
   constructor(private dialogRef: MatDialogRef<CreateSessionDialogComponent>) {
   }
 
-  // key listener for "enter" to submit
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
 
-  create = (name: string) => {
-    const newSessionName = name ? name : NameBuilder.generate();
+    if (event.key === 'Enter' && this.formValid()) {
+      this.create();
+    }
+  }
+
+  create = () => {
+    const newSessionName = this.sessionName ? this.sessionName : NameBuilder.generate();
     const passCode = this.createWithPasscode ? PasswordService.encode(this.passCode) : undefined;
 
     const message = {

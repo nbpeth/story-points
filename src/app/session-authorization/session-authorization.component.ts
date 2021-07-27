@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {PasswordService} from '../services/password.service';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {LocalStorageService} from '../services/local-storage.service';
@@ -25,6 +25,13 @@ export class SessionAuthorizationComponent implements OnInit {
               private lss: LocalStorageService,
               private route: ActivatedRoute,
               private router: Router) {
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      this.enterPasscodeForSession();
+    }
   }
 
   ngOnInit(): void {

@@ -1,4 +1,4 @@
-import {Component, Inject} from '@angular/core';
+import {Component, HostListener, Inject} from '@angular/core';
 import {PasswordService} from '../services/password.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
@@ -14,7 +14,6 @@ export class ConfirmDialogComponent {
   verifySessionName: string;
   sessionName: string;
   message: string;
-
   error: string;
 
   constructor(private passwordService: PasswordService, private dialogRef: MatDialogRef<ConfirmDialogComponent>,
@@ -23,6 +22,13 @@ export class ConfirmDialogComponent {
     this.passcodeEnabled = data.passcodeEnabled;
     this.sessionName = data.sessionName;
     this.message = data.message;
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'Enter' && this.okToDelete()) {
+      this.close(true);
+    }
   }
 
   close = (shouldClose: boolean) => {
