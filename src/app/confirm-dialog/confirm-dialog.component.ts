@@ -31,6 +31,10 @@ export class ConfirmDialogComponent {
     }
   }
 
+  cancel = () => {
+    this.dialogRef.close(true);
+  }
+
   close = (shouldClose: boolean) => {
     this.passwordService.authorizeSession(this.id, this.verifyPassCode).subscribe((_) => {
       this.dialogRef.close(shouldClose);
