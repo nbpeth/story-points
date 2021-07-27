@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {PasswordService} from '../services/password.service';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {LocalStorageService} from '../services/local-storage.service';
-import {flatMap, map} from 'rxjs/operators';
+import {flatMap, map, finalize} from 'rxjs/operators';
 import {of, zip} from 'rxjs';
 
 @Component({
@@ -12,12 +12,14 @@ import {of, zip} from 'rxjs';
 })
 export class SessionAuthorizationComponent implements OnInit {
   public passcode;
+  public loading = false;
 
   errorReasons = {
     1: 'Invalid passcode'
   };
 
   error: string;
+  sessionName: string;
 
   constructor(private passwordService: PasswordService,
               private lss: LocalStorageService,
@@ -26,10 +28,14 @@ export class SessionAuthorizationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe((queryParams: ParamMap) => {
+      this.sessionName = queryParams.get('name') ? queryParams.get('name') : 'Session';
+    });
   }
 
   enterPasscodeForSession() {
     this.error = undefined;
+    this.loading = true;
 
     this.route.paramMap.pipe(
       flatMap((pathParams: ParamMap) => {
@@ -46,6 +52,9 @@ export class SessionAuthorizationComponent implements OnInit {
 
         return false;
       }),
+      finalize(() => {
+        this.loading = false;
+      })
     ).subscribe(success => {
     }, err => {
       this.error = this.errorReasons[1];

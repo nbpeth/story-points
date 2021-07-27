@@ -5,6 +5,7 @@ import {UserService} from '../user.service';
 import {LocalStorageService} from '../services/local-storage.service';
 import {catchError, map} from 'rxjs/operators';
 import {PasswordService} from '../services/password.service';
+import {Q} from "@angular/cdk/keycodes";
 
 @Injectable()
 export class CanActivateSession implements CanActivate {
@@ -34,7 +35,7 @@ export class CanActivateSession implements CanActivate {
           console.error(err);
           const id = route.paramMap.get('id');
           this.localStorage.clearSessionPasscodeCache(id);
-          this.router.navigate(['sessions', id, 'login']);
+          this.router.navigate(['sessions', id, 'login'], { queryParams: route.queryParams });
 
           return of(false);
         })
