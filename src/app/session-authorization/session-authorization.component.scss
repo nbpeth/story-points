@@ -1,11 +1,19 @@
 .container {
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 20px;
 }
 
-.matInput {
-  width: 100%;
-}
-
-.button {
+.full-width {
   width: 100%
+}
+
+button {
+  width: 100%
+}
+
+mat-card-content {
+  padding: 20px
 }
