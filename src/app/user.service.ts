@@ -29,16 +29,6 @@ export class UserService {
       this.user = user;
       this.userChanged.next(user);
       this.loggedIn.next(user != null);
-
-      // this.authService.idTokenClaims$.subscribe(claims => {
-      //   console.log("!!!!!!!", claims)
-      //   const idToken = claims && claims.__raw;
-      //   this.lss.set('idToken', idToken);
-      // });
-
-      // this.authService.getAccessTokenSilently().subscribe(x => {
-      //   console.log("ACCESS", x)
-      // })
     });
 
     this.userChanges().subscribe((user: User) => {
@@ -48,10 +38,22 @@ export class UserService {
     });
   }
 
-  createUser(user: User) {
-    // const idToken = this.lss.get('idToken');
-    // dont store token any more
+  /*
 
+    Have API create its own JWT
+      in app can activate
+        pass API JWT in to verify
+          if it is invalid/expired or missing
+            pass access token from auth0 and validate
+
+    use this token for all http requests, not access token from auth0
+
+    can use custom claims on token for user
+      which rooms you have admin access to, etc
+
+   */
+
+  createUser(user: User) {
     this.authService.getAccessTokenSilently().pipe(
       flatMap((accessToken: any) => {
           return this.http.post(
@@ -95,6 +97,7 @@ export class UserService {
         labelClass: 'warn',
       }
     });
+
     this.logout();
   }
 

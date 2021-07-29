@@ -1,36 +1,46 @@
-<div style=" display: flex; flex-direction: column; justify-content: space-between; height: 100%">
-  <div style="width:100%; display: flex; justify-content: center" class="mat-app-background">
-    <div style="padding: 20px" *ngIf="session && session.sessionName">
-      <h3>{{session.sessionName}}</h3>
+<ng-container>
+
+  <div style=" display: flex; flex-direction: column; justify-content: space-between; height: 100%">
+    <div style="width:100%; display: flex; justify-content: center" class="mat-app-background">
+      <div style="padding: 20px" *ngIf="session && session.sessionName">
+        <h3>{{session.sessionName}}</h3>
+      </div>
+    </div>
+    <div class="content">
+
+      <div class="tiles">
+        <user-tiles>
+          <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter"
+                     [participant]="participant"
+                     [locked]="session.sessionId == 311"
+                     [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
+                     [myCard]="isMyCard(participant)">
+          </user-tile>
+        </user-tiles>
+      </div>
+    </div>
+
+    <div class="toolbar mat-app-background" style="height:130px">
+      <control-panel
+        (participantJoined)="joinSession($event)"
+        (participantLeft)="leaveSession($event)"
+        (pointVisibilityEvent)="changePointVisibility($event)"
+        (voteSubmitted)="voteHasChanged($event)"
+        [sessionId]="session.sessionId"
+        [participant]="participant"
+        [locked]="session.sessionId == 311"
+        [logs]="logs"
+        [pointsVisible]="session.pointsVisible"
+        [showLogs]="false"
+      >
+      </control-panel>
     </div>
   </div>
-  <div class="content">
-
-    <div class="tiles">
-      <user-tiles>
-        <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter"
-                   [participant]="participant"
-                   [locked]="session.sessionId == 311"
-                   [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
-                   [myCard]="isMyCard(participant)">
-        </user-tile>
-      </user-tiles>
+</ng-container>
+<ng-template #spinner>
+  <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-evenly;">
+    <div>
+      <mat-spinner></mat-spinner>
     </div>
   </div>
-
-  <div class="toolbar mat-app-background" style="height:130px">
-    <control-panel
-      (participantJoined)="joinSession($event)"
-      (participantLeft)="leaveSession($event)"
-      (pointVisibilityEvent)="changePointVisibility($event)"
-      (voteSubmitted)="voteHasChanged($event)"
-      [sessionId]="session.sessionId"
-      [participant]="participant"
-      [locked]="session.sessionId == 311"
-      [logs]="logs"
-      [pointsVisible]="session.pointsVisible"
-      [showLogs]="false"
-    >
-    </control-panel>
-  </div>
-</div>
+</ng-template>

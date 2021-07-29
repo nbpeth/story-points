@@ -7,7 +7,7 @@
       </mat-card-title>
       <mat-card-subtitle>This session requires a passcode to enter</mat-card-subtitle>
       <mat-card-content>
-        <ng-container *ngIf="!loading; else spinner">
+        <ng-container>
             <div class="full-width">
               <mat-form-field appearance="fill" class="full-width">
                 <mat-label>Input</mat-label>
@@ -23,14 +23,6 @@
             </div>
 
         </ng-container>
-
-        <ng-template #spinner>
-          <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-evenly;">
-            <div>
-              <mat-spinner></mat-spinner>
-            </div>
-          </div>
-        </ng-template>
 
       </mat-card-content>
     </mat-card>
