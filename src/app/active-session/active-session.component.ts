@@ -254,7 +254,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   private updateSession = (messageData: GetStateForSessionMessage | ParticipantJoinedSessionMessage) => {
     const session = Object.assign(new StoryPointSession(), messageData.payload);
-    console.log('U)DATE', session);
+
     // const previousName = this.session.sessionName;
     this.session = session;
     // this.session.setName(previousName); // the name gets set every. time. no.

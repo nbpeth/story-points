@@ -41,7 +41,7 @@ const startServer = () => {
   app.post("/:sessionId/auth", (req, res) => {
     // rate limit
     const sessionId = req.params["sessionId"];
-    const passcodeHash = req.headers.authorization;
+    const passcodeHash = req.body["passCode"];
 
     mysqlClient.verifySessionPassword(sessionId, (err, results) => {
       if(err) {
@@ -58,6 +58,7 @@ const startServer = () => {
           const { id, passcode, passcode_enabled } = row;
 
           const validAuth = (id == sessionId && passcode === passcodeHash)
+
           if(!passcode_enabled || validAuth) {
             res.status(200);
             res.send({ok: "yay"})

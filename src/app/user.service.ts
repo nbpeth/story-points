@@ -36,13 +36,10 @@ export class UserService {
       //   this.lss.set('idToken', idToken);
       // });
 
-      this.authService.getAccessTokenSilently().subscribe(x => {
-        console.log("ACCESS", x)
-      })
+      // this.authService.getAccessTokenSilently().subscribe(x => {
+      //   console.log("ACCESS", x)
+      // })
     });
-
-    //EdSfCHm7PVNeHpejW4CLWVKpDW51ougu
-
 
     this.userChanges().subscribe((user: User) => {
       if (user) {

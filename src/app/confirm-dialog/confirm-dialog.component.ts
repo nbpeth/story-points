@@ -37,7 +37,8 @@ export class ConfirmDialogComponent {
 
   close = (shouldClose: boolean) => {
     if (this.passcodeEnabled) {
-      this.passwordService.authorizeSession(this.id, this.verifyPassCode).subscribe((_) => {
+      const encodedPassCode = PasswordService.encode(this.verifyPassCode);
+      this.passwordService.authorizeSession(this.id, encodedPassCode).subscribe((_) => {
         this.dialogRef.close(shouldClose);
       }, error => {
         console.error(error);

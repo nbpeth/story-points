@@ -2,8 +2,8 @@ import {Component, HostListener, OnInit} from '@angular/core';
 import {PasswordService} from '../services/password.service';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {LocalStorageService} from '../services/local-storage.service';
-import {flatMap, map, finalize} from 'rxjs/operators';
-import {of, zip} from 'rxjs';
+import {flatMap, map, finalize, tap} from 'rxjs/operators';
+import {combineLatest, of, zip} from 'rxjs';
 
 @Component({
   selector: 'app-session-authorization',
@@ -37,32 +37,19 @@ export class SessionAuthorizationComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((queryParams: ParamMap) => {
       this.sessionName = queryParams.get('name') ? queryParams.get('name') : 'Session';
+      this.error = this.errorReasons[queryParams.get('error')];
     });
   }
 
   enterPasscodeForSession() {
     this.error = undefined;
-    this.loading = true;
 
     this.route.paramMap.pipe(
-      flatMap((pathParams: ParamMap) => {
+      tap((pathParams: ParamMap) => {
         const sessionId = pathParams.get('id');
-        return zip(of(sessionId), this.passwordService.authorizeSession(sessionId, this.passcode));
-      }),
-      map(([sessionId, res]: [string, any]) => {
-        if (res.ok === 'yay') {
-          this.lss.cacheSessionPasscode(+sessionId, this.passcode); // "save password?"
-          this.router.navigate(['sessions', sessionId]);
-
-          return true;
-        }
-
-        return false;
-      }),
-      finalize(() => {
-        this.loading = false;
-      })
-    ).subscribe(success => {
+        this.lss.cacheSessionPasscode(+sessionId, PasswordService.encode(this.passcode));
+        this.router.navigate(['sessions', sessionId]);
+      })).subscribe(success => {
     }, err => {
       this.error = this.errorReasons[1];
     });

@@ -5,7 +5,6 @@ import {UserService} from '../user.service';
 import {LocalStorageService} from '../services/local-storage.service';
 import {catchError, map} from 'rxjs/operators';
 import {PasswordService} from '../services/password.service';
-import {Q} from "@angular/cdk/keycodes";
 
 @Injectable()
 export class CanActivateSession implements CanActivate {
@@ -22,10 +21,9 @@ export class CanActivateSession implements CanActivate {
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     const sessionId = route.params.id;
     const queryParams = route.queryParamMap;
-    const password = this.getSessionPassword(queryParams, sessionId);
-    this.localStorage.cacheSessionPasscode(+sessionId, password);
+    const passCode = this.getSessionPassword(queryParams, sessionId);
 
-    return this.passwordService.authorizeSession(sessionId, password)
+    return this.passwordService.authorizeSession(sessionId, passCode)
       .pipe(
         map((response: { ok: string }) => {
             return response.ok === 'yay';
@@ -34,8 +32,7 @@ export class CanActivateSession implements CanActivate {
         catchError((err) => {
           console.error(err);
           const id = route.paramMap.get('id');
-          this.localStorage.clearSessionPasscodeCache(id);
-          this.router.navigate(['sessions', id, 'login'], { queryParams: route.queryParams });
+          this.router.navigate(['sessions', id, 'login'], { queryParams: {...route.queryParams, error: 1} });
 
           return of(false);
         })
