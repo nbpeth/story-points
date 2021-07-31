@@ -55,15 +55,24 @@ const startServer = () => {
     const sessionId = req.body["sessionId"];
 
     tokenAuthMiddlware(req, res)
-      .then(_ => mysqlClient.getSessionNameFor(sessionId, (err, results) => {
-        if (err || !results || results.length < 1) {
-          res.status(500);
-          res.send({error: "unable to retrieve session name"});
-        } else {
-          res.status(200);
-          res.send(results[0]);
-        }
-      }))
+      .then(_ =>
+        mysqlClient.getSessionNameFor(sessionId)
+          .then((results) => {
+              if (!results || results.length < 1) {
+                res.status(500);
+                res.send({error: "unable to retrieve session name"});
+              } else {
+                res.status(200);
+                res.send(results[0]);
+              }
+            }
+          ).catch((e) => {
+            console.error(e);
+            res.status(500);
+            res.send({error: "unable to retrieve session name"});
+          }
+        )
+      )
   })
 
   app.post("/:sessionId/auth", (req, res) => {
@@ -103,10 +112,11 @@ const startServer = () => {
 
 const tokenAuthMiddlware = (req, res) => {
   const headers = req.headers
-  return validateAuth(headers).catch((error) => {
-    res.status(401);
-    res.send({error: "You shall not pass!"})
-  });
+  return validateAuth(headers)
+    .catch((error) => {
+      res.status(401);
+      res.send({error: "You shall not pass!"})
+    });
 }
 
 const validateAuth = (headers) => {

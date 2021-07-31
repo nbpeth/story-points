@@ -1,6 +1,7 @@
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const clientSecret = process.env.JWT_SECRET || "secrets";
+const mysqlClient = require('./mysqlClient');
 
 // verify auth0 token
 const validateAccessToken = async (authHeader) => {
@@ -23,10 +24,23 @@ const validateIdToken = async (authHeader) => {
 
 const generateJWT = (authHeader) => {
   return validateAccessToken(authHeader)
-    .then(userInfo => {
-
+    // .then(userInfo => {
+    //   return mysqlClient.getUserAdminSessions(userInfo.data.sub)
+    //     .then((rooms) => {
+    //       const adminOfRooms = rooms.results.map(results => {
+    //         return results ? results.session_id : undefined;
+    //       });
+    //       const defaultClaims = userInfo.data;
+    //
+    //       return {
+    //         ...defaultClaims,
+    //         adminOfRooms
+    //       }
+    //     })
+    // })
+    .then(userInfoWithCustomClaims => {
       return jwt.sign({
-        ...userInfo.data
+        ...userInfoWithCustomClaims.data
       }, clientSecret);
     })
 }

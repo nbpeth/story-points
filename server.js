@@ -259,7 +259,6 @@ const initHandlers = () => {
           if (err) {
             sendErrorToCaller('Unable to create session', err.message);
           } else {
-            console.log("we did it!")
             getAllSession()
           }
         })
