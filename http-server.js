@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mysqlClient = require('./mysqlClient');
-const {validateIdToken} = require('./authClient')
+const {validateIdToken, generateJWT} = require('./authClient')
 
 // const clientId = process.env.SP_LOGIN_AUD;
 
@@ -21,7 +21,6 @@ const startServer = () => {
   });
 
   app.use(express.static(__dirname + '/dist/story-points'));
-
   app.use(bodyParser.urlencoded({extended: false}));
   app.use(bodyParser.json());
   app.use(cors());
@@ -36,9 +35,25 @@ const startServer = () => {
       res.status(401);
       res.send({error: "You shall not pass!"})
     })
+  });
+
+  app.post("/getToken", (req, res) => {
+    const headers = req.headers;
+    const authHeader = headers["authorization"]
+
+    generateJWT(authHeader)
+      .then((token) => {
+        res.status(200);
+        res.send({token: token});
+      })
+      .catch((e) => {
+        console.error("ERROR?!", e)
+        res.status(401);
+        res.send({error: e});
+      })
   })
 
-  app.get("/sessions/:sessionId/", (req, res) => {
+  app.get("/sessions/info/:sessionId/", (req, res) => {
     const sessionId = req.params["sessionId"];
 
     mysqlClient.getSessionNameFor(sessionId, (err, results) => {
@@ -50,7 +65,6 @@ const startServer = () => {
         res.send(results[0]);
       }
     })
-
   })
 
   app.post("/:sessionId/auth", (req, res) => {

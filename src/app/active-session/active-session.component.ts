@@ -78,7 +78,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         flatMap((paramMap: any) => {
           const id = paramMap.get('id');
           this.session.sessionId = id;
-
           this.socketService.connect(id);
 
           this.requestInitialStateOfSessionBy(id);

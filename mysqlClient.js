@@ -149,7 +149,7 @@ getSessionState = (sessionId, onComplete) => {
 
 getSessionNameFor = (sessionId, onComplete) => {
   const sql = `
-        SELECT s.session_name, s.id as sessionName FROM sessions s WHERE s.id = ?
+        SELECT s.session_name as sessionName, s.id FROM sessions s WHERE s.id = ?
     `;
 
   const statement = mysql.format(sql, [sessionId]);

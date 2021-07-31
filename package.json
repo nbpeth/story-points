@@ -35,6 +35,7 @@
     "express": "^4.17.1",
     "hammerjs": "^2.0.8",
     "http": "0.0.0",
+    "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
     "ngx-webstorage-service": "^4.1.0",
     "path": "^0.12.7",

@@ -2,6 +2,7 @@ import {AfterViewInit, Component, ElementRef, HostListener, OnInit} from '@angul
 import {ThemeService} from './services/theme.service';
 import {UserService} from './user.service';
 import {combineLatest} from 'rxjs';
+import {LocalStorageService} from './services/local-storage.service';
 
 declare const confetti: any;
 
@@ -29,7 +30,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   ];
   konamiCount = 0;
 
-  constructor(private elementRef: ElementRef, private themeService: ThemeService, public userService: UserService) {
+  constructor(private elementRef: ElementRef,
+              private themeService: ThemeService,
+              private lss: LocalStorageService,
+              public userService: UserService) {
   }
 
   ngOnInit() {
@@ -44,6 +48,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       this.toggleClassTheme();
     });
+
+    console.log("hllllllo?")
+
+    // issue jwts when auth0 access token changes
+    this.userService.getJWT()
+      .subscribe((response: { token: string }) => {
+        console.log("token?!", response)
+        this.lss.set('jwt', response.token);
+      });
   }
 
   ngAfterViewInit() {

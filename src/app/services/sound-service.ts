@@ -7,7 +7,7 @@ import {LocalStorageService} from './local-storage.service';
 })
 export class SoundService {
   private audioEnabled: boolean;
-  private successSound: HTMLAudioElement = new Audio('assets/sounds/cheering.mp3');
+  private successSound: HTMLAudioElement = new Audio('assets/sounds/hawk.mp3');
 
   constructor(private lss: LocalStorageService) {
     lss.stateEventStream().subscribe((state: AppState) => {

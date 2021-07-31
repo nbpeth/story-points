@@ -13,14 +13,16 @@ export class LoggedInGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+
     return this.userService.isAuthenticated()
       .pipe(
         map((isAuthenticated: boolean) => {
           if (!isAuthenticated) {
             this.userService.login();
           }
+
           return isAuthenticated;
-        })
+        }),
       );
   }
 }

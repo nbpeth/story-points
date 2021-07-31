@@ -8,7 +8,7 @@ import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition}
 import {AlertSnackbarComponent} from './alert-snackbar/alert-snackbar.component';
 import {AuthService} from '@auth0/auth0-angular';
 import {DOCUMENT} from '@angular/common';
-import {flatMap, map} from 'rxjs/operators';
+import {flatMap, map, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -54,14 +54,9 @@ export class UserService {
    */
 
   createUser(user: User) {
-    this.authService.getAccessTokenSilently().pipe(
-      flatMap((accessToken: any) => {
-          return this.http.post(
-            `${environment.host}/user`, user,
-            {headers: new HttpHeaders().append('Authorization', `Bearer ${accessToken}`)}
-          );
-        }
-      )
+    return this.http.post(
+      `${environment.host}/user`, user,
+      {headers: new HttpHeaders().append('Authorization', `Bearer ${this.lss.get('jwt')}`)}
     ).subscribe((res) => {
     }, error => {
       console.error('Error creating user', error);
@@ -77,6 +72,22 @@ export class UserService {
 
   login() {
     this.authService.loginWithRedirect();
+  }
+
+  // issue a jwt from the api using the access token from auth0
+  getJWT() {
+    return this.authService.getAccessTokenSilently()
+      .pipe(
+        tap(x => {
+          console.log("??", x)
+        }),
+        flatMap((accessToken: string) => {
+          return this.http.post('/getToken',
+            {},
+            {headers: new HttpHeaders().append('Authorization', `Bearer ${accessToken}`)}
+          );
+        })
+      );
   }
 
   isAuthenticated() {

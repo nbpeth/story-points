@@ -68,5 +68,4 @@ export class SessionAuthorizationComponent implements OnInit {
       this.error = this.errorReasons[1];
     });
   }
-
 }

@@ -13,7 +13,9 @@ import {LocalStorageService} from './local-storage.service';
   providedIn: 'root'
 })
 export class PasswordService {
-  constructor(private http: HttpClient, private authService: AuthService, private localStorage: LocalStorageService) {
+  constructor(private http: HttpClient,
+              private authService: AuthService,
+              private localStorage: LocalStorageService) {
   }
 
   // hashing should be done server side, https only
@@ -21,19 +23,14 @@ export class PasswordService {
 
   authorizeSession = (sessionId: any, encodedPassword: string) => {
     // const encodedPassword = PasswordService.encode(passCode);
-    return this.authService.getAccessTokenSilently()
+    return this.http.post(`${environment.host}/${sessionId}/auth`,
+      {
+        passCode: encodedPassword
+      },
+      {headers: new HttpHeaders().append('Authorization', `Bearer ${this.localStorage.get('jwt')}`)})
       .pipe(
-        flatMap((accessToken: any) => {
-            return this.http.post(`${environment.host}/${sessionId}/auth`,
-              {
-                passCode: encodedPassword
-              },
-              {headers: new HttpHeaders().append('Authorization', `Bearer ${accessToken}`)});
-          }
-        ),
         tap(response => {
           this.localStorage.cacheSessionPasscode(+sessionId, encodedPassword); // "save password?"
-
         }),
         catchError((error: any) => {
 
