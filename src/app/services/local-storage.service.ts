@@ -20,6 +20,14 @@ export class LocalStorageService {
 
   get = (key: string): string => this.storage.get(key);
 
+  getIdToken() {
+    return this.get('jwt');
+  }
+
+  setIdToken(jwt: string) {
+    return this.set('jwt', jwt);
+  }
+
   private getState = (): AppState => {
     const appState = this.storage.get(this.key);
     if (!appState) {

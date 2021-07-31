@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 const mysqlClient = require('./mysqlClient');
 const {validateIdToken, generateJWT} = require('./authClient')
 
-// const clientId = process.env.SP_LOGIN_AUD;
 
 const startServer = () => {
   app.use((req, res, next) => {
@@ -25,16 +24,8 @@ const startServer = () => {
   app.use(bodyParser.json());
   app.use(cors());
 
-  app.post('/user', (req, res) => {
-    const headers = req.headers
-    const userInfo = validateAuth(headers)
-
-    userInfo.then((validUserInfo) => {
-      createUser(req, res)
-    }).catch((error) => {
-      res.status(401);
-      res.send({error: "You shall not pass!"})
-    })
+  app.get('*', (_, res) => {
+    res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
   });
 
   app.post("/getToken", (req, res) => {
@@ -47,24 +38,32 @@ const startServer = () => {
         res.send({token: token});
       })
       .catch((e) => {
-        console.error("ERROR?!", e)
+        console.error("error generating JWT", e)
+
         res.status(401);
         res.send({error: e});
       })
   })
 
-  app.get("/sessions/info/:sessionId/", (req, res) => {
-    const sessionId = req.params["sessionId"];
-
-    mysqlClient.getSessionNameFor(sessionId, (err, results) => {
-      if (err || !results || results.length < 1) {
-        res.status(500);
-        res.send({error: "unable to retrieve session name"});
-      } else {
-        res.status(200);
-        res.send(results[0]);
-      }
+  app.post('/user', (req, res) => {
+    tokenAuthMiddlware(req, res).then((_) => {
+      createUser(req, res)
     })
+  });
+
+  app.post("/sessionDetails", (req, res) => {
+    const sessionId = req.body["sessionId"];
+
+    tokenAuthMiddlware(req, res)
+      .then(_ => mysqlClient.getSessionNameFor(sessionId, (err, results) => {
+        if (err || !results || results.length < 1) {
+          res.status(500);
+          res.send({error: "unable to retrieve session name"});
+        } else {
+          res.status(200);
+          res.send(results[0]);
+        }
+      }))
   })
 
   app.post("/:sessionId/auth", (req, res) => {
@@ -72,10 +71,7 @@ const startServer = () => {
     const sessionId = req.params["sessionId"];
     const passcodeHash = req.body["passCode"];
 
-    const headers = req.headers
-    const userInfo = validateAuth(headers)
-
-    userInfo.then((_) => {
+    tokenAuthMiddlware(req, res).then((_) => {
       mysqlClient.verifySessionPassword(sessionId, (err, results) => {
         if (err) {
           res.status(500);
@@ -101,14 +97,15 @@ const startServer = () => {
           }
         }
       });
-    }).catch((error) => {
-      res.status(401);
-      res.send({error: "You shall not pass!"})
     })
   })
+}
 
-  app.get('*', (_, res) => {
-    res.sendFile(path.join(__dirname + '/dist/story-points/index.html'));
+const tokenAuthMiddlware = (req, res) => {
+  const headers = req.headers
+  return validateAuth(headers).catch((error) => {
+    res.status(401);
+    res.send({error: "You shall not pass!"})
   });
 }
 

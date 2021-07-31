@@ -2,6 +2,7 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const clientSecret = process.env.JWT_SECRET || "secrets";
 
+// verify auth0 token
 const validateAccessToken = async (authHeader) => {
   return await axios.get('https://nameless-meadow-6569.us.auth0.com/userinfo', {
     headers: { 'Authorization': authHeader }
@@ -10,16 +11,15 @@ const validateAccessToken = async (authHeader) => {
   })
 }
 
+// verify self issued token
 const validateIdToken = async (authHeader) => {
   try {
     return jwt.verify(authHeader.split(" ")[1], clientSecret)
   } catch(e) {
-    console.log(e)
+    console.error(`Invalid auth header: ${authHeader}`)
     return null;
   }
 }
-
-
 
 const generateJWT = (authHeader) => {
   return validateAccessToken(authHeader)
@@ -32,7 +32,6 @@ const generateJWT = (authHeader) => {
 }
 
 const decode = (token) => jwt.decode(token);
-
 
 module.exports = {
   decode,

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {flatMap} from 'rxjs/operators';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {AuthService} from '@auth0/auth0-angular';
+import {LocalStorageService} from './local-storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,18 +9,17 @@ import {AuthService} from '@auth0/auth0-angular';
 export class SessionService {
 
   constructor(private http: HttpClient,
-              private authService: AuthService) {
+              private authService: AuthService,
+              private localStorageService: LocalStorageService
+  ) {
   }
 
   getSessionDetails = (sessionId: any) => {
-    return this.authService.getAccessTokenSilently()
-      .pipe(
-        flatMap((accessToken: any) => {
-            return this.http.get(`/sessions/info/${sessionId}`,
-
-              {headers: new HttpHeaders().append('Authorization', `Bearer ${accessToken}`)});
-          }
-        ),
-      );
+    const token = this.localStorageService.getIdToken();
+    return this.http.post(
+      `/sessionDetails`,
+      { sessionId },
+      {headers: new HttpHeaders().append('Authorization', `Bearer ${token}`)}
+    );
   }
 }
