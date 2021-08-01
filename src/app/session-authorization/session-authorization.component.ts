@@ -5,6 +5,7 @@ import {LocalStorageService} from '../services/local-storage.service';
 import {flatMap, tap} from 'rxjs/operators';
 import {SessionService} from '../services/session.service';
 import {of} from 'rxjs';
+import {UserService} from "../user.service";
 
 @Component({
   selector: 'app-session-authorization',
@@ -12,20 +13,21 @@ import {of} from 'rxjs';
   styleUrls: ['./session-authorization.component.scss']
 })
 export class SessionAuthorizationComponent implements OnInit {
-  public passcode;
-
+  passcode;
   errorReasons = {
     1: 'Invalid passcode'
   };
-
-
   error: string;
   sessionName: string;
+  forgotPasswordClicked: boolean;
+  fromDashboard: boolean;
 
+  // if from dashboard do not show error, if from auth page show error
   constructor(private passwordService: PasswordService,
               private sessionService: SessionService,
+              private userService: UserService,
               private lss: LocalStorageService,
-              private route: ActivatedRoute,
+              public route: ActivatedRoute,
               private router: Router) {
   }
 
@@ -39,6 +41,7 @@ export class SessionAuthorizationComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((queryParams: ParamMap) => {
       this.error = this.errorReasons[queryParams.get('error')];
+      this.fromDashboard = queryParams.get('referrer') === 'dashboard';
     });
 
     this.route.paramMap.pipe(
@@ -52,6 +55,14 @@ export class SessionAuthorizationComponent implements OnInit {
     });
   }
 
+  forgotPasscode() {
+    this.forgotPasswordClicked = true;
+  }
+
+  cancelForgotPassword() {
+    this.forgotPasswordClicked = false;
+  }
+
   enterPasscodeForSession() {
     this.error = undefined;
 
@@ -62,7 +73,7 @@ export class SessionAuthorizationComponent implements OnInit {
       }),
       tap((sessionId: any) => {
         this.lss.cacheSessionPasscode(+sessionId, PasswordService.encode(this.passcode));
-        this.router.navigate(['sessions', sessionId], {queryParams: {auth: PasswordService.encode(this.passcode)}});
+        this.router.navigate(['sessions', sessionId]);
       })).subscribe(success => {
     }, err => {
       this.error = this.errorReasons[1];

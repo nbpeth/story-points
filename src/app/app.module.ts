@@ -60,6 +60,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { SessionAuthorizationComponent } from './session-authorization/session-authorization.component';
 import {CanActivateSession} from "./canactivate/can-activate-session";
 import {LoggedInGuard} from "./canactivate/logged-in-guard";
+import { ForgotSessionPasscodeComponent } from './forgot-session-passcode/forgot-session-passcode.component';
 
 @NgModule({
   declarations: [
@@ -93,6 +94,7 @@ import {LoggedInGuard} from "./canactivate/logged-in-guard";
     CreateSessionTileComponent,
     ChangelogDialogComponent,
     SessionAuthorizationComponent,
+    ForgotSessionPasscodeComponent,
   ],
   imports: [
     AppRoutingModule,

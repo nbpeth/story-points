@@ -1,0 +1,40 @@
+<ng-container *ngIf="!loading; else isLoading">
+  <div *ngIf="(isRoomAdmin) === false; else notAdmin">
+    <ng-container>
+      <div style="display: flex; flex-direction: column">
+        <div>
+          <mat-form-field>
+            <input matInput type="password" #name [(ngModel)]="newPassCode" (ngModelChange)=passCodeChanged($event)
+                   placeholder="Enter Passcode">
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field>
+            <input matInput type="password" #name [(ngModel)]="verifyPassCode"
+                   (ngModelChange)=verifyPassCodeChanged($event) placeholder="Verify Passcode">
+          </mat-form-field>
+        </div>
+      </div>
+      <ng-container *ngIf="!passCodesAreEqual">
+        <div class="mat-warn" style="max-width: 250px; font-size: .7rem; color:#ff6262 ">
+          Passcodes must match and must not be blank.
+        </div>
+      </ng-container>
+      <div class="full-width toppad">
+        <button class="full-width" [disabled]="!passCodesAreEqual" mat-raised-button color="primary">Change Passcode
+        </button>
+      </div>
+    </ng-container>
+  </div>
+
+  <ng-template #notAdmin>
+    Please contact your session administrator to change the passcode.
+  </ng-template>
+</ng-container>
+<ng-template #isLoading>
+  <div style="display: flex; justify-content: center">
+    <div>
+      <mat-spinner></mat-spinner>
+    </div>
+  </div>
+</ng-template>

@@ -49,12 +49,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.toggleClassTheme();
     });
 
-    console.log("hllllllo?")
-
     // issue jwts when auth0 access token changes
     this.userService.getJWT()
       .subscribe((response: { token: string }) => {
-        console.log("token?!", response)
         this.lss.set('jwt', response.token);
       });
   }

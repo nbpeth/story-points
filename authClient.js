@@ -24,20 +24,6 @@ const validateIdToken = async (authHeader) => {
 
 const generateJWT = (authHeader) => {
   return validateAccessToken(authHeader)
-    // .then(userInfo => {
-    //   return mysqlClient.getUserAdminSessions(userInfo.data.sub)
-    //     .then((rooms) => {
-    //       const adminOfRooms = rooms.results.map(results => {
-    //         return results ? results.session_id : undefined;
-    //       });
-    //       const defaultClaims = userInfo.data;
-    //
-    //       return {
-    //         ...defaultClaims,
-    //         adminOfRooms
-    //       }
-    //     })
-    // })
     .then(userInfoWithCustomClaims => {
       return jwt.sign({
         ...userInfoWithCustomClaims.data

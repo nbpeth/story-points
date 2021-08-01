@@ -51,6 +51,30 @@ const startServer = () => {
     })
   });
 
+  app.post('/user/details', (req, res) => {
+    tokenAuthMiddlware(req, res).then((userInfo) => {
+        mysqlClient.getUserAdminSessions(userInfo.sub)
+          .then((rooms) => {
+              const adminOfRooms = rooms.map(results => {
+                return results ? results["session_id"] : undefined;
+              });
+
+              res.status(200);
+              res.send({...userInfo, adminOfRooms})
+            }
+          ).catch(e => {
+          res.status(500)
+          console.error(e)
+          res.send(`An error occurred: ${e.message}`)
+        })
+      }
+    ).catch(e => {
+      res.status(500)
+      console.error(e)
+      res.send(`An error occurred: ${e.message}`)
+    })
+  });
+
   app.post("/sessionDetails", (req, res) => {
     const sessionId = req.body["sessionId"];
 

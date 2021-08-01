@@ -184,7 +184,7 @@ getSessionState = (sessionId, onComplete) => {
   runQuery(statement, onComplete);
 }
 
-getSessionDetails = (sessionId, onComplete) => {
+getSessionNameFor = (sessionId, onComplete) => {
   const sql = `
     SELECT s.session_name as sessionName, s.id
     FROM sessions s
@@ -337,6 +337,6 @@ module.exports = {
   getSessionData,
   verifySessionPassword,
   setSessionAdmin,
-  getSessionDetails,
+  getSessionNameFor,
   getUserAdminSessions
 }

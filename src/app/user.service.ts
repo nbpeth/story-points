@@ -38,21 +38,6 @@ export class UserService {
     });
   }
 
-  /*
-
-    Have API create its own JWT
-      in app can activate
-        pass API JWT in to verify
-          if it is invalid/expired or missing
-            pass access token from auth0 and validate
-
-    use this token for all http requests, not access token from auth0
-
-    can use custom claims on token for user
-      which rooms you have admin access to, etc
-
-   */
-
   createUser(user: User) {
     return this.http.post(
       `${environment.host}/user`, user,
@@ -62,8 +47,14 @@ export class UserService {
       console.error('Error creating user', error);
       this.logoutWithPrejudice('An error occurred during login or you are not authorized to use this app');
     });
+  }
 
-
+  getUserInfo() {
+    return this.http.post(
+      `${environment.host}/user/details`,
+      {},
+      {headers: new HttpHeaders().append('Authorization', `Bearer ${this.lss.get('jwt')}`)}
+    );
   }
 
   userChanges(): Observable<User> {
@@ -78,9 +69,6 @@ export class UserService {
   getJWT() {
     return this.authService.getAccessTokenSilently()
       .pipe(
-        tap(x => {
-          console.log("??", x)
-        }),
         flatMap((accessToken: string) => {
           return this.http.post('/getToken',
             {},
@@ -114,7 +102,6 @@ export class UserService {
 
   logout() {
     this.authService.logout({returnTo: `${this.doc.location.origin}`});
-    // this.authService.logout({ returnTo: `${this.doc.location.origin}/logout?unauthorized` });
   }
 
   isLoggedIn(): Observable<boolean> {
@@ -126,14 +113,12 @@ export class UserService {
   }
 
   isLoginUser(loginEmail: string): boolean {
-    // console.log("isLoginUser", this.user.email, loginEmail)
     return this.user && this.user.email === loginEmail; // change to providerId
   }
-
-
 }
 
 export interface User {
+  adminOfRooms?: number[];
   name?: string;
   given_name?: string;
   family_name?: string;
