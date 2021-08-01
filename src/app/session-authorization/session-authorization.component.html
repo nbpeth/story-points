@@ -11,12 +11,9 @@
         <ng-container *ngIf="forgotPasswordClicked && route.paramMap | async as routeParams; else standardForm">
           <ng-container>
             <forgot-session-passcode
+              (exitForm)="cancelForgotPassword()"
               [sessionId]="routeParams['params']['id']"
             ></forgot-session-passcode>
-            <div class="full-width toppad">
-              <button class="full-width" (click)="cancelForgotPassword()" mat-raised-button color="accent">Cancel
-              </button>
-            </div>
           </ng-container>
         </ng-container>
 

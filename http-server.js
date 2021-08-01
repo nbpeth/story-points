@@ -75,6 +75,37 @@ const startServer = () => {
     })
   });
 
+  app.post("/changePasscode", (req, res) => {
+    tokenAuthMiddlware(req, res).then(userInfo => {
+      const sessionId = req.body["sessionId"]
+      const newPasscode = req.body["newPasscode"]
+
+      mysqlClient.getUserAdminSessions(userInfo.sub)
+        .then((rooms) => {
+          const adminOfRooms = rooms.map(results => {
+            return results ? results["session_id"] : undefined;
+          });
+
+          if (!adminOfRooms || adminOfRooms.length < 1 || !adminOfRooms.includes(+sessionId)) {
+            throw Error("User is not admin of this room and cannot change the passcode");
+          }
+
+          return mysqlClient.changeSessionPasscode(sessionId, newPasscode)
+        })
+        .then((_) => {
+          console.log(`Passcode changed for session: ${sessionId}`)
+          res.status(204);
+          res.send();
+
+        })
+        .catch((e) => {
+          console.error(e);
+          res.status(401);
+          res.send("Yea, you aren't allowed to do that.")
+        })
+    })
+  })
+
   app.post("/sessionDetails", (req, res) => {
     const sessionId = req.body["sessionId"];
 

@@ -1,7 +1,8 @@
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {User, UserService} from '../user.service';
 import {of} from 'rxjs';
 import {flatMap, single} from 'rxjs/operators';
+import {SessionService} from '../services/session.service';
 
 @Component({
   selector: 'forgot-session-passcode',
@@ -10,6 +11,7 @@ import {flatMap, single} from 'rxjs/operators';
 })
 export class ForgotSessionPasscodeComponent implements OnChanges {
   @Input() sessionId: string;
+  @Output() exitForm: EventEmitter<string> = new EventEmitter<string>();
   isRoomAdmin: boolean;
   loading: boolean;
 
@@ -17,7 +19,7 @@ export class ForgotSessionPasscodeComponent implements OnChanges {
   verifyPassCode: string;
   passCodesAreEqual: boolean;
 
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService, private sessionService: SessionService) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -37,6 +39,19 @@ export class ForgotSessionPasscodeComponent implements OnChanges {
         this.loading = false;
       }
     );
+  }
+
+  submitNewPasscode() {
+    this.loading = true;
+    this.sessionService.changePasscode(this.sessionId, this.newPassCode)
+      .subscribe(success => {
+        this.exitForm.next('Passcode changed');
+        this.loading = false;
+      });
+  }
+
+  cancel() {
+    this.exitForm.next('Cancelled');
   }
 
   passCodeChanged = (_: Event) => {

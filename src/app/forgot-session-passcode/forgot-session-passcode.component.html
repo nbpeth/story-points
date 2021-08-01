@@ -1,5 +1,5 @@
 <ng-container *ngIf="!loading; else isLoading">
-  <div *ngIf="(isRoomAdmin) === false; else notAdmin">
+  <div *ngIf="(isRoomAdmin) === true; else notAdmin">
     <ng-container>
       <div style="display: flex; flex-direction: column">
         <div>
@@ -21,9 +21,15 @@
         </div>
       </ng-container>
       <div class="full-width toppad">
-        <button class="full-width" [disabled]="!passCodesAreEqual" mat-raised-button color="primary">Change Passcode
+        <button class="full-width" (click)="submitNewPasscode()" [disabled]="!passCodesAreEqual" mat-raised-button color="primary">Change Passcode
         </button>
       </div>
+
+      <div class="full-width toppad">
+        <button (click)="cancel()" class="full-width" mat-raised-button color="accent">Cancel
+        </button>
+      </div>
+
     </ng-container>
   </div>
 

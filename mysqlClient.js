@@ -60,6 +60,20 @@ getUserAdminSessions = (providerId) => {
   return runQueryPromise(statement);
 }
 
+changeSessionPasscode = (sessionId, newPasscode) => {
+  const sql = `
+    INSERT INTO session_passcode
+    (session_id, passcode)
+    VALUES (?, ?) ON DUPLICATE KEY
+    UPDATE
+      passcode = ?
+  `;
+
+  const statement = mysql.format(sql, [sessionId, newPasscode, newPasscode]);
+
+  return runQueryPromise(statement);
+}
+
 getAllSessions = (onComplete) => {
   const sql = `select a.id as id, a.id, a.sessionName, a.passcodeEnabled, lastActive, participantCount
                from (select s.id, s.session_name as sessionName, s.passcode_enabled as passcodeEnabled
@@ -338,5 +352,6 @@ module.exports = {
   verifySessionPassword,
   setSessionAdmin,
   getSessionNameFor,
-  getUserAdminSessions
+  getUserAdminSessions,
+  changeSessionPasscode
 }
