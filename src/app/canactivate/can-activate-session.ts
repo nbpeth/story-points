@@ -32,7 +32,8 @@ export class CanActivateSession implements CanActivate {
         catchError((err) => {
           console.error(err);
           const id = route.paramMap.get('id');
-          this.router.navigate(['sessions', id, 'login'], { queryParams: {...route.queryParams, error: 1} });
+          const error = !passCode ? 0 : 1;
+          this.router.navigate(['sessions', id, 'login'], { queryParams: {error} });
 
           return of(false);
         })
@@ -46,6 +47,10 @@ export class CanActivateSession implements CanActivate {
       return queryPassword;
     }
 
-    return this.localStorage.getCachedPasscodeForSession(sessionId);
+    const sessionStoragePassword = JSON.parse(sessionStorage.getItem(`${sessionId}`) || '{}');
+
+    return sessionStoragePassword && sessionStoragePassword.password ?
+      sessionStoragePassword.password :
+      this.localStorage.getCachedPasscodeForSession(sessionId);
   }
 }

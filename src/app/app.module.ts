@@ -57,10 +57,10 @@ import {GestureConfig} from '@angular/material/core';
 import {AuthModule} from '@auth0/auth0-angular';
 import {environment} from '../environments/environment';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import { SessionAuthorizationComponent } from './session-authorization/session-authorization.component';
-import {CanActivateSession} from "./canactivate/can-activate-session";
-import {LoggedInGuard} from "./canactivate/logged-in-guard";
-import { ForgotSessionPasscodeComponent } from './forgot-session-passcode/forgot-session-passcode.component';
+import {SessionAuthorizationComponent} from './session-authorization/session-authorization.component';
+import {CanActivateSession} from './canactivate/can-activate-session';
+import {LoggedInGuard} from './canactivate/logged-in-guard';
+import {ForgotSessionPasscodeComponent} from './forgot-session-passcode/forgot-session-passcode.component';
 
 @NgModule({
   declarations: [

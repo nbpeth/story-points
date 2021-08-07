@@ -1,14 +1,15 @@
-<ng-container (keydown.enter)="enterPasscodeForSession()">
+<ng-container (keydown.enter)="enterPasswordForSession()">
   <div
     class="mat-app-background container">
     <mat-card style="max-width: 300px;">
-      <mat-card-title>
-        {{sessionName}}
-      </mat-card-title>
-      <mat-card-subtitle>This session requires a passcode to enter</mat-card-subtitle>
-      <mat-card-content>
 
+      <mat-card-content>
+        <mat-card-title>
+          {{sessionName}}
+        </mat-card-title>
         <ng-container *ngIf="forgotPasswordClicked && route.paramMap | async as routeParams; else standardForm">
+
+          <mat-card-subtitle>Enter a new passcode</mat-card-subtitle>
           <ng-container>
             <forgot-session-passcode
               (exitForm)="cancelForgotPassword()"
@@ -18,21 +19,23 @@
         </ng-container>
 
         <ng-template #standardForm>
+          <mat-card-subtitle>This session requires a passcode to enter</mat-card-subtitle>
           <div class="full-width">
             <mat-form-field appearance="fill" class="full-width">
               <mat-label class="full-width">Input</mat-label>
               <input [(ngModel)]="passcode" type="password" matInput class="full-width">
             </mat-form-field>
-            <mat-error *ngIf="error && !fromDashboard">
+            <mat-checkbox [(ngModel)]="savePassword" class="example-margin">Remember password</mat-checkbox>
+            <mat-error *ngIf="error">
               {{error}}
             </mat-error>
           </div>
           <div class="full-width toppad">
-            <button class="full-width" (click)="enterPasscodeForSession()" mat-raised-button color="primary">Submit
+            <button class="full-width" (click)="enterPasswordForSession()" mat-raised-button color="primary">Submit
             </button>
           </div>
           <div class="full-width toppad">
-            <button (click)="forgotPasscode()" mat-stroked-button color="accent">Forgot Passcode?</button>
+            <button (click)="forgotPassword()" mat-stroked-button color="accent">Forgot Passcode?</button>
           </div>
         </ng-template>
 

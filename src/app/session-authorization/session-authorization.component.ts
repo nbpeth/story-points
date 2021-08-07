@@ -5,7 +5,7 @@ import {LocalStorageService} from '../services/local-storage.service';
 import {flatMap, tap} from 'rxjs/operators';
 import {SessionService} from '../services/session.service';
 import {of} from 'rxjs';
-import {UserService} from "../user.service";
+import {UserService} from '../user.service';
 
 @Component({
   selector: 'app-session-authorization',
@@ -15,12 +15,13 @@ import {UserService} from "../user.service";
 export class SessionAuthorizationComponent implements OnInit {
   passcode;
   errorReasons = {
+    0: '',
     1: 'Invalid passcode'
   };
   error: string;
   sessionName: string;
   forgotPasswordClicked: boolean;
-  fromDashboard: boolean;
+  savePassword: boolean;
 
   // if from dashboard do not show error, if from auth page show error
   constructor(private passwordService: PasswordService,
@@ -34,14 +35,13 @@ export class SessionAuthorizationComponent implements OnInit {
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.key === 'Enter') {
-      this.enterPasscodeForSession();
+      this.enterPasswordForSession();
     }
   }
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((queryParams: ParamMap) => {
       this.error = this.errorReasons[queryParams.get('error')];
-      this.fromDashboard = queryParams.get('referrer') === 'dashboard';
     });
 
     this.route.paramMap.pipe(
@@ -55,25 +55,27 @@ export class SessionAuthorizationComponent implements OnInit {
     });
   }
 
-  forgotPasscode() {
+  forgotPassword() {
     this.forgotPasswordClicked = true;
   }
 
   cancelForgotPassword() {
+    this.error = undefined;
     this.forgotPasswordClicked = false;
   }
 
-  enterPasscodeForSession() {
-    this.error = undefined;
-
+  enterPasswordForSession() {
     this.route.paramMap.pipe(
       flatMap((pathParams: ParamMap) => {
         const sessionId = pathParams.get('id');
         return of(sessionId);
       }),
       tap((sessionId: any) => {
-        this.lss.cacheSessionPasscode(+sessionId, PasswordService.encode(this.passcode));
-        this.router.navigate(['sessions', sessionId]);
+        const encodedPassword = PasswordService.encode(this.passcode);
+        if (this.savePassword) {
+          this.lss.cacheSessionPasscode(+sessionId, encodedPassword);
+        }
+        this.router.navigate(['sessions', sessionId], { queryParams: {auth: encodedPassword }});
       })).subscribe(success => {
     }, err => {
       this.error = this.errorReasons[1];

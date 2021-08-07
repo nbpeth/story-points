@@ -1,7 +1,7 @@
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const clientSecret = process.env.JWT_SECRET || "secrets";
-const mysqlClient = require('./mysqlClient');
+// const mysqlClient = require('./mysqlClient');
 
 // verify auth0 token
 const validateAccessToken = async (authHeader) => {
