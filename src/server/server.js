@@ -5,6 +5,7 @@ const mysqlClient = require('./mysqlClient')
 const startServer = () => {
   const server = require('http').createServer();
   const app = require('./http-server');
+
   app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -118,15 +119,9 @@ const initHandlers = () => {
       case 'terminate-session':
         terminateSession(messageData);
         break;
-      // case 'get-session-name':
-      //   getSessionNameFor(messageData);
-      //   break;
       case 'celebrate':
         celebrate(messageData)
         break
-      // case 'create-user':
-      //   createUser(messageData)
-      //   break;
     }
   };
 

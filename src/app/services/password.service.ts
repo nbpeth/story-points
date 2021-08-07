@@ -34,7 +34,7 @@ export class PasswordService {
         }),
         catchError((error: any) => {
 
-          this.localStorage.clearSessionPasscodeCache(sessionId);
+          this.localStorage.clearSessionPasswordCache(sessionId);
 
           return throwError(error);
         })

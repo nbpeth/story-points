@@ -150,7 +150,7 @@ export class LocalStorageService {
     }
   }
 
-  clearSessionPasscodeCache = (sessionId: any) => {
+  clearSessionPasswordCache = (sessionId: any) => {
       const appState: AppState = this.getState();
 
       const session = this.createOrGetSession(sessionId) as Session;
