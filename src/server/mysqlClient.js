@@ -74,7 +74,7 @@ changeSessionPasscode = (sessionId, newPasscode) => {
   return runQueryPromise(statement);
 }
 
-getAllSessions = (onComplete) => {
+getAllSessions = () => {
   const sql = `select a.id as id, a.id, a.sessionName, a.passcodeEnabled, lastActive, participantCount
                from (select s.id, s.session_name as sessionName, s.passcode_enabled as passcodeEnabled
                      from sessions s) as a
@@ -91,10 +91,10 @@ getAllSessions = (onComplete) => {
 
   const statement = mysql.format(sql, []);
 
-  runQuery(statement, onComplete)
+  return runQueryPromise(statement)
 }
 
-createSession = (messageData, onComplete) => {
+createSession = (messageData) => {
   const payload = messageData.payload;
 
   const {createWithPasscode, name} = payload && payload.sessionData || {};
@@ -116,21 +116,21 @@ setSessionAdmin = (sessionId, providerId) => {
   return runQueryPromise(statement)
 }
 
-writePassCode = (sessionId, messageData, onComplete) => {
+writePassCode = (sessionId, messageData) => {
   const payload = messageData.payload;
   const {passCode} = payload && payload.sessionData || {};
 
   const sql = 'INSERT INTO session_passcode (session_id, passcode) VALUES (?, ?)';
   const statement = mysql.format(sql, [sessionId, passCode]);
 
-  runQuery(statement, onComplete);
+  return runQueryPromise(statement);
 }
 
 terminateSession = (sessionId, onComplete) => {
   const sql = 'DELETE FROM sessions WHERE id = (?)';
   const statement = mysql.format(sql, [sessionId]);
 
-  runQuery(statement, onComplete);
+  return runQueryPromise(statement, onComplete);
 }
 
 getSessionParticipants = (sessionId) => {
@@ -161,37 +161,6 @@ getSessionParticipants = (sessionId) => {
   const statement = mysql.format(sql, [sessionId]);
 
   return runQueryPromise(statement);
-}
-
-
-getSessionState = (sessionId, onComplete) => {
-  const sql = `
-    SELECT s.id,
-           s.points_visible   as pointsVisible,
-           s.session_name     as sessionName,
-           s.passcode_enabled as passcodeEnabled,
-           p.participant_name as participantName,
-           p.id               as participantId,
-           p.point,
-           p.is_admin         as isAdmin,
-           p.has_voted        as hasVoted,
-           p.has_revoted      as hasAlreadyVoted,
-           p.login_email      as loginEmail,
-           p.provider_id      as providerId,
-           u.photo_url        as photoUrl,
-           u.first_name       as firstName,
-           u.last_name        as lastName
-    FROM sessions s,
-         participant p,
-         user u
-    WHERE s.id = ?
-      AND s.id = p.session_id
-      AND p.provider_id = u.provider_id;
-  `;
-
-  const statement = mysql.format(sql, [sessionId]);
-
-  runQuery(statement, onComplete);
 }
 
 getSessionNameFor = (sessionId, onComplete) => {
@@ -244,7 +213,7 @@ removeParticipantFromSession = (participantId, sessionId, onComplete) => {
   return runQueryPromise(statement, onComplete);
 }
 
-pointWasSubmitted = (participantId, value, hasAlreadyVoted, onComplete) => {
+pointWasSubmitted = (participantId, value, hasAlreadyVoted) => {
   const sql = `
     UPDATE participant
     SET point       = ?,
@@ -255,10 +224,10 @@ pointWasSubmitted = (participantId, value, hasAlreadyVoted, onComplete) => {
 
   const statement = mysql.format(sql, [value, hasAlreadyVoted, participantId]);
 
-  runQuery(statement, onComplete);
+  return runQueryPromise(statement);
 }
 
-resetPointsForSession = (sessionId, onComplete) => {
+resetPointsForSession = (sessionId) => {
   const sql = `
     UPDATE participant p, sessions s
     SET p.point = 0, p.has_voted = false, s.points_visible = false, p.has_revoted = false
@@ -268,7 +237,7 @@ resetPointsForSession = (sessionId, onComplete) => {
 
   const statement = mysql.format(sql, [sessionId, sessionId]);
 
-  runQuery(statement, onComplete);
+  return runQueryPromise(statement);
 }
 
 revealPointsForSession = (sessionId) => {

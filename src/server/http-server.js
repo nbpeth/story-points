@@ -183,10 +183,10 @@ const validateAuth = (headers) => {
   }
 }
 
+// this user is used to store metadata sourced from the auth provider about a user that is distributed to other members of a session; e.g. photo url, name
 const createUser = (req, res) => {
   mysqlClient.createUser(req.body)
-    .then(results => {
-      console.log(`Create user: "${results}"`)
+    .then(_ => {
       res.status(200);
       res.send(req.body);
     })

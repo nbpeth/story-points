@@ -47,21 +47,19 @@ const handleNewClients = (ws, request) => {
 const initHandlers = () => {
   const wss = startServer();
 
-  getAllSession = () => {
-    const getAllSessionsCallback = (err, results) => {
-      if (err) {
+  const getAllSession = () => {
+    mysqlClient.getAllSessions()
+      .then(results => {
+        notifyCaller(formatMessage('state-of-the-state', {sessions: results}))
+      })
+      .catch(e => {
         sendErrorToCaller('Unable to get sessions', err.message);
-      }
-      notifyCaller(formatMessage('state-of-the-state', {sessions: results}))
-    }
-
-    mysqlClient.getAllSessions(getAllSessionsCallback)
+      });
   }
 
-  getStateOfTheAppForCaller = () => {
+  const getStateOfTheAppForCaller = () => {
     getAllSession()
   }
-
 
   handleIncomingMessages = (message) => {
     const messageData = JSON.parse(message);
@@ -102,7 +100,7 @@ const initHandlers = () => {
     }
   };
 
-  getSessionState = (sessionId, notifier, overrideEvent, extraProps) => {
+  const getSessionState = (sessionId, notifier, overrideEvent, extraProps) => {
     mysqlClient.getSessionData(sessionId)
       .then(sessionStateResults => {
         if (!sessionStateResults || sessionStateResults.length < 1) {
@@ -128,11 +126,11 @@ const initHandlers = () => {
       });
   }
 
-  getStateOfTheAppForClients = () => {
+  const getStateOfTheAppForClients = () => {
     getAllSession()
   }
 
-  terminateSession = (messageData) => {
+  const terminateSession = (messageData) => {
     const payload = messageData.payload;
     const requestedSession = payload.sessionId;
 
@@ -144,49 +142,56 @@ const initHandlers = () => {
       }
     }
 
-    mysqlClient.terminateSession(requestedSession, callback);
+    mysqlClient.terminateSession(requestedSession)
+      .then(results => {
+        getStateOfTheAppForClients();
+      })
+      .catch(e => {
+        console.error('Unable to terminate sessions', e.message);
+        sendErrorToCaller('Unable to terminate sessions', e.message);
+      })
   };
 
-  revealPoints = (messageData) => {
+  const revealPoints = (messageData) => {
     const {sessionId} = messageData.payload;
 
     mysqlClient.revealPointsForSession(sessionId)
       .then(results => {
-        getSessionState(sessionId, notifyClients)
+        return getSessionState(sessionId, notifyClients)
       })
       .catch(e => {
-        console.error(`Unable to reveal points for session: ${sessionId}. Because: "${err}"`)
-        sendErrorToCaller('Unable to reveal points', err.message);
+        console.error(`Unable to reveal points for session: ${sessionId}. Because: "${e}"`)
+        sendErrorToCaller('Unable to reveal points', e.message);
       })
   };
 
-  resetPoints = (messageData) => {
+  const resetPoints = (messageData) => {
     const {sessionId} = messageData.payload;
 
-    mysqlClient.resetPointsForSession(sessionId, (err) => {
-      if (err) {
-        sendErrorToCaller('Unable to reset points', err.message);
-      } else {
-        getSessionState(sessionId, notifyClients);
-      }
-    })
+    mysqlClient.resetPointsForSession(sessionId)
+      .then(results => {
+        return getSessionState(sessionId, notifyClients);
+      })
+      .catch(e => {
+        console.error('Unable to reset points', e.message);
+        sendErrorToCaller('Unable to reset points', e.message);
+      });
   };
 
-  pointWasSubmitted = (messageData) => {
+  const pointWasSubmitted = (messageData) => {
     const {userId, value, sessionId, hasAlreadyVoted} = messageData.payload;
 
-    const pointWasSubmittedCallback = (err) => {
-      if (err) {
-        sendErrorToCaller('Unable to submit point', err.message);
-      } else {
-        getSessionState(sessionId, notifyClients);
-      }
-    }
-
-    mysqlClient.pointWasSubmitted(userId, value, hasAlreadyVoted, pointWasSubmittedCallback);
+    mysqlClient.pointWasSubmitted(userId, value, hasAlreadyVoted)
+      .then(results => {
+        return getSessionState(sessionId, notifyClients);
+      })
+      .catch(e => {
+        console.error('Unable to submit point', e.message)
+        sendErrorToCaller('Unable to submit point', e.message);
+      })
   };
 
-  addParticipantToSession = (messageData) => {
+  const addParticipantToSession = (messageData) => {
     const {sessionId, userName, isAdmin, providerId, loginEmail} = messageData.payload;
 
     mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, providerId, loginEmail)
@@ -202,7 +207,7 @@ const initHandlers = () => {
       })
   };
 
-  removeParticipantFromSession = (messageData) => {
+  const removeParticipantFromSession = (messageData) => {
     const {participantId, userName, sessionId, providerId, loginEmail} = messageData.payload;
 
     mysqlClient.removeParticipantFromSession(participantId, sessionId)
@@ -218,7 +223,7 @@ const initHandlers = () => {
       });
   };
 
-  celebrate = (messageData) => {
+  const celebrate = (messageData) => {
     const {celebration, celebrator, sessionId} = messageData.payload;
 
     mysqlClient.incrementCelebration(sessionId)
@@ -229,7 +234,7 @@ const initHandlers = () => {
     })
   }
 
-  createNewSession = (messageData) => {
+  const  createNewSession = (messageData) => {
     mysqlClient.createSession(messageData)
       .then(results => {
         const sessionId = results["insertId"]
@@ -254,22 +259,22 @@ const initHandlers = () => {
   };
 
 
-  sendErrorToCaller = (message, reason) => {
+  const sendErrorToCaller = (message, reason) => {
     // console.error(`${message}: ${reason}`);
     notifyCaller(formatMessage('error', {message: message}))
   }
 
-  formatMessage = (eventType, payload, targetSession) => ({
+  const formatMessage = (eventType, payload, targetSession) => ({
     eventType: eventType,
     payload: payload,
     targetSession: targetSession,
   });
 
-  notifyClients = (message) => {
+  const notifyClients = (message) => {
     notifyCaller(message);
   };
 
-  notifyCaller = (message) => {
+  const notifyCaller = (message) => {
     wss.clients
       .forEach(client => {
         const isTargeted = message.payload.sessionId !== undefined;
