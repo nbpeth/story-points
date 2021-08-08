@@ -1,8 +1,6 @@
 const mysql = require('mysql');
 let pool;
 
-// can refactor everything to use promises now!
-
 initDB = (onComplete) => {
   pool = mysql.createPool(process.env.SPMYSQL_URL)
 
@@ -33,20 +31,6 @@ runQueryPromise = (statement) => {
   });
 }
 
-
-runQuery = (statement, onComplete) => {
-  pool.getConnection((err, con) => {
-    if (err) {
-      console.log('error getConnection to db', err);
-    }
-
-    con.query(statement, (err, results, fields) => {
-      onComplete && onComplete(err, results, fields);
-
-      con.release();
-    });
-  })
-}
 
 getUserAdminSessions = (providerId) => {
   const sql = `
@@ -126,11 +110,11 @@ writePassCode = (sessionId, messageData) => {
   return runQueryPromise(statement);
 }
 
-terminateSession = (sessionId, onComplete) => {
+terminateSession = (sessionId) => {
   const sql = 'DELETE FROM sessions WHERE id = (?)';
   const statement = mysql.format(sql, [sessionId]);
 
-  return runQueryPromise(statement, onComplete);
+  return runQueryPromise(statement);
 }
 
 getSessionParticipants = (sessionId) => {
@@ -163,7 +147,7 @@ getSessionParticipants = (sessionId) => {
   return runQueryPromise(statement);
 }
 
-getSessionNameFor = (sessionId, onComplete) => {
+getSessionNameFor = (sessionId) => {
   const sql = `
     SELECT s.session_name as sessionName, s.id
     FROM sessions s
@@ -172,7 +156,7 @@ getSessionNameFor = (sessionId, onComplete) => {
 
   const statement = mysql.format(sql, [sessionId]);
 
-  return runQueryPromise(statement, onComplete);
+  return runQueryPromise(statement);
 }
 
 getSessionData = (sessionId) => {
@@ -189,7 +173,7 @@ getSessionData = (sessionId) => {
 }
 
 
-addParticipantToSession = (sessionId, userName, isAdmin, providerId, loginEmail, onComplete) => {
+addParticipantToSession = (sessionId, userName, isAdmin, providerId, loginEmail) => {
   const sql = `
     INSERT INTO participant (session_id, participant_name, provider_id, point, is_admin, login_email)
     VALUES (?, ?, ?, ?, ?, ?);
@@ -197,10 +181,10 @@ addParticipantToSession = (sessionId, userName, isAdmin, providerId, loginEmail,
 
   const statement = mysql.format(sql, [sessionId, userName, providerId, 0, isAdmin, loginEmail]);
 
-  return runQueryPromise(statement, onComplete);
+  return runQueryPromise(statement);
 }
 
-removeParticipantFromSession = (participantId, sessionId, onComplete) => {
+removeParticipantFromSession = (participantId, sessionId) => {
   const sql = `
     DELETE
     FROM participant
@@ -210,7 +194,7 @@ removeParticipantFromSession = (participantId, sessionId, onComplete) => {
 
   const statement = mysql.format(sql, [participantId, sessionId]);
 
-  return runQueryPromise(statement, onComplete);
+  return runQueryPromise(statement);
 }
 
 pointWasSubmitted = (participantId, value, hasAlreadyVoted) => {
@@ -251,12 +235,11 @@ revealPointsForSession = (sessionId) => {
   return runQueryPromise(statement);
 }
 
-createUser = (user, onComplete) => {
+createUser = (user) => {
   const {given_name, family_name, email, name, picture, sub} = user;
 
   if (!email || !sub) {
-    console.error(`No ID or Provider, unable to write user. ID: '${id}', Provider: '${provider}'`)
-    onComplete("Missing user id or provider id");
+    // console.error(`No ID or Provider, unable to write user. ID: '${id}', Provider: '${provider}'`)
   } else {
 
     // find a way to migrate existing users until they're all moved over
