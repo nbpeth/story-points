@@ -6,7 +6,7 @@ const startServer = () => {
   const server = require('http').createServer();
   const app = require('./http-server');
 
-  app.use(function(req, res, next) {
+  app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
@@ -18,7 +18,7 @@ const startServer = () => {
   wss.on('connection', handleNewClients);
 
   setInterval(() => {
-    // keep connections alive
+    // keep connections alive by blasting them with messages every 30 seconds
     console.log('clients', wss.clients.size);
     wss.clients.forEach((client) => {
       client.send(JSON.stringify({}))
@@ -62,35 +62,11 @@ const initHandlers = () => {
     getAllSession()
   }
 
-  getSessionState = (sessionId, notifier, overrideEvent, extraProps) => {
-    mysqlClient.getSessionData(sessionId, (err, sessionStateResults) => {
-
-      if (err || !sessionStateResults || sessionStateResults.length < 1) {
-        sendErrorToCaller('Unable to fetch session state', err.message);
-      } else {
-        mysqlClient.getSessionParticipants(sessionId, (err, results) => {
-          if (err) {
-            sendErrorToCaller('Unable to fetch session participants', err.message);
-          } else {
-            notifyCaller(formatMessage(overrideEvent ? overrideEvent : 'session-state', {
-              ...extraProps,
-              sessionId: sessionId, sessionName:sessionStateResults[0].sessionName,
-              participants: results, passcodeEnabled: sessionStateResults[0].passcodeEnabled}
-            ));
-          }
-        })
-      }
-    })
-  }
-
-  getStateOfTheAppForClients = () => {
-    getAllSession()
-  }
 
   handleIncomingMessages = (message) => {
     const messageData = JSON.parse(message);
     const eventType = messageData.eventType;
-    // console.log('incoming!', messageData)
+    console.log('incoming!', messageData)
     switch (eventType) {
       case 'state-of-the-state':
         getStateOfTheAppForCaller();
@@ -99,7 +75,8 @@ const initHandlers = () => {
         createNewSession(messageData);
         break;
       case 'session-state':
-        getSessionStateUsing(messageData);
+        const {sessionId} = messageData.payload;
+        getSessionState(sessionId);
         break;
       case 'participant-joined':
         addParticipantToSession(messageData);
@@ -125,6 +102,36 @@ const initHandlers = () => {
     }
   };
 
+  getSessionState = (sessionId, notifier, overrideEvent, extraProps) => {
+    mysqlClient.getSessionData(sessionId)
+      .then(sessionStateResults => {
+        if (!sessionStateResults || sessionStateResults.length < 1) {
+          return Promise.reject(`No session for id: "${sessionId}"`);
+        }
+
+        return Promise.all([
+          mysqlClient.getSessionParticipants(sessionId),
+          sessionStateResults
+        ])
+      })
+      .then(res => {
+        const [results, sessionStateResults] = res;
+        notifyCaller(formatMessage(overrideEvent ? overrideEvent : 'session-state', {
+            ...extraProps,
+            sessionId: sessionId, sessionName: sessionStateResults[0].sessionName,
+            participants: results, passcodeEnabled: sessionStateResults[0].passcodeEnabled
+          }
+        ));
+      })
+      .catch(e => {
+        sendErrorToCaller('Unable to fetch session state', e.message)
+      });
+  }
+
+  getStateOfTheAppForClients = () => {
+    getAllSession()
+  }
+
   terminateSession = (messageData) => {
     const payload = messageData.payload;
     const requestedSession = payload.sessionId;
@@ -143,14 +150,14 @@ const initHandlers = () => {
   revealPoints = (messageData) => {
     const {sessionId} = messageData.payload;
 
-    mysqlClient.revealPointsForSession(sessionId, (err) => {
-      if (err) {
-        console.error(err)
+    mysqlClient.revealPointsForSession(sessionId)
+      .then(results => {
+        getSessionState(sessionId, notifyClients)
+      })
+      .catch(e => {
+        console.error(`Unable to reveal points for session: ${sessionId}. Because: "${err}"`)
         sendErrorToCaller('Unable to reveal points', err.message);
-      } else {
-        getSessionState(sessionId, notifyClients);
-      }
-    })
+      })
   };
 
   resetPoints = (messageData) => {
@@ -161,25 +168,6 @@ const initHandlers = () => {
         sendErrorToCaller('Unable to reset points', err.message);
       } else {
         getSessionState(sessionId, notifyClients);
-      }
-    })
-  };
-
-  getSessionStateUsing = (messageData) => {
-    const eventType = messageData.eventType;
-    const {sessionId} = messageData.payload;
-
-    mysqlClient.getSessionData(sessionId, (err, sessionStateResults) => {
-      if (err || !sessionStateResults || sessionStateResults.length < 1) {
-        sendErrorToCaller('Unable to fetch session state', err.message);
-      } else {
-        mysqlClient.getSessionParticipants(sessionId, (err, results) => {
-          if (err) {
-            sendErrorToCaller('Unable to fetch session participants', err.message);
-          } else {
-            notifyCaller(formatMessage(eventType, {sessionId: sessionId, sessionName:sessionStateResults[0].sessionName, participants: results, passcodeEnabled: sessionStateResults[0].passcodeEnabled}));
-          }
-        })
       }
     })
   };
@@ -201,80 +189,70 @@ const initHandlers = () => {
   addParticipantToSession = (messageData) => {
     const {sessionId, userName, isAdmin, providerId, loginEmail} = messageData.payload;
 
-    const callback = (err) => {
-      if (err) {
-        console.error('Unable to add participant', err.message)
-        sendErrorToCaller('Unable to add participant', err.message);
-      }
-
-      getSessionState(sessionId, notifyClients, "participant-joined", {userName, providerId});
-
-      // increment counts on the dash
-      // getAllSession();
-
-    }
-
-    mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, providerId, loginEmail, callback)
+    mysqlClient.addParticipantToSession(sessionId, userName, isAdmin, providerId, loginEmail)
+      .then(results => {
+        return getSessionState(sessionId, notifyClients, "participant-joined", {userName, providerId});
+      })
+      .then(_ => {
+        getAllSession();
+      })
+      .catch(e => {
+        console.error('Unable to add participant', e.message)
+        sendErrorToCaller('Unable to add participant', e.message);
+      })
   };
 
   removeParticipantFromSession = (messageData) => {
     const {participantId, userName, sessionId, providerId, loginEmail} = messageData.payload;
 
-    mysqlClient.removeParticipantFromSession(participantId, sessionId, (err) => {
-      if (err) {
-        sendErrorToCaller('Unable to remove participant', err.message);
-      } else {
-        getSessionState(sessionId, notifyClients, "participant-removed", {userName, providerId});
-      }
-
-      // increment counts on the dash
-      getAllSession();
-    })
+    mysqlClient.removeParticipantFromSession(participantId, sessionId)
+      .then(results => {
+        return getSessionState(sessionId, notifyClients, "participant-removed", {userName, providerId})
+      })
+      .then(_ => {
+        getAllSession();
+      })
+      .catch(e => {
+        console.error(`Unable to remove participant: "${participantId}" from session "${sessionId}" because: ${e.message}`)
+        sendErrorToCaller('Unable to remove participant', e.message);
+      });
   };
 
   celebrate = (messageData) => {
-    const { celebration, celebrator, sessionId } = messageData.payload;
+    const {celebration, celebrator, sessionId} = messageData.payload;
 
-    mysqlClient.incrementCelebration(sessionId);
-
-    notifyClients(formatMessage("celebrate", {celebration, celebrator, sessionId}))
+    mysqlClient.incrementCelebration(sessionId)
+      .then(_ => {
+        notifyClients(formatMessage("celebrate", {celebration, celebrator, sessionId}))
+      }).catch(e => {
+      console.error(`Could not increment celebration: "${e}"`)
+    })
   }
 
   createNewSession = (messageData) => {
-
-    const createSessionCallback = (err, results, fields) => {
-      if (err) {
-        console.log("createSessionCallback error?", err)
-        sendErrorToCaller('Unable to create session', err.message);
-      } else {
+    mysqlClient.createSession(messageData)
+      .then(results => {
         const sessionId = results["insertId"]
 
-        mysqlClient.setSessionAdmin(sessionId, messageData["payload"]["sessionData"]["createdBy"])
-        mysqlClient.writePassCode(sessionId, messageData, (err) => {
-          if (err) {
-            sendErrorToCaller('Unable to create session', err.message);
-          } else {
-            getAllSession()
-          }
-        })
-      }
-    }
-
-    mysqlClient.createSession(messageData, createSessionCallback);
+        return Promise.all([
+          mysqlClient.setSessionAdmin(sessionId, messageData["payload"]["sessionData"]["createdBy"]),
+          Promise.resolve(sessionId)
+        ]);
+      })
+      .then(results => {
+        const [_, sessionId] = results;
+        return mysqlClient.writePassCode(sessionId, messageData)
+      })
+      .then(_ => {
+        getAllSession()
+      })
+      .catch(e => {
+        console.error(e);
+        console.error(`Unable to create session with data: "${JSON.stringify(messageData || "{}")}" because: ${e.message}`);
+        sendErrorToCaller('Unable to create session', e.message);
+      })
   };
 
-  // createNewSession = (messageData) => {
-  //   const createSessionCallback = (err) => {
-  //     if (err) {
-  //       console.error(`Unable to create session: ${err}`)
-  //       sendErrorToCaller('Unable to create session', err.message);
-  //     } else {
-  //       getAllSession()
-  //     }
-  //   }
-  //
-  //   mysqlClient.createSession(messageData, createSessionCallback);
-  // };
 
   sendErrorToCaller = (message, reason) => {
     // console.error(`${message}: ${reason}`);
@@ -292,19 +270,18 @@ const initHandlers = () => {
   };
 
   notifyCaller = (message) => {
-    // console.log('outgoing!!!', message)
     wss.clients
       .forEach(client => {
         const isTargeted = message.payload.sessionId !== undefined;
 
-        if(isTargeted) { // can refactor to some targeting rules
+        if (isTargeted) { // can refactor to some targeting rules
           // message is targeted and client is connected to targeted session
-          const clientIsTargeted = +message.payload.sessionId === +client.targetSessionId;
-          if(clientIsTargeted) {
+          const clientIsTargeted = message.payload.sessionId == client.targetSessionId;
+          if (clientIsTargeted) {
             client.send(JSON.stringify(message));
           }
         } else {
-          if(!client.targetSessionId) {
+          if (!client.targetSessionId) {
             client.send(JSON.stringify(message));
           }
         }

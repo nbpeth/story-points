@@ -63,7 +63,7 @@ getUserAdminSessions = (providerId) => {
 changeSessionPasscode = (sessionId, newPasscode) => {
   const sql = `
     INSERT INTO session_passcode
-    (session_id, passcode)
+      (session_id, passcode)
     VALUES (?, ?) ON DUPLICATE KEY
     UPDATE
       passcode = ?
@@ -106,18 +106,14 @@ createSession = (messageData, onComplete) => {
   const sql = 'INSERT INTO sessions (session_name, passcode_enabled) VALUES (?, ?)';
   const statement = mysql.format(sql, [name, createWithPasscode]);
 
-  runQuery(statement, onComplete);
+  return runQueryPromise(statement);
 }
 
 setSessionAdmin = (sessionId, providerId) => {
   const sql = 'INSERT INTO session_admin (session_id, provider_id) VALUES (?, ?)';
   const statement = mysql.format(sql, [sessionId, providerId]);
 
-  runQuery(statement, (err) => {
-    if (err) {
-      console.error(`Unable to set session admin: '${providerId}' for session '${sessionId}'`)
-    }
-  });
+  return runQueryPromise(statement)
 }
 
 writePassCode = (sessionId, messageData, onComplete) => {
@@ -137,7 +133,7 @@ terminateSession = (sessionId, onComplete) => {
   runQuery(statement, onComplete);
 }
 
-getSessionParticipants = (sessionId, onComplete) => {
+getSessionParticipants = (sessionId) => {
   const sql = `
     SELECT s.id,
            s.points_visible   as pointsVisible,
@@ -164,7 +160,7 @@ getSessionParticipants = (sessionId, onComplete) => {
 
   const statement = mysql.format(sql, [sessionId]);
 
-  runQuery(statement, onComplete);
+  return runQueryPromise(statement);
 }
 
 
@@ -210,7 +206,7 @@ getSessionNameFor = (sessionId, onComplete) => {
   return runQueryPromise(statement, onComplete);
 }
 
-getSessionData = (sessionId, onComplete) => {
+getSessionData = (sessionId) => {
   const sql = `
     SELECT s.session_name     as sessionName,
            s.passcode_enabled as passcodeEnabled
@@ -220,7 +216,7 @@ getSessionData = (sessionId, onComplete) => {
 
   const statement = mysql.format(sql, [sessionId]);
 
-  runQuery(statement, onComplete);
+  return runQueryPromise(statement);
 }
 
 
@@ -232,7 +228,7 @@ addParticipantToSession = (sessionId, userName, isAdmin, providerId, loginEmail,
 
   const statement = mysql.format(sql, [sessionId, userName, providerId, 0, isAdmin, loginEmail]);
 
-  runQuery(statement, onComplete);
+  return runQueryPromise(statement, onComplete);
 }
 
 removeParticipantFromSession = (participantId, sessionId, onComplete) => {
@@ -245,7 +241,7 @@ removeParticipantFromSession = (participantId, sessionId, onComplete) => {
 
   const statement = mysql.format(sql, [participantId, sessionId]);
 
-  runQuery(statement, onComplete);
+  return runQueryPromise(statement, onComplete);
 }
 
 pointWasSubmitted = (participantId, value, hasAlreadyVoted, onComplete) => {
@@ -275,7 +271,7 @@ resetPointsForSession = (sessionId, onComplete) => {
   runQuery(statement, onComplete);
 }
 
-revealPointsForSession = (sessionId, onComplete) => {
+revealPointsForSession = (sessionId) => {
   const sql = `UPDATE sessions
                SET points_visible = true,
                    last_active    = ?
@@ -283,7 +279,7 @@ revealPointsForSession = (sessionId, onComplete) => {
 
   const statement = mysql.format(sql, [new Date(), sessionId]);
 
-  runQuery(statement, onComplete);
+  return runQueryPromise(statement);
 }
 
 createUser = (user, onComplete) => {
@@ -306,7 +302,7 @@ createUser = (user, onComplete) => {
     const now = new Date();
     const statement = mysql.format(sql, [given_name, family_name, sub, name, picture, now, now, email, given_name, family_name, name, picture, now, email]);
 
-    runQuery(statement, onComplete);
+    return runQueryPromise(statement);
   }
 }
 
@@ -320,10 +316,10 @@ incrementCelebration = (sessionId) => {
 
   const statement = mysql.format(sql, [sessionId, 1]);
 
-  runQuery(statement);
+  return runQueryPromise(statement);
 }
 
-verifySessionPassword = (sessionId, onComplete) => {
+verifySessionPassword = (sessionId) => {
   const sql = `select *
                from sessions s
                       left join session_passcode p on p.session_id = s.id
@@ -331,7 +327,7 @@ verifySessionPassword = (sessionId, onComplete) => {
 
   const statement = mysql.format(sql, [sessionId]);
 
-  runQuery(statement, onComplete);
+  return runQueryPromise(statement);
 }
 
 module.exports = {

@@ -135,34 +135,33 @@ const startServer = () => {
     const sessionId = req.params["sessionId"];
     const passcodeHash = req.body["passCode"];
 
-    tokenAuthMiddlware(req, res).then((_) => {
-      mysqlClient.verifySessionPassword(sessionId, (err, results) => {
-        if (err) {
-          res.status(500);
-          res.send({error: "Something bad happened"});
-        } else {
-          const noSessionData = !results || results.length < 1;
-          if (noSessionData) {
-            res.status(401);
-            res.send({error: "Invalid authorization for session"})
-          } else {
-            const row = results[0];
-            const {id, passcode, passcode_enabled} = row;
-
-            const validAuth = (id == sessionId && passcode === passcodeHash)
-
-            if (!passcode_enabled || validAuth) {
-              res.status(200);
-              res.send({ok: "yay"})
-            } else {
-              res.status(401);
-              res.send({error: "Invalid authorization for session"})
-            }
-          }
+    tokenAuthMiddlware(req, res)
+      .then((_) => {
+        return mysqlClient.verifySessionPassword(sessionId)
+      })
+      .then(results => {
+        const noSessionData = !results || results.length < 1;
+        if (noSessionData) {
+          return Promise.reject(`Invalid authorization for session: no session: "${sessionId}"`);
         }
-      });
-    })
-  })
+        const row = results[0];
+        const {id, passcode, passcode_enabled} = row;
+
+        const validAuth = (id == sessionId && passcode === passcodeHash)
+
+        if (!passcode_enabled || validAuth) {
+          res.status(200);
+          res.send({ok: "yay"})
+        } else {
+          return Promise.reject(`Invalid authorization for session: incorrect password: "${sessionId}"`);
+        }
+      })
+      .catch(e => {
+        console.error(`Error validating password for session: ${e}`)
+        res.status(401);
+        res.send("Unauthorized")
+      })
+  });
 }
 
 const tokenAuthMiddlware = (req, res) => {
@@ -185,16 +184,17 @@ const validateAuth = (headers) => {
 }
 
 const createUser = (req, res) => {
-
-  mysqlClient.createUser(req.body, (err, results) => {
-    if (err) {
-      console.error("Error creating user", err)
+  mysqlClient.createUser(req.body)
+    .then(results => {
+      console.log(`Create user: "${results}"`)
+      res.status(200);
+      res.send(req.body);
+    })
+    .catch(e => {
+      console.error(`Could not create user: "${e}"`)
       res.status(500);
       res.send({error: err})
-    } else {
-      res.send(req.body);
-    }
-  })
+    });
 }
 
 mysqlClient.initDB(startServer)
