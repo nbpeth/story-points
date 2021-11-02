@@ -1,5 +1,4 @@
-import {Injectable} from '@angular/core';
-import {AuthService, GoogleLoginProvider, SocialUser} from 'angularx-social-login';
+import {Inject, Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {SocketService} from './services/socket.service';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
@@ -7,6 +6,9 @@ import {environment} from '../environments/environment';
 import {LocalStorageService} from './services/local-storage.service';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
 import {AlertSnackbarComponent} from './alert-snackbar/alert-snackbar.component';
+import {AuthService} from '@auth0/auth0-angular';
+import {DOCUMENT} from '@angular/common';
+import {flatMap, map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -15,20 +17,23 @@ export class UserService {
   private user: User;
   private userChanged: BehaviorSubject<User> = new BehaviorSubject<User>(this.user);
   loggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  isLoggingIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
 
-  constructor(private  authService: AuthService,
+  constructor(public authService: AuthService,
+              @Inject(DOCUMENT) private doc: Document,
               private socketService: SocketService,
               private http: HttpClient,
               private lss: LocalStorageService,
               private snackBar: MatSnackBar) {
-    this.authService.authState.subscribe((user: SocialUser) => {
-      const idToken = user ? user.idToken : null;
-      this.lss.set('idToken', idToken);
+    this.authService.user$.subscribe((user: User) => {
       this.user = user;
       this.userChanged.next(user);
       this.loggedIn.next(user != null);
+
+      this.authService.idTokenClaims$.subscribe(claims => {
+        const idToken = claims && claims.__raw;
+        this.lss.set('idToken', idToken);
+      });
     });
 
 
@@ -40,13 +45,22 @@ export class UserService {
   }
 
   createUser(user: User) {
-    const idToken = this.lss.get('idToken');
-    this.http.post(`${environment.host}/user`, user, { headers: new HttpHeaders().append('Authorization', idToken) })
-      .subscribe((res) => {
-      }, error => {
-        console.error(error);
-        this.logoutWithPrejudice('An error occurred during login or you are not authorized to use this app');
-      });
+    // const idToken = this.lss.get('idToken');
+    // dont store token any more
+
+    this.authService.idTokenClaims$.pipe(
+      flatMap( (t: any) => {
+          const idToken = t && t.__raw ? t.__raw : '';
+          return this.http.post(`${environment.host}/user`, user, { headers: new HttpHeaders().append('Authorization', idToken) });
+        }
+      )
+    ).subscribe((res) => {
+    }, error => {
+      console.error('Error creating user', error);
+      this.logoutWithPrejudice('An error occurred during login or you are not authorized to use this app');
+    });
+
+
   }
 
   userChanges(): Observable<User> {
@@ -54,10 +68,15 @@ export class UserService {
   }
 
   login() {
-    this.isLoggingIn.next(true);
-    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).finally(() => {
-      this.isLoggingIn.next(false);
-    });
+    this.authService.loginWithRedirect();
+  }
+
+  isAuthenticated() {
+    return this.authService.isAuthenticated$;
+  }
+
+  isLoading() {
+    return this.authService.isLoading$;
   }
 
   logoutWithPrejudice(message: string) {
@@ -74,10 +93,8 @@ export class UserService {
   }
 
   logout() {
-    this.isLoggingIn.next(true);
-    this.authService.signOut().finally(() => {
-      this.isLoggingIn.next(false);
-    });
+    this.authService.logout({ returnTo: `${this.doc.location.origin}` });
+    // this.authService.logout({ returnTo: `${this.doc.location.origin}/logout?unauthorized` });
   }
 
   isLoggedIn(): Observable<boolean> {
@@ -88,19 +105,32 @@ export class UserService {
     return this.user;
   }
 
-  isLoginUser(loginId: string): boolean {
-    return this.user && this.user.id === loginId;
+  isLoginUser(loginEmail: string): boolean {
+    // console.log("isLoginUser", this.user.email, loginEmail)
+    return this.user && this.user.email === loginEmail; // need a better less sensitive way to identify?
   }
 }
 
 export interface User {
-  authToken: string;
-  email: string;
-  firstName: string;
-  id: string;
-  idToken: string;
-  lastName: string;
-  name: string;
-  photoUrl: string;
-  provider: string;
+  name?: string;
+  given_name?: string;
+  family_name?: string;
+  middle_name?: string;
+  nickname?: string;
+  preferred_username?: string;
+  profile?: string;
+  picture?: string;
+  website?: string;
+  email?: string;
+  email_verified?: boolean;
+  gender?: string;
+  birthdate?: string;
+  zoneinfo?: string;
+  locale?: string;
+  phone_number?: string;
+  phone_number_verified?: boolean;
+  address?: string;
+  updated_at?: string;
+  sub?: string;
+  [key: string]: any;
 }

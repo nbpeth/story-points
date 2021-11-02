@@ -65,3 +65,8 @@ FOREIGN KEY
     ON
     DELETE CASCADE
 );
+
+## Patches
+alter table user add column email varchar(255);
+alter table user drop column provider;
+alter table participant drop column login_id; -- unique email

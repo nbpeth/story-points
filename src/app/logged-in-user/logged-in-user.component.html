@@ -1,16 +1,30 @@
-<div *ngIf="user; else login">
-    <div [matMenuTriggerFor]="menu">
-      <img *ngIf="user.photoUrl" height="40" width="40" [src]="user.photoUrl" class="photo">
-      <!--    photo can be its own component-->
-    </div>
 
-    <mat-menu #menu="matMenu">
-      <div class="items">
-        <span class="greeting">Oh hey, {{user.name}}</span>
-        <span class="button" (click)="logout()">Sign Out</span>
-      </div>
-    </mat-menu>
-</div>
-<ng-template #login>
-  <button mat-stroked-button color="accent" (click)="signInWithGoogle()">Login</button>
+<ng-container *ngIf="isAuthenticated() | async; else loggedOut">
+  <div [matMenuTriggerFor]="menu">
+    <img *ngIf="user.picture" height="40" width="40" [src]="user.picture" class="photo">
+    <!--    photo can be its own component-->
+  </div>
+
+  <mat-menu #menu="matMenu">
+    <div class="items">
+      <span class="greeting">Oh hey, {{user.name}}</span>
+      <span class="button" (click)="logout()">Sign Out</span>
+    </div>
+  </mat-menu>
+</ng-container>
+
+<ng-template #loggedOut>
+
+  <ng-container *ngIf="isAuthenticating() | async; else notLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </ng-container>
+
+  <ng-template #notLoading>
+
+    <button mat-stroked-button color="accent"
+      (click)="login()"
+    >
+      Log in
+    </button>
+  </ng-template>
 </ng-template>

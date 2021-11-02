@@ -5,7 +5,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const mysqlClient = require('./mysqlClient');
 
-const clientId = process.env.SP_CLIENT_ID;
+const clientId = process.env.SP_LOGIN_AUD;
 
 const startServer = () => {
   app.use((req, res, next) => {
@@ -28,8 +28,9 @@ const startServer = () => {
   app.post('/user', (req, res) => {
     const headers = req.headers
     const validUser = validateAuth(headers)
+
     if(!validUser) {
-      console.error(`Invalid user: ${headers}`)
+      console.error(`Invalid user: ${JSON.stringify(headers || {})}`)
 
       res.status(401);
       res.send({error: "You shall not pass!"})
@@ -56,6 +57,7 @@ const validateAuth = (headers) => {
 
     return tokenIsNotExpired && tokenAudienceIsCorrectClient
   } catch(e) {
+    console.error("Validate Auth Error:", e)
     return false
   }
 }

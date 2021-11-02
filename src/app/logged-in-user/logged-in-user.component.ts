@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {User, UserService} from "../user.service";
+import {User, UserService} from '../user.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-logged-in-user',
@@ -10,7 +11,8 @@ export class LoggedInUserComponent implements OnInit {
   @Input() enableMenu = true;
   user: User;
 
-  constructor(public userService: UserService) {
+  constructor(public userService: UserService
+  ) {
   }
 
   ngOnInit() {
@@ -19,11 +21,19 @@ export class LoggedInUserComponent implements OnInit {
     });
   }
 
+  isAuthenticated(): Observable<boolean> {
+    return this.userService.isAuthenticated();
+  }
+
+  isAuthenticating(): Observable<boolean> {
+    return this.userService.isLoading();
+  }
+
   logout() {
     this.userService.logout();
   }
 
-  signInWithGoogle(): void {
+  login() {
     this.userService.login();
   }
 }

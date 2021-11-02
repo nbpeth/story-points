@@ -105,7 +105,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   submit = () => {
 
     const vote = this.participant && this.participant.point ? this.participant.point as string : 'Abstain';
-    const me = this.session.participants.find(p => p.loginId === this.participant.loginId);
+    const me = this.session.participants.find(p => p.loginEmail === this.participant.loginEmail);
     // ew, ew ew. need to keep "this.participant" up to date maybe - this is nasty
     this.socketService.send(
       new PointSubmittedForParticipantMessage(
@@ -161,7 +161,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   joinSession = (maybeNewParticipant: Participant, isAdmin: boolean = false) => {
     if (maybeNewParticipant) {
       this.participant = maybeNewParticipant;
-      const {id, email} = this.userService.getLoginUser();
+      const {email, sub} = this.userService.getLoginUser();
 
       this.socketService.send(
         new ParticipantJoinedSessionMessage(
@@ -169,7 +169,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
             this.session.sessionId,
             maybeNewParticipant.participantName,
             isAdmin,
-            id,
+            sub,
             email
           )
         )
@@ -178,14 +178,13 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   leaveSession = (_: Participant) => {
-    const {id, email} = this.userService.getLoginUser();
+    const {email} = this.userService.getLoginUser();
     this.socketService.send(
       new ParticipantRemovedSessionMessage(
         new ParticipantRemovedSessionPayload(
           this.participant.participantId,
           this.participant.participantName,
           this.session.sessionId,
-          id,
           email
         )
       )
@@ -194,7 +193,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   isMyCard = (card: Participant) => {
     const user = this.userService.getLoginUser();
-    return user && card && card.loginId === user.id;
+    return user && card && card.providerId === user.sub;
   }
 
   collectBallots = (): Ballot[] =>
@@ -283,19 +282,19 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
-    const {userName, loginId} = messageData.payload;
-    const itWasMe = this.userService.isLoginUser(loginId);
+    const {userName, loginEmail} = messageData.payload;
+    const itWasMe = this.userService.isLoginUser(loginEmail);
     const message = itWasMe ? `You joined as ${userName}` : `${userName} joined.`;
-
     this.logs.unshift(message);
     this.showInfoBar(message, 'happy');
+
     this.localStorage.setUser(this.session && this.session.sessionId, this.participant);
     this.updateSession(messageData);
   }
 
   private participantRemoved = (messageData: ParticipantRemovedSessionMessage) => {
-    const {userName, loginId} = messageData.payload;
-    const itWasMe = this.userService.isLoginUser(loginId);
+    const {userName, loginEmail} = messageData.payload;
+    const itWasMe = this.userService.isLoginUser(loginEmail);
     const message = itWasMe ? 'You left' : `${userName} left.`;
 
     if (itWasMe) {
@@ -311,8 +310,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private recoverUser = (user: User, participants: any[]): void => {
     if (user && participants) {
       this.participant = participants.find((p: Participant) => {
-
-          return p && p.loginId === user.id;
+          return p && p.providerId === user.sub; // this is duplicated all over the place, unify this so
         }
       );
     }

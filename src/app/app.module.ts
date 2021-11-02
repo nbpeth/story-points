@@ -27,20 +27,18 @@ import {JoinSessionDialogComponent} from './join-session-dialog/join-session-dia
 import {FormsModule} from '@angular/forms';
 import {AdminControlsComponent} from './admin-controls/admin-controls.component';
 import {VotingBoothComponent} from './voting-booth/voting-booth.component';
-// import {BallotDisplayComponent} from './vote-display/ballot-display.component';
 import {ActivityLogComponent} from './activity-log/activity-log.component';
-import {AuthServiceConfig, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
 import {MatMenuModule} from '@angular/material/menu';
-import { LoginComponent } from './login/login.component';
-import { LoggedInUserComponent } from './logged-in-user/logged-in-user.component';
+import {LoginComponent} from './login/login.component';
+import {LoggedInUserComponent} from './logged-in-user/logged-in-user.component';
 import {UserService} from './user.service';
 import {HttpClientModule} from '@angular/common/http';
 import {UsernamePipe} from './pipe/username.pipe';
 import {ParseDatePipe} from './pipe/parse-date.pipe';
-import { ChangeLogComponent } from './change-log/change-log.component';
-import { CreateSessionTileComponent } from './create-session-tile/create-session-tile.component';
-import { MatDividerModule } from '@angular/material/divider';
-import { ChangelogDialogComponent } from './changelog-dialog/changelog-dialog.component';
+import {ChangeLogComponent} from './change-log/change-log.component';
+import {CreateSessionTileComponent} from './create-session-tile/create-session-tile.component';
+import {MatDividerModule} from '@angular/material/divider';
+import {ChangelogDialogComponent} from './changelog-dialog/changelog-dialog.component';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
@@ -56,8 +54,9 @@ import {MatInputModule} from '@angular/material/input';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {GestureConfig} from '@angular/material/core';
-// import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
-// import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
+import {AuthModule} from '@auth0/auth0-angular';
+import {environment} from '../environments/environment';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -82,7 +81,6 @@ import {GestureConfig} from '@angular/material/core';
     JoinSessionDialogComponent,
     AdminControlsComponent,
     VotingBoothComponent,
-    // BallotDisplayComponent,
     ActivityLogComponent,
     LoginComponent,
     LoggedInUserComponent,
@@ -91,7 +89,6 @@ import {GestureConfig} from '@angular/material/core';
     ChangeLogComponent,
     CreateSessionTileComponent,
     ChangelogDialogComponent,
-    // TestComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -116,20 +113,14 @@ import {GestureConfig} from '@angular/material/core';
     MatSnackBarModule,
     MatSidenavModule,
     MatSliderModule,
-    SocialLoginModule,
-    // AuthModule.forRoot({
-    //   domain: 'proud-recipe-3564.us.auth0.com',
-    //   clientId: 'nqBp54zHH9Dl2Vm69NGDORg8QdU8c7lL'
-    // }),
+    MatProgressSpinnerModule,
+    AuthModule.forRoot({
+      domain: environment.auth0Domain,
+      clientId: environment.auth0ClientId
+    }),
   ],
   providers: [
-    // AbstractNavigator,
-    // AuthClientConfig,
     UserService,
-    {
-      provide: AuthServiceConfig,
-      useFactory: provideConfig
-    },
     {provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig},
   ],
   bootstrap: [AppComponent],
@@ -151,17 +142,4 @@ export class AppModule {
     this.overlayContainer.getContainerElement().classList.remove(removeTheme);
     this.overlayContainer.getContainerElement().classList.add(theme);
   }
-}
-
-
-
-// google provider should be injected from env
-export function provideConfig() {
-  return (new AuthServiceConfig([
-      {
-        id: GoogleLoginProvider.PROVIDER_ID,
-        provider: new GoogleLoginProvider('169440150514-6p8qrgf59kceaonb8qvpk10jam8gmaho.apps.googleusercontent.com')
-      },
-    ])
-  );
 }

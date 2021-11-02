@@ -76,15 +76,15 @@ getSessionState = (sessionId, onComplete) => {
         p.is_admin as isAdmin,
         p.has_voted as hasVoted,
         p.has_revoted as hasAlreadyVoted,
-        p.login_id as loginId,
         p.login_email as loginEmail,
+        p.provider_id as providerId,
         u.photo_url as photoUrl,
         u.first_name as firstName,
         u.last_name as lastName
         FROM sessions s, participant p, user u
         WHERE s.id = ?
         AND s.id = p.session_id
-        AND p.login_id = u.provider_id;
+        AND p.provider_id = u.provider_id;
     `;
 
   const statement = mysql.format(sql, [sessionId]);
@@ -102,14 +102,14 @@ getSessionNameFor = (sessionId, onComplete) => {
   runQuery(statement, onComplete);
 }
 
-addParticipantToSession = (sessionId, userName, isAdmin, loginId, loginEmail, onComplete) => {
+addParticipantToSession = (sessionId, userName, isAdmin, providerId, loginEmail, onComplete) => {
   const sql = `
-        INSERT INTO participant (session_id, participant_name, point, is_admin, login_id, login_email)
+        INSERT INTO participant (session_id, participant_name, provider_id, point, is_admin, login_email)
         VALUES
         (?, ?, ?, ?, ?, ?);
     `;
 
-  const statement = mysql.format(sql, [sessionId, userName, 0, isAdmin, loginId, loginEmail]);
+  const statement = mysql.format(sql, [sessionId, userName, providerId, 0, isAdmin, loginEmail]);
 
   runQuery(statement, onComplete);
 }
@@ -156,21 +156,25 @@ revealPointsForSession = (sessionId, onComplete) => {
 }
 
 createUser = (user, onComplete) => {
-  const { firstName, lastName, id, name, photoUrl, provider } = user;
-  if(!id || !provider) {
+  const { given_name, family_name, email, name, picture, sub } = user;
+  console.log("user...", user)
+  if(!email || !sub) {
     console.error(`No ID or Provider, unable to write user. ID: '${id}', Provider: '${provider}'`)
     onComplete("Missing user id or provider id");
   } else {
+
+    // find a way to migrate existing users until they're all moved over
+
     const sql = `
         INSERT INTO USER
-        (first_name, last_name, provider_id, name, photo_url, provider, date_joined, updated)
+        (first_name, last_name, provider_id, name, photo_url, date_joined, updated, email)
         VALUES
         (?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
-        first_name = ?, last_name = ?, name = ?, photo_url = ?, provider = ?, updated = ?
+        first_name = ?, last_name = ?, name = ?, photo_url = ?, updated = ?, email = ?
     `
     const now = new Date();
-    const statement = mysql.format(sql, [firstName, lastName, id, name, photoUrl, provider, now, now, firstName, lastName, name, photoUrl, provider, now]);
+    const statement = mysql.format(sql, [given_name, family_name, sub, name, picture, now, now, email, given_name, family_name, name, picture, now, email]);
 
     runQuery(statement, onComplete);
   }

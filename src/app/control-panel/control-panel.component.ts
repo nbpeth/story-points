@@ -51,7 +51,10 @@ export class ControlPanelComponent implements OnInit, OnChanges {
 
   joinSession = () => {
     const you = this.userService.getLoginUser();
-    const youAsAParticipantOfThisSession = new Participant(you.firstName);
+    const participantName = you.given_name ? you.given_name : you.nickname;
+    const youAsAParticipantOfThisSession = new Participant(participantName);
+    youAsAParticipantOfThisSession.loginEmail = you.email;
+
     this.participantJoined.emit(youAsAParticipantOfThisSession);
   }
 

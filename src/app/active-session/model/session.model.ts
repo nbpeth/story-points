@@ -7,20 +7,15 @@ export class Participant {
     public hasAlreadyVoted?: boolean,
     public isAdmin?: boolean,
     public pointsVisible?: boolean,
-    public loginId?: string,
+    public providerId?: string,
     public loginEmail?: string,
     public firstName?: string,
     public lastName?: string,
     public photoUrl?: string,
+    public nickName?: string,
 
   ) {
-    if (!participantName) {
-      this.participantName = `Lurker${Math.floor(Math.random() * 1000000)}`;
-    }
-  }
-
-  setPoint = (point: any) => {
-    this.point = point;
+    this.nickName = participantName;
   }
 }
 
@@ -32,11 +27,11 @@ export class StoryPointSession {
 
   setName = (name: string) => {
     this.sessionName = name;
-  };
+  }
 
   loadParticipants = (participants: Participant[]): void => {
     this.participants = participants;
     const first = participants.find(p => p);
     this.pointsVisible = first ? !!first.pointsVisible : false;
-  };
+  }
 }

@@ -63,10 +63,10 @@ export class LocalStorageService {
     this.setState(appState);
   }
 
-  getUser = (sessionId: number): Participant => {
-    const appState: AppState = this.getState();
-    return appState.sessions[sessionId].user;
-  }
+  // getUser = (sessionId: number): Participant => {
+  //   const appState: AppState = this.getState();
+  //   return appState.sessions[sessionId].user;
+  // }
 
   setUser = (sessionId: number, user: Participant) => {
     const appState: AppState = this.getState();
@@ -74,6 +74,7 @@ export class LocalStorageService {
     if (maybeSession) {
       maybeSession.user = user;
     }
+    console.log("set user??", user, maybeSession)
     this.setState(appState);
   }
 
@@ -86,10 +87,10 @@ export class LocalStorageService {
     }
   }
 
-  getShowAdminConsole = (sessionId: number) => {
-    const appState: AppState = this.getState();
-    return appState.globals.showAdminConsole;
-  }
+  // getShowAdminConsole = (sessionId: number) => {
+  //   const appState: AppState = this.getState();
+  //   return appState.globals.showAdminConsole;
+  // }
 
   setShowAdminConsole = (showAdminConsole: boolean) => {
     const appState: AppState = this.getState();
