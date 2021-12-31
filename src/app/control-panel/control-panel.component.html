@@ -9,7 +9,8 @@
   <ng-template #controls>
     <ng-container *ngIf="userService.userChanges() | async as user ">
       <mat-drawer-container class="options-container" autosize>
-        <mat-drawer #menu class="options-sidenav" mode="side">
+
+        <!-- <mat-drawer #menu class="options-sidenav" mode="side">
           <div class="settings-items">
 
 
@@ -39,10 +40,10 @@
 
 
           </div>
-        </mat-drawer>
+        </mat-drawer> -->
 
         <div class="options-content">
-          <button type="button" mat-button (click)="celebrate()">
+          <!-- <button type="button" mat-button (click)="celebrate()">
             <mat-icon>cake</mat-icon>
             Celebrate
           </button>
@@ -63,7 +64,7 @@
               <mat-icon>close</mat-icon>
               Bail
             </button>
-          </ng-template>
+          </ng-template> -->
 
         </div>
       </mat-drawer-container>

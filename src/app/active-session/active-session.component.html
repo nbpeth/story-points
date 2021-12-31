@@ -1,10 +1,63 @@
 <div style=" display: flex; flex-direction: column; justify-content: space-between; height: 100%">
   <div style="width:100%; display: flex; justify-content: center" class="mat-app-background">
-    <div style="padding: 20px" *ngIf="session && session.sessionName">
+
+    <div style="padding: 20px; display: flex;" *ngIf="session && session.sessionName">
       <h3>{{session.sessionName}}</h3>
     </div>
+
   </div>
+  
   <div class="content">
+    <div>
+      <mat-drawer-container class="sidenav-container" autosize>
+        <mat-drawer #drawer class="sidenav" mode="side">
+          <div>
+              <button type="button" mat-button (click)="celebrate()">
+                <mat-icon>cake</mat-icon>
+                Celebrate
+              </button>
+          </div>
+          <div>
+            <ng-container *ngIf="!participant; else leaveSessionButton">
+              <button type="button" mat-button (click)="joinSession()">
+                <mat-icon>add</mat-icon>
+                Join
+              </button>
+            </ng-container>
+    
+            <ng-template #leaveSessionButton>
+              <button type="button" mat-button (click)="leaveSession()">
+                <mat-icon>close</mat-icon>
+                Bail
+              </button>
+            </ng-template>
+          </div>
+          <div>
+            <mat-checkbox class="item" id="audioEnabledCheckbox" [checked]="audioEnabled" (change)="toggleAudio($event)">
+                  Audio
+            </mat-checkbox>
+          </div>
+          <div>
+            <mat-checkbox class="item" (change)="setShowAdminConsole($event)" id="showAdminConsole"
+                          [(ngModel)]="showAdminConsole">
+              Point Controls
+            </mat-checkbox>
+          </div>
+          <div>
+            <mat-checkbox class="item" (change)="setShowEventLog($event)" id="eventLog" [(ngModel)]="showEventLog">
+              Event Log
+            </mat-checkbox>
+          </div>
+        </mat-drawer>
+      
+        <div class="sidenav-content">
+          <button type="button" mat-button (click)="drawer.toggle()">
+            <mat-icon>settings</mat-icon>
+          </button>
+        </div>
+      
+      </mat-drawer-container>
+    </div> 
 
     <div class="tiles">
       <user-tiles>
@@ -15,11 +68,21 @@
                    [myCard]="isMyCard(participant)">
         </user-tile>
       </user-tiles>
-
     </div>
+
+    <div class="session-controls">
+      <div>
+        <admin-controls 
+        [pointsVisible]="pointsVisible"
+        (pointVisibilityEvent)="changePointVisibility($event)">
+        </admin-controls>
+      </div>
+    </div> 
 
   </div>
 
+
+<!-- 
   <div class="toolbar mat-app-background" style="height:130px">
 
     <control-panel
@@ -35,5 +98,5 @@
       [showLogs]="false"
     >
     </control-panel>
-  </div>
+  </div> -->
 </div>

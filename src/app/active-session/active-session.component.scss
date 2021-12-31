@@ -2,7 +2,7 @@
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
   overflow-y: scroll;
 
@@ -17,6 +17,7 @@
   }
 
   .tiles {
+    width: 100%;
     justify-content: center;
     display: flex;
     flex-wrap: wrap;
@@ -26,4 +27,24 @@
     height: 130px;
     width: 100%;
   }
+}
+
+.sidenav-container {
+  height: 100%;
+  // width: 500px;
+  // height: 300px;
+  // border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.sidenav-content {
+  
+  // display: flex;
+  // height: 100%;
+  // align-items: center;
+  // justify-content: center;
+}
+
+.sidenav {
+  padding: 12px;
+  // padding: 20px;
 }
