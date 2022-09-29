@@ -88,6 +88,18 @@ export class CelebratePayload extends SpMessagePayload {
   }
 }
 
+export class StartShameTimerPayload extends SpMessagePayload {
+  constructor(public sessionId: any) {
+    super();
+  }
+}
+
+export class ShameTimerEndedPayload extends SpMessagePayload {
+  constructor(public sessionId: any) {
+    super();
+  }
+}
+
 export class GetCompleteStateMessage extends SpMessage {
   constructor() {
     super();
@@ -169,6 +181,20 @@ export class CelebrateMessage extends SpMessage {
   constructor(public payload: CelebratePayload) {
     super(payload);
     this.eventType = Events.CELEBRATE as string;
+  }
+}
+
+export class StartShameTimerMessage extends SpMessage {
+  constructor(public payload: StartShameTimerPayload) {
+    super(payload);
+    this.eventType = Events.START_SHAME_TIMER as string;
+  }
+}
+
+export class ShameTimerEndedMessage extends SpMessage {
+  constructor(public payload: ShameTimerEndedPayload) {
+    super(payload);
+    this.eventType = Events.SHAME_TIMER_ENDED as string;
   }
 }
 

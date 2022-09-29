@@ -17,6 +17,8 @@ export class UserService {
   loggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   isLoggingIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
+  shameTimerRunning: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
 
   constructor(private  authService: AuthService,
               private socketService: SocketService,
@@ -37,6 +39,14 @@ export class UserService {
         this.createUser(user);
       }
     });
+  }
+
+  startShameTimer() {
+    this.shameTimerRunning.next(true);
+  }
+
+  stopShameTimer() {
+    this.shameTimerRunning.next(false);
   }
 
   createUser(user: User) {

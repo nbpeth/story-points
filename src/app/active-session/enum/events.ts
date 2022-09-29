@@ -12,4 +12,6 @@ export enum Events {
   CREATE_USER = 'create-user',
   ERROR = 'error',
   CELEBRATE = 'celebrate',
+  START_SHAME_TIMER = 'start-shame-timer',
+  SHAME_TIMER_ENDED = 'shame-timer-ended',
 }

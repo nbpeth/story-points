@@ -1,5 +1,8 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
+import { CelebrateMessage, CelebratePayload, StartShameTimerMessage, StartShameTimerPayload } from '../active-session/model/events.model';
 import {PointVisibilityChange} from '../control-panel/control-panel.component';
+import { SocketService } from '../services/socket.service';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'admin-controls',
@@ -9,8 +12,23 @@ import {PointVisibilityChange} from '../control-panel/control-panel.component';
 export class AdminControlsComponent {
   @Output() pointVisibilityEvent: EventEmitter<PointVisibilityChange> = new EventEmitter<PointVisibilityChange>();
   @Input() pointsVisible: boolean;
+  @Input() sessionId: any;
+  isShaming: boolean;
+
+  constructor(private socketService: SocketService, private userService: UserService) {
+    this.userService.shameTimerRunning.subscribe(running => {
+      this.isShaming = running;
+    });
+  }
 
   changePointVisibility = (state: PointVisibilityChange) => {
     this.pointVisibilityEvent.emit(state);
+  }
+
+  startShameTimer = () => {
+    this.userService.startShameTimer();
+    const payload = new StartShameTimerPayload(this.sessionId);
+    payload.sessionId = this.sessionId;
+    this.socketService.send(new StartShameTimerMessage(payload));
   }
 }

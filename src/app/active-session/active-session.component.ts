@@ -21,6 +21,7 @@ import {
   ResetPointsForSessionPayload,
   RevealPointsForSessionMessage,
   RevealPointsForSessionPayload,
+  ShameTimerEndedMessage,
   SpMessage
 } from './model/events.model';
 import {Participant, StoryPointSession} from './model/session.model';
@@ -54,6 +55,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   participant: Participant;
   isDarkTheme: boolean;
   // successSound: HTMLAudioElement;
+
+  iAmShamed: boolean;
 
   session: StoryPointSession = new StoryPointSession();
 
@@ -139,7 +142,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   resetPoints = () => {
-
     this.session.pointsVisible = false;
     this.socketService.send(new ResetPointsForSessionMessage(new ResetPointsForSessionPayload(this.session.sessionId)));
   }
@@ -245,6 +247,9 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       case Events.CELEBRATE:
         this.handleCelebration(messageData as CelebrateMessage);
         break;
+      case Events.SHAME_TIMER_ENDED:
+        this.shameTimerEnded(messageData as ShameTimerEndedMessage)
+        break;
       default:
         console.log('not matched', messageData);
     }
@@ -263,6 +268,15 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         // this.successSound.play();
         break;
     }
+  }
+
+  private shameTimerEnded = (messageData: ShameTimerEndedMessage) => {
+    const notVoted = this.session.participants.filter(p => !p.hasVoted).map(p => p.firstName).join(',');
+    const message = `Shame! Vote @ ${notVoted}`;
+
+    this.logs.unshift(message);
+    this.showInfoBar(message, 'warn', 10000, 'top');
+    this.userService.stopShameTimer();
   }
 
   private verifyPayloadAndUpdate = (payload: any, updateFunction: any, messageData: any) => {
@@ -333,11 +347,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     this.participant = undefined;
   }
 
-  private showInfoBar = (message: string, labelClass: string, duration: number = 2000): void => {
+  private showInfoBar = (message: string, labelClass: string, duration: number = 2000, verticalPosition = 'bottom'): void => {
     this.snackBar.openFromComponent(AlertSnackbarComponent, {
       duration,
       horizontalPosition: 'center' as MatSnackBarHorizontalPosition,
-      verticalPosition: 'bottom' as MatSnackBarVerticalPosition,
+      verticalPosition: verticalPosition as MatSnackBarVerticalPosition,
       data: {
         message,
         labelClass

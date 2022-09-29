@@ -1,14 +1,15 @@
 .admin-console {
+  .button {
+    padding: 10px;
+  }
   border-left-style: inset;
   flex-wrap: wrap;
   display: flex;
-  flex-direction: column;
-  height: 100%;
+  flex-direction: row;
   align-items: flex-start;
-  padding: 0;
+  padding: 15px;
 
   button {
     font-size: large;
   }
-
 }

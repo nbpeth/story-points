@@ -141,8 +141,11 @@ const initHandlers = () => {
         getSessionNameFor(messageData);
         break;
       case 'celebrate':
-        celebrate(messageData)
-        break
+        celebrate(messageData);
+        break;
+      case 'start-shame-timer':
+        startShameTimer(messageData);
+        break;
     }
   };
 
@@ -265,6 +268,16 @@ const initHandlers = () => {
     mysqlClient.incrementCelebration(sessionId);
 
     notifyClients(formatMessage("celebrate", {celebration, celebrator, sessionId}))
+  }
+
+  startShameTimer = (messageData) => {
+    const { sessionId } = messageData.payload;
+
+    console.log("starting shame timer for session ", sessionId);
+
+    setTimeout(() => {
+      notifyClients(formatMessage("shame-timer-ended", {sessionId}))
+    }, 5000);
   }
 
   createNewSession = (messageData) => {
