@@ -1,9 +1,24 @@
+// const e = require('cors');
 const mysql = require('mysql');
 let pool;
 
 initDB = (onComplete) => {
-  pool = mysql.createPool(process.env.SPMYSQL_URL)
+  console.log("Init DB");
 
+  if (Boolean(pool)) {
+    console.warn("Pool already created, skipping");
+
+  } else {
+    const [host, db] = process.env.SPHOST ? process.env.SPHOST.split("/") : ["", ""]
+    pool = mysql.createPool({
+      connectionLimit: 500,
+      database: db,
+      host,
+      password: process.env.SPPASSWORD,
+      user: process.env.SPUSER,
+    });
+    // pool = mysql.createPool(process.env.SPMYSQL_URL);
+  }
   pool.on('error', (err) => {
     console.log('error pool.on', err);
   });
