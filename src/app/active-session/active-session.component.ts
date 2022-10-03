@@ -248,7 +248,11 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         this.handleCelebration(messageData as CelebrateMessage);
         break;
       case Events.SHAME_TIMER_ENDED:
-        this.shameTimerEnded(messageData as ShameTimerEndedMessage)
+        this.shameTimerEnded(messageData as ShameTimerEndedMessage);
+        break;
+      case Events.ACK_SHAME_TIMER_STARTED:
+        // block out the timer for everyone during the timer
+        this.userService.shameTimerRunning.next(true);
         break;
       default:
         console.log('not matched', messageData);
@@ -258,8 +262,6 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private handleCelebration = (messageData: CelebrateMessage) => {
     switch (messageData.payload.celebration) {
       case 'fireworks':
-
-
         this.logs.unshift(`${messageData.payload.celebrator} is ${RandomBuilder.generateFrom(happy)}`);
         confetti.start(2500);
         break;
@@ -271,11 +273,34 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   }
 
   private shameTimerEnded = (messageData: ShameTimerEndedMessage) => {
-    const notVoted = this.session.participants.filter(p => !p.hasVoted).map(p => p.firstName).join(',');
-    const message = `Shame! Vote @ ${notVoted}`;
+    const notVoted = this.session.participants
+      .filter(p => !p.hasVoted)
+      .map(p => ({loginId: p.loginId, name: [p.firstName, p.lastName].join(' ')}));
+
+
+    let message = 'Everyone voted in time!';
+    let status = 'happy';
+    let time = 2000;
+
+    if (notVoted && notVoted.length > 1) {
+      message = `Still need a vote from ${notVoted.map(m => m.name).join(', ')}`;
+      status = 'warn';
+      time = 10000;
+
+      if(notVoted.find(n => this.userService.isLoginUser(n.loginId))) {
+        // it was you. you didn't vote.
+        this.soundService.ding();
+      }
+    }
+
+
+
+    // different sound or behavior if you're in the list
+
+
 
     this.logs.unshift(message);
-    this.showInfoBar(message, 'warn', 10000, 'top');
+    this.showInfoBar(message, status, time, 'top');
     this.userService.stopShameTimer();
   }
 

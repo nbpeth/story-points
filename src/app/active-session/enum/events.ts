@@ -14,4 +14,5 @@ export enum Events {
   CELEBRATE = 'celebrate',
   START_SHAME_TIMER = 'start-shame-timer',
   SHAME_TIMER_ENDED = 'shame-timer-ended',
+  ACK_SHAME_TIMER_STARTED= 'ack-shame-timer-started',
 }

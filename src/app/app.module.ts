@@ -57,6 +57,7 @@ import {MatSliderModule} from '@angular/material/slider';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {GestureConfig} from '@angular/material/core';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { ChangelogItemComponent } from './changelog-item/changelog-item.component';
 // import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
 // import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
 
@@ -92,6 +93,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     ChangeLogComponent,
     CreateSessionTileComponent,
     ChangelogDialogComponent,
+    ChangelogItemComponent,
     // TestComponent,
   ],
   imports: [

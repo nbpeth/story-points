@@ -2,8 +2,8 @@
     <div class="button">
       <mat-card style="height:100%;">
         <ng-container *ngIf="!isShaming; else shaming">
-          <button mat-button  (click)="startShameTimer()">
-            Start Shame Timer
+          <button mat-raised-button  (click)="startShameTimer()">
+            <mat-icon >timer</mat-icon>
           </button>
         </ng-container>
         <ng-template #shaming>

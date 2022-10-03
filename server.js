@@ -270,14 +270,28 @@ const initHandlers = () => {
     notifyClients(formatMessage("celebrate", {celebration, celebrator, sessionId}))
   }
 
+  // only one timer per session, please
+  const activeTimers = new Set();
+
   startShameTimer = (messageData) => {
     const { sessionId } = messageData.payload;
+    console.log("active timers", activeTimers);
 
-    console.log("starting shame timer for session ", sessionId);
+    if(activeTimers.has(sessionId)) {
+      console.warn("only one timer allowed at a time", sessionId);
+      return;
+    }
+    activeTimers.add(sessionId);
+
+    // let participants know it's started to block the timer
+    notifyClients(formatMessage("ack-shame-timer-started", {sessionId}))
+
+    console.log("starting vote timer for session ", sessionId);
 
     setTimeout(() => {
+      activeTimers.delete(sessionId);
       notifyClients(formatMessage("shame-timer-ended", {sessionId}))
-    }, 5000);
+    }, 15000);
   }
 
   createNewSession = (messageData) => {

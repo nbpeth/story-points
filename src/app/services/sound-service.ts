@@ -8,6 +8,7 @@ import {LocalStorageService} from './local-storage.service';
 export class SoundService {
   private audioEnabled: boolean;
   private successSound: HTMLAudioElement = new Audio('assets/sounds/cheering.mp3');
+  private dingSound: HTMLAudioElement = new Audio('assets/sounds/ding.mp3');
 
   constructor(private lss: LocalStorageService) {
     lss.stateEventStream().subscribe((state: AppState) => {
@@ -19,6 +20,12 @@ export class SoundService {
   playSuccess = () => {
     if (this.audioEnabled) {
       this.successSound.play();
+    }
+  }
+
+  ding = () => {
+    if (this.audioEnabled) {
+      this.dingSound.play();
     }
   }
 }
