@@ -287,7 +287,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       status = 'warn';
       time = 10000;
 
-      if(notVoted.find(n => this.userService.isLoginUser(n.loginId))) {
+      if (notVoted.find(n => this.userService.isLoginUser(n.loginId))) {
         // it was you. you didn't vote.
         this.soundService.ding();
       }

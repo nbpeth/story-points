@@ -23,14 +23,14 @@
           <mat-icon>menu</mat-icon>
         </button>
 
-        <mat-menu #menu="matMenu">
+        <mat-menu #menu="matMenu" matBadge="1">
           <button mat-menu-item [routerLink]="['']">
             <mat-icon>home</mat-icon>
             <span>Dashboard</span>
           </button>
 
           <button mat-menu-item (click)="openChangeLog()">
-            <mat-icon>new_releases</mat-icon>
+            <mat-icon matBadge="1">new_releases</mat-icon>
             <span>What's New</span>
           </button>
 
