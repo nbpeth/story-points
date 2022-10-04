@@ -45,9 +45,8 @@ const runQuery = (statement, onComplete, retry = 0) => {
     } else {
       con.query(statement, (err, results, fields) => {
         onComplete && onComplete(err, results, fields);
-
-        con.release();
       });
+      con.release();
     }
   });
 }
