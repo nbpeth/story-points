@@ -2,22 +2,22 @@
 const mysql = require('mysql');
 let pool;
 
-initDB = (onComplete) => {
+const initDB = (onComplete) => {
   console.log("Init DB");
 
   if (Boolean(pool)) {
     console.warn("Pool already created, skipping");
 
   } else {
+    console.warn("Initiating connection pool")
     const [host, db] = process.env.SPHOST ? process.env.SPHOST.split("/") : ["", ""]
     pool = mysql.createPool({
-      connectionLimit: 500,
+      // connectionLimit: 10,
       database: db,
       host,
       password: process.env.SPPASSWORD,
       user: process.env.SPUSER,
     });
-    // pool = mysql.createPool(process.env.SPMYSQL_URL);
   }
   pool.on('error', (err) => {
     console.log('error pool.on', err);
@@ -27,18 +27,29 @@ initDB = (onComplete) => {
 }
 
 
-runQuery = (statement, onComplete) => {
+const runQuery = (statement, onComplete, retry = 0) => {
+
   pool.getConnection((err, con) => {
-    if (err) {
-      console.log('error getConnection to db', err);
+    if(retry >= 3) {
+      throw Error("Could not get connection");
     }
 
-    con.query(statement, (err, results, fields) => {
-      onComplete && onComplete(err, results, fields);
+    if (err) {
+      console.error('Error getConnection to db', err, `Retry ${retry} of 3`);
+      // try to recover connection: max 3 retries
 
-      con.release();
-    });
-  })
+      setTimeout(() => {
+        runQuery(statement, onComplete, retry + 1);
+      }, 1000);
+
+    } else {
+      con.query(statement, (err, results, fields) => {
+        onComplete && onComplete(err, results, fields);
+
+        con.release();
+      });
+    }
+  });
 }
 
 getAllSessions = (onComplete) => {

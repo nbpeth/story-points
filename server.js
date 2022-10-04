@@ -108,7 +108,7 @@ const initHandlers = () => {
   handleIncomingMessages = (message) => {
     const messageData = JSON.parse(message);
     const eventType = messageData.eventType;
-    console.log('incoming!', messageData)
+    // console.log('incoming!', messageData)
     switch (eventType) {
       case 'state-of-the-state':
         getStateOfTheAppForCaller();
@@ -322,7 +322,7 @@ const initHandlers = () => {
   };
 
   notifyCaller = (message) => {
-    console.log('outgoing!!!', message)
+    // console.log('outgoing!!!', message)
     wss.clients
       .forEach(client => {
         const isTargeted = message.payload.sessionId !== undefined;
@@ -346,6 +346,8 @@ const connectedToDB = (err) => {
   if (err) {
     throw Error(`Could not connect to DB: ${err.message}`);
   }
+
+  console.log("Connected to DB")
 
   initHandlers();
 }
