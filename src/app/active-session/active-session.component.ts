@@ -224,7 +224,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private handleEvents = (messageData: SpMessage) => {
     const eventType = messageData.eventType;
     const payload = messageData.payload;
-    // console.log("message!", eventType)
+    console.log("message!", messageData)
     switch (eventType) {
       // add event types back for logging, at least
       // each event can still do a whole refresh for now
@@ -252,6 +252,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
         break;
       case Events.ACK_SHAME_TIMER_STARTED:
         // block out the timer for everyone during the timer
+        const { userName } = messageData.payload as unknown as {userName: string};
+        this.logs.unshift(`⚡⚡⚡ ${userName} is reminding you to vote ⚡⚡⚡`);
         this.userService.shameTimerRunning.next(true);
         break;
       default:
@@ -262,7 +264,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private handleCelebration = (messageData: CelebrateMessage) => {
     switch (messageData.payload.celebration) {
       case 'fireworks':
-        this.logs.unshift(`${messageData.payload.celebrator} is ${RandomBuilder.generateFrom(happy)}`);
+        this.logs.unshift(`🎉🎉🎉 ${messageData.payload.celebrator} is ${RandomBuilder.generateFrom(happy)}`);
         confetti.start(2500);
         break;
       case 'synergy':
@@ -324,7 +326,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   private participantJoined = (messageData: ParticipantJoinedSessionMessage) => {
     const {userName, loginId} = messageData.payload;
     const itWasMe = this.userService.isLoginUser(loginId);
-    const message = itWasMe ? `You joined as ${userName}` : `${userName} joined.`;
+    const message = itWasMe ? `👋 You joined as ${userName}` : `👋 ${userName} joined.`;
 
     this.logs.unshift(message);
     this.showInfoBar(message, 'happy');

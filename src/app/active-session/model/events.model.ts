@@ -89,7 +89,7 @@ export class CelebratePayload extends SpMessagePayload {
 }
 
 export class StartShameTimerPayload extends SpMessagePayload {
-  constructor(public sessionId: any) {
+  constructor(public sessionId: any, public userName: string) {
     super();
   }
 }

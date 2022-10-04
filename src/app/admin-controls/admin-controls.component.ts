@@ -28,10 +28,13 @@ export class AdminControlsComponent {
 
   startShameTimer = () => {
     if (!this.pointsVisible) {
+      const user = this.userService.getLoginUser();
+      const {firstName, lastName} = user;
       this.userService.startShameTimer();
-      const payload = new StartShameTimerPayload(this.sessionId);
+      const payload = new StartShameTimerPayload(this.sessionId, `${firstName} ${lastName}`);
       payload.sessionId = this.sessionId;
       this.socketService.send(new StartShameTimerMessage(payload));
+
     }
   }
 }

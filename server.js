@@ -274,8 +274,9 @@ const initHandlers = () => {
   const activeTimers = new Set();
 
   startShameTimer = (messageData) => {
-    const { sessionId } = messageData.payload;
+    const { sessionId, userName } = messageData.payload;
     console.log("active timers", activeTimers);
+    console.log("shamed by", userName)
 
     if(activeTimers.has(sessionId)) {
       console.warn("only one timer allowed at a time", sessionId);
@@ -283,8 +284,8 @@ const initHandlers = () => {
     }
     activeTimers.add(sessionId);
 
-    // let participants know it's started to block the timer
-    notifyClients(formatMessage("ack-shame-timer-started", {sessionId}))
+    // let participants know it's started and who started it
+    notifyClients(formatMessage("ack-shame-timer-started", {sessionId, userName}));
 
     console.log("starting vote timer for session ", sessionId);
 
