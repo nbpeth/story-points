@@ -25,7 +25,7 @@ export class ControlPanelComponent implements OnInit, OnChanges {
   @Output() voteSubmitted: EventEmitter<any> = new EventEmitter<any>();
 
   showAdminConsole: boolean;
-  showEventLog: boolean;
+  showEventLog = true;
   audioEnabled: boolean;
 
   @Output() pointSelectionChanged = new EventEmitter<PointSelection>();

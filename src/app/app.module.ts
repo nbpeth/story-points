@@ -58,6 +58,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {GestureConfig} from '@angular/material/core';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { ChangelogItemComponent } from './changelog-item/changelog-item.component';
+import { LocalStorageService } from './services/local-storage.service';
 // import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
 // import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
 
@@ -144,8 +145,10 @@ import { ChangelogItemComponent } from './changelog-item/changelog-item.componen
 })
 
 export class AppModule {
-  constructor(private overlayContainer: OverlayContainer, private themeService: ThemeService) {
-
+  constructor(private overlayContainer: OverlayContainer, private themeService: ThemeService, private lss: LocalStorageService) {
+    if (lss.getShowEventLog() === undefined) {
+      lss.setShowEventLog(true);
+    }
     this.themeService.isDarkTheme.subscribe(this.toggleDarkThemeForOverlay);
   }
 

@@ -18,7 +18,7 @@ export class LocalStorageService {
     this.storage.set(key, value);
   }
 
-  get = (key: string): string => this.storage.get(key)
+  get = (key: string): string => this.storage.get(key);
 
   private getState = (): AppState => {
     const appState = this.storage.get(this.key);
@@ -89,6 +89,11 @@ export class LocalStorageService {
   getShowAdminConsole = (sessionId: number) => {
     const appState: AppState = this.getState();
     return appState.globals.showAdminConsole;
+  }
+
+  getShowEventLog = () => {
+    const appState: AppState = this.getState();
+    return appState.globals.showEventLog;
   }
 
   setShowAdminConsole = (showAdminConsole: boolean) => {

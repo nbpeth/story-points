@@ -11,7 +11,10 @@
         <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter"
                    [participant]="participant"
                    [locked]="session.sessionId == 311"
-                   [sessionId]="session.sessionId" [pointsVisible]="session.pointsVisible" [isDarkTheme]="isDarkTheme"
+                   [thoseWhoHaveNotVoted]="thoseWhoHaveNotVoted"
+                   [sessionId]="session.sessionId"
+                   [pointsVisible]="session.pointsVisible"
+                   [isDarkTheme]="isDarkTheme"
                    [myCard]="isMyCard(participant)">
         </user-tile>
       </user-tiles>

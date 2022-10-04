@@ -57,6 +57,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
   // successSound: HTMLAudioElement;
 
   iAmShamed: boolean;
+  thoseWhoHaveNotVoted: any[];
 
   session: StoryPointSession = new StoryPointSession();
 
@@ -279,6 +280,8 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
       .filter(p => !p.hasVoted)
       .map(p => ({loginId: p.loginId, name: [p.firstName, p.lastName].join(' ')}));
 
+    this.thoseWhoHaveNotVoted = notVoted.map(v => v.loginId);
+    // console.log("thoseWhoHaveNotVoted", this.thoseWhoHaveNotVoted)
 
     let message = 'Everyone voted in time!';
     let status = 'happy';

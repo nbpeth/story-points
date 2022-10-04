@@ -1,15 +1,16 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {SocketService} from '../../services/socket.service';
 import {ParticipantRemovedSessionMessage, ParticipantRemovedSessionPayload} from '../model/events.model';
 import {Participant} from '../model/session.model';
 import {UserService} from "../../user.service";
+import { BehaviorSubject } from 'rxjs-compat';
 
 @Component({
   selector: 'user-tile',
   templateUrl: './user-tile.component.html',
   styleUrls: ['./user-tile.component.scss']
 })
-export class UserTileComponent implements OnInit {
+export class UserTileComponent implements OnInit, OnChanges {
 
   @Input() sessionId: any;
   @Input() participant: Participant = new Participant();
@@ -19,10 +20,20 @@ export class UserTileComponent implements OnInit {
   @Input() isDarkTheme: boolean;
   @Input() locked: boolean;
 
-  needsToVote: boolean;
+  @Input() thoseWhoHaveNotVoted: string[];
+  // isShamed = new BehaviorSubject();
 
   constructor(private socketService: SocketService, public userService: UserService) {
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // console.log("changes", changes)
+    // if (!!Object.keys(changes).includes("thoseWhoHaveNotVoted")) {
+
+    //   this.isShamed = Boolean(this.thoseWhoHaveNotVoted.find(shamedLoginId => this.participant.loginId === shamedLoginId));
+    // }
+  }
+
   ngOnInit(): void {
     // this.userService.sh
   }
