@@ -291,7 +291,7 @@ const initHandlers = () => {
     setTimeout(() => {
       activeTimers.delete(sessionId);
       notifyClients(formatMessage("shame-timer-ended", {sessionId}))
-    }, 15000);
+    }, 500);
   }
 
   createNewSession = (messageData) => {

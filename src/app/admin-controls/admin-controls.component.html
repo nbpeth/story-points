@@ -1,13 +1,13 @@
   <div class="admin-console">
     <div class="button">
-      <mat-card style="height:100%;">
+      <mat-card *ngIf="!pointsVisible" style="height:100%;">
         <ng-container *ngIf="!isShaming; else shaming">
-          <button mat-raised-button  (click)="startShameTimer()">
-            <mat-icon >timer</mat-icon>
+          <button  mat-button (click)="startShameTimer()">
+            <mat-icon color="accent">bolt</mat-icon>
           </button>
         </ng-container>
         <ng-template #shaming>
-          <mat-spinner diameter="35"></mat-spinner>
+          <mat-spinner diameter="35" color="secondary"></mat-spinner>
         </ng-template>
       </mat-card>
     </div>

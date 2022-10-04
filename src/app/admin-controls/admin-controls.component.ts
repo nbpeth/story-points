@@ -15,6 +15,7 @@ export class AdminControlsComponent {
   @Input() sessionId: any;
   isShaming: boolean;
 
+
   constructor(private socketService: SocketService, private userService: UserService) {
     this.userService.shameTimerRunning.subscribe(running => {
       this.isShaming = running;
@@ -26,9 +27,11 @@ export class AdminControlsComponent {
   }
 
   startShameTimer = () => {
-    this.userService.startShameTimer();
-    const payload = new StartShameTimerPayload(this.sessionId);
-    payload.sessionId = this.sessionId;
-    this.socketService.send(new StartShameTimerMessage(payload));
+    if (!this.pointsVisible) {
+      this.userService.startShameTimer();
+      const payload = new StartShameTimerPayload(this.sessionId);
+      payload.sessionId = this.sessionId;
+      this.socketService.send(new StartShameTimerMessage(payload));
+    }
   }
 }

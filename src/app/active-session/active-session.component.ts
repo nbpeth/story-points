@@ -282,7 +282,7 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
     let status = 'happy';
     let time = 2000;
 
-    if (notVoted && notVoted.length > 1) {
+    if (notVoted && notVoted.length > 0) {
       message = `Still need a vote from ${notVoted.map(m => m.name).join(', ')}`;
       status = 'warn';
       time = 10000;
