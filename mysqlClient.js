@@ -23,19 +23,22 @@ const initDB = (onComplete) => {
     console.log('error pool.on', err);
   });
 
+  pool.on('release', (connection) => {
+    console.debug('Connection %d released', connection.threadId);
+  });
+
   onComplete();
 }
 
 
 const runQuery = (statement, onComplete, retry = 0) => {
-
   pool.getConnection((err, con) => {
-    if(retry >= 3) {
+    if(retry >= 10) {
       throw Error("Could not get connection");
     }
 
     if (err) {
-      console.error('Error getConnection to db', err, `Retry ${retry} of 3`);
+      console.error('Error getConnection to db', err, `Retry ${retry} of 10`);
       // try to recover connection: max 3 retries
 
       setTimeout(() => {
@@ -43,6 +46,7 @@ const runQuery = (statement, onComplete, retry = 0) => {
       }, 1000);
 
     } else {
+      console.log("Got connection", con.threadId)
       con.query(statement, (err, results, fields) => {
         onComplete && onComplete(err, results, fields);
       });
