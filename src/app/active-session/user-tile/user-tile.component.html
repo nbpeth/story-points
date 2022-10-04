@@ -2,6 +2,7 @@
 <!--  should flip when all votes are cast or one vote cast -->
   <mat-card
     [ngClass]="{
+      'needToVote': true,
       'voted': participant.hasVoted,
       'voted-dark': participant.hasVoted && isDarkTheme,
       'vote-changer': participant.hasAlreadyVoted

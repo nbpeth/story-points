@@ -58,12 +58,29 @@
   animation: glowing 5000ms infinite;
 }
 
+.needToVote {
+  animation: card-spin 800ms 3
+}
+
+.flip {
+  animation: card-flip 1000ms 1
+}
+
 @keyframes glowing {
   0% { box-shadow: 0 0 -10px #ffffff; }
   40% { box-shadow: 0 0 20px #ffffff; }
   60% { box-shadow: 0 0 20px #ffffff; }
   60% { box-shadow: 0 0 20px #ffffff; }
   100% { box-shadow: 0 0 -10px #ffffff; }
+}
+
+@keyframes card-spin {
+  100% {transform: rotate(360deg);} // show points at end of flip?
+  // 20% {transform: rotate(50%);} // show points at end of flip?
+  // 40% {transform: rotate(100%);} // show points at end of flip?
+  // 60% {transform: rotate(50%);} // show points at end of flip?
+  // 80% {transform: rotate(0%);} // show points at end of flip?
+  // 100% {transform: trarotatenslateX(0%);} // show points at end of flip?
 }
 
 @keyframes card-flip {

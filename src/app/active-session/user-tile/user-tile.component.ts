@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {SocketService} from '../../services/socket.service';
 import {ParticipantRemovedSessionMessage, ParticipantRemovedSessionPayload} from '../model/events.model';
 import {Participant} from '../model/session.model';
@@ -9,7 +9,7 @@ import {UserService} from "../../user.service";
   templateUrl: './user-tile.component.html',
   styleUrls: ['./user-tile.component.scss']
 })
-export class UserTileComponent {
+export class UserTileComponent implements OnInit {
 
   @Input() sessionId: any;
   @Input() participant: Participant = new Participant();
@@ -19,7 +19,12 @@ export class UserTileComponent {
   @Input() isDarkTheme: boolean;
   @Input() locked: boolean;
 
+  needsToVote: boolean;
+
   constructor(private socketService: SocketService, public userService: UserService) {
+  }
+  ngOnInit(): void {
+    // this.userService.sh
   }
 
   removeUser = () => {
