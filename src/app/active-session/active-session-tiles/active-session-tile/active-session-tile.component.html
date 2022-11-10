@@ -9,14 +9,22 @@
     <div style="align-items: flex-start; display: flex; flex-direction: column">
     <div>Users: {{session.participantCount}}</div>
     <div>Last Active: {{session.lastActive ? (session.lastActive | parseDatePipe | date) : "--"}}</div>
+    <!-- <div>total: {{session.total}}</div>
+    <div>total: {{session.synergized}}</div>
+    <div>total: {{session.calculatedSynergy}}</div> -->
     </div>
   </mat-card-content>
 
   <mat-card-footer>
-    <div class="actions">
-      <button (click)="closeSession()" mat-button *ngIf="userService.isLoggedIn() | async">
-        <mat-icon>delete_forever</mat-icon>
-      </button>
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+      <div style="font-weight: bold; color: burlywood;">
+        <div>{{(session.calculatedSynergy * 100).toFixed(0)}}</div>
+      </div>
+      <div class="actions">
+        <button (click)="closeSession()" mat-button *ngIf="userService.isLoggedIn() | async">
+          <mat-icon>delete_forever</mat-icon>
+        </button>
+      </div>
     </div>
   </mat-card-footer>
 </mat-card>

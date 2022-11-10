@@ -18,7 +18,7 @@ export class SpMessagePayload {
 }
 
 export class GetCompleteStatePayload extends SpMessagePayload {
-  sessions: { id: number, sessionName: string, participantCount: number, lastActive: any }[];
+  sessions: { id: number, sessionName: string, participantCount: number, lastActive: string, total: any, synergized: any, calculatedSynergy: any }[];
 }
 
 export class NewSessionPayload extends SpMessagePayload {
@@ -42,7 +42,7 @@ export class ResetPointsForSessionPayload extends SpMessagePayload {
 }
 
 export class RevealPointsForSessionPayload extends SpMessagePayload {
-  constructor(public sessionId: number) {
+  constructor(public sessionId: number, public synergized: number) {
     super();
   }
 }

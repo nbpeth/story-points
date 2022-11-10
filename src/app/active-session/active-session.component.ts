@@ -149,7 +149,9 @@ export class ActiveSessionComponent implements OnInit, OnDestroy {
 
   revealPoints = () => {
     this.session.pointsVisible = true;
-    this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.session.sessionId)));
+    // if all points in the vote match, you get 1 synergy
+    const synergized = 1;
+    this.socketService.send(new RevealPointsForSessionMessage(new RevealPointsForSessionPayload(this.session.sessionId, synergized)));
     const points = this.session.participants.map(p => ({point: p.point, hasVoted: p.hasVoted}));
 
     if (points && points.length && points.every(point => {
