@@ -30,7 +30,7 @@ export class NewSessionPayload extends SpMessagePayload {
 }
 
 export class GetStateForSessionPayload extends SpMessagePayload {
-  constructor(public sessionId: number, participants?: any[], sessionName?: string, pointsVisible?: boolean) {
+  constructor(public sessionId: number, participants?: any[], sessionName?: string,  pointsVisible?: boolean) {
     super();
   }
 }
@@ -72,7 +72,7 @@ export class PointSubmittedForParticipantPayload extends SpMessagePayload {
 
 
 export class GetSessionNamePayload extends SpMessagePayload {
-  constructor(public sessionId: number, public sessionName?: string) {
+  constructor(public sessionId: number, public schemeValues?: string, public sessionName?: string) {
     super();
   }
 }
@@ -96,6 +96,12 @@ export class StartShameTimerPayload extends SpMessagePayload {
 
 export class ShameTimerEndedPayload extends SpMessagePayload {
   constructor(public sessionId: any) {
+    super();
+  }
+}
+
+export class PointSchemaChangedPayload extends SpMessagePayload {
+  constructor(public sessionId: number, public schemaId: string) {
     super();
   }
 }
@@ -198,3 +204,16 @@ export class ShameTimerEndedMessage extends SpMessage {
   }
 }
 
+export class GetPointSchemaOptionsMessage extends SpMessage {
+  constructor(public payload: any) {
+    super(payload);
+    this.eventType = Events.GET_POINT_SCHEMA_OPTIONS as string;
+  }
+}
+
+export class PointSchemaChangedMessage extends SpMessage {
+  constructor(public payload: PointSchemaChangedPayload) {
+    super(payload);
+    this.eventType = Events.POINT_SCHEMA_CHANGED as string;
+  }
+}

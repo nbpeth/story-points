@@ -76,10 +76,26 @@
         </admin-controls>
       </div>
       <div>
-        <voting-booth *ngIf="participant"
-                      (voteSubmitted)="submitVote($event)">
 
+        <voting-booth *ngIf="participant"
+                      [pointValues]="pointValues"
+                      (voteSubmitted)="submitVote($event)">
         </voting-booth>
+
+      </div>
+      <div class="point-scheme" *ngIf="showAdminConsole">
+        <div class="button">
+          <mat-card  style="height:100%;">
+            <mat-form-field>
+              <!-- point scheme options -->
+              <mat-select (selectionChange)="pointSchemeHasChanged($event)">
+                <mat-option *ngFor="let option of pointSchemeOptions" [value]="option">
+                  {{option.display_name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-card>
+        </div>
       </div>
 
       <div *ngIf="showEventLog" class="event-log">

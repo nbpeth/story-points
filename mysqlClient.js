@@ -124,9 +124,31 @@ getSessionState = (sessionId, onComplete) => {
   runQuery(statement, onComplete);
 };
 
+getPointSchemeOptions = (onComplete) => {
+  const sql = `
+      select * from point_schemes
+    `;
+
+  const statement = mysql.format(sql, []);
+
+  runQuery(statement, onComplete);
+};
+
+setPointSchemeForSession = (sessionId, schemaId, onComplete) => {
+  const sql = `
+      update sessions set point_scheme_id = ? where id = ?
+    `;
+
+  const statement = mysql.format(sql, [schemaId, sessionId]);
+
+  runQuery(statement, onComplete);
+}
+
 getSessionNameFor = (sessionId, onComplete) => {
   const sql = `
-        SELECT s.session_name as sessionName FROM sessions s WHERE s.id = ?
+      select ps.schema_values as schemeValues, s.session_name as sessionName from sessions s
+      left join point_schemes ps on ps.id = s.point_scheme_id
+      where s.id = ?
     `;
 
   const statement = mysql.format(sql, [sessionId]);
@@ -309,6 +331,7 @@ module.exports = {
   createSession,
   createUser,
   getAllSessions,
+  getPointSchemeOptions,
   getSessionNameFor,
   getSessionState,
   incrementCelebration,
@@ -317,6 +340,7 @@ module.exports = {
   removeParticipantFromSession,
   resetPointsForSession,
   revealPointsForSession,
+  setPointSchemeForSession,
   terminateSession,
   updateSynergy,
 };

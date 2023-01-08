@@ -34,7 +34,6 @@ export class AdminControlsComponent {
       const payload = new StartShameTimerPayload(this.sessionId, `${firstName} ${lastName}`);
       payload.sessionId = this.sessionId;
       this.socketService.send(new StartShameTimerMessage(payload));
-
     }
   }
 }

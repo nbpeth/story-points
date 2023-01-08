@@ -18,13 +18,10 @@
                    [myCard]="isMyCard(participant)">
         </user-tile>
       </user-tiles>
-
     </div>
-
   </div>
 
   <div class="toolbar mat-app-background" style="height:130px">
-
     <control-panel
       (participantJoined)="joinSession($event)"
       (participantLeft)="leaveSession($event)"
@@ -36,6 +33,8 @@
       [logs]="logs"
       [pointsVisible]="session.pointsVisible"
       [showLogs]="false"
+      [pointSchemeOptions]="pointSchemeOptions"
+      [pointValues]="pointValues"
     >
     </control-panel>
   </div>

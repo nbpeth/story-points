@@ -142,7 +142,7 @@ const initHandlers = () => {
   handleIncomingMessages = (message) => {
     const messageData = JSON.parse(message);
     const eventType = messageData.eventType;
-    // console.log('incoming!', messageData)
+    console.log("incoming!", messageData);
     switch (eventType) {
       case "state-of-the-state":
         getStateOfTheAppForCaller();
@@ -179,6 +179,12 @@ const initHandlers = () => {
         break;
       case "start-shame-timer":
         startShameTimer(messageData);
+        break;
+      case "get-point-schemes":
+        getPointSchemes(messageData);
+        break;
+      case "point-schema-changed":
+        sessionPointSchemaChanged(messageData);
         break;
     }
   };
@@ -242,11 +248,19 @@ const initHandlers = () => {
             ? sessionNameResults[0].sessionName
             : undefined;
 
+        const maybePointValues =
+          sessionNameResults && sessionNameResults.length > 0
+            ? sessionNameResults[0].schemeValues
+            : undefined;
         if (maybeSessionName) {
           notifyCaller(
             formatMessage(
               eventType,
-              { sessionId: sessionId, sessionName: maybeSessionName },
+              {
+                sessionId: sessionId,
+                sessionName: maybeSessionName,
+                schemeValues: maybePointValues,
+              },
               sessionId
             )
           );
@@ -352,6 +366,71 @@ const initHandlers = () => {
 
     notifyClients(
       formatMessage("celebrate", { celebration, celebrator, sessionId })
+    );
+  };
+
+  getPointSchemes = (messageData) => {
+    const { sessionId } = messageData.payload;
+
+    mysqlClient.getPointSchemeOptions((err, results) => {
+      if (err) {
+        sendErrorToCaller("Unable to fetch point schemes", err.message);
+      } else {
+        notifyCaller(
+          formatMessage("get-point-schemes", {
+            sessionId: sessionId,
+            pointSchemes: results,
+          })
+        );
+      }
+    });
+  };
+
+  sessionPointSchemaChanged = (messageData) => {
+    const { sessionId, schemaId, eventType } = messageData.payload;
+
+    mysqlClient.setPointSchemeForSession(
+      sessionId,
+      schemaId,
+      (err, results) => {
+        // if(err) {
+        //   throw err
+        // }
+        //
+        mysqlClient.getSessionNameFor(
+          sessionId,
+          (err, sessionNameResults) => {
+            if (err) {
+              sendErrorToCaller("Unable to resolve session name", err.message);
+            } else {
+              const maybeSessionName =
+                sessionNameResults && sessionNameResults.length > 0
+                  ? sessionNameResults[0].sessionName
+                  : undefined;
+
+              const maybePointValues =
+                sessionNameResults && sessionNameResults.length > 0
+                  ? sessionNameResults[0].schemeValues
+                  : undefined;
+              if (maybeSessionName) {
+
+                notifyClients(
+                  formatMessage(
+                    "get-session-name",
+                    {
+                      sessionId: sessionId,
+                      sessionName: maybeSessionName,
+                      schemeValues: maybePointValues,
+                    },
+                    sessionId
+                  )
+                );
+              }
+            }
+          }
+          //
+        );
+      }
     );
   };
 

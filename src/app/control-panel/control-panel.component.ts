@@ -1,11 +1,13 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
-import {Participant} from '../active-session/model/session.model';
-import {LocalStorageService} from '../services/local-storage.service';
-import {DefaultPointSelection, PointSelection} from '../point-selection/point-selection';
-import {AppState} from '../services/local-storage.model';
-import {UserService} from '../user.service';
-import {SocketService} from '../services/socket.service';
-import {CelebrateMessage, CelebratePayload} from '../active-session/model/events.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { environment } from 'src/environments/environment';
+import { CelebrateMessage, CelebratePayload, GetPointSchemaOptionsMessage, PointSchemaChangedMessage, PointSchemaChangedPayload } from '../active-session/model/events.model';
+import { Participant } from '../active-session/model/session.model';
+import { DefaultPointSelection, PointSelection } from '../point-selection/point-selection';
+import { AppState } from '../services/local-storage.model';
+import { LocalStorageService } from '../services/local-storage.service';
+import { SocketService } from '../services/socket.service';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'control-panel',
@@ -19,6 +21,8 @@ export class ControlPanelComponent implements OnInit, OnChanges {
   @Input() showLogs: boolean;
   @Input() pointsVisible: boolean;
   @Input() locked: boolean;
+  @Input() pointValues?: string;
+  @Input() pointSchemeOptions?: any;
   @Output() participantJoined: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Output() participantLeft: EventEmitter<Participant> = new EventEmitter<Participant>();
   @Output() pointVisibilityEvent: EventEmitter<PointVisibilityChange> = new EventEmitter<PointVisibilityChange>();
@@ -28,14 +32,16 @@ export class ControlPanelComponent implements OnInit, OnChanges {
   showEventLog = true;
   audioEnabled: boolean;
 
-  @Output() pointSelectionChanged = new EventEmitter<PointSelection>();
-
   constructor(public userService: UserService,
               private socketService: SocketService,
               private localStorage: LocalStorageService) {
   }
+  ngOnChanges(changes: SimpleChanges): void {
+    // console.log("pointValues", this.pointValues)
+  }
 
-  ngOnChanges(changes: any) {
+  pointSchemeHasChanged(selection: any) {
+    this.socketService.send(new PointSchemaChangedMessage(new PointSchemaChangedPayload(this.sessionId, selection.value.id)));
   }
 
   ngOnInit(): void {
@@ -45,8 +51,6 @@ export class ControlPanelComponent implements OnInit, OnChanges {
         this.showEventLog = state.globals.showEventLog;
         this.audioEnabled = state.globals.audioEnabled;
       });
-
-    this.pointSelectionChanged.emit(new DefaultPointSelection());
   }
 
   joinSession = () => {

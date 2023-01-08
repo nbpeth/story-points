@@ -59,6 +59,7 @@ import {GestureConfig} from '@angular/material/core';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { ChangelogItemComponent } from './changelog-item/changelog-item.component';
 import { LocalStorageService } from './services/local-storage.service';
+import { SplitStringPipe } from './pipe/split-string.pipe';
 // import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
 // import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
 
@@ -79,6 +80,7 @@ import { LocalStorageService } from './services/local-storage.service';
     CreateSessionDialogComponent,
     ParticipantFilterPipe,
     UsernamePipe,
+    SplitStringPipe,
     ParseDatePipe,
     AlertSnackbarComponent,
     ControlPanelComponent,

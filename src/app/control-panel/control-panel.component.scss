@@ -57,6 +57,24 @@
      width: 25%;
   }
 
+  .point-scheme {
+    .button {
+        padding: 10px;
+      }
+      border-left-style: inset;
+      flex-wrap: wrap;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      padding: 15px;
+
+      button {
+        font-size: large;
+      }
+  }
+
+
+
 }
 
 .spacing {

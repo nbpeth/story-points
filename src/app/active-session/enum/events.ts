@@ -14,5 +14,7 @@ export enum Events {
   CELEBRATE = 'celebrate',
   START_SHAME_TIMER = 'start-shame-timer',
   SHAME_TIMER_ENDED = 'shame-timer-ended',
+  GET_POINT_SCHEMA_OPTIONS = 'get-point-schemes',
+  POINT_SCHEMA_CHANGED = 'point-schema-changed',
   ACK_SHAME_TIMER_STARTED= 'ack-shame-timer-started',
 }

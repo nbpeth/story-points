@@ -1,23 +1,43 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {DefaultPointSelection, PointSelection} from '../point-selection/point-selection';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
+import { Subject } from "rxjs-compat";
 
 @Component({
-  selector: 'voting-booth',
-  templateUrl: './voting-booth.component.html',
-  styleUrls: ['./voting-booth.component.scss']
+  selector: "voting-booth",
+  templateUrl: "./voting-booth.component.html",
+  styleUrls: ["./voting-booth.component.scss"],
 })
-export class VotingBoothComponent {
-  @Input() votingScheme: string;
+export class VotingBoothComponent implements OnChanges {
+  @Input() pointValues: string;
+  @Input() pointSchemeHasChanged: Subject<any>;
   @Output() voteSubmitted: EventEmitter<any> = new EventEmitter<any>();
 
-  pointSelection: PointSelection = new DefaultPointSelection();
+  pointOptions: string[];
+
+  // pointSelection: PointSelection = new DefaultPointSelection();
   vote: any;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // console.log(this.pointValues)
+    if (Object.keys(changes).includes("pointValues")) {
+      const change = changes["pointValues"];
+      const currentValue = change && change.currentValue;
+
+      this.pointOptions = currentValue && currentValue.split(",");
+    }
+  }
 
   voteHasChanged = (value: any) => {
     this.vote = value;
-  }
+  };
 
   submitVote = () => {
     this.voteSubmitted.emit(this.vote);
-  }
+  };
 }

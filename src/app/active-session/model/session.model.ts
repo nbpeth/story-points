@@ -28,6 +28,7 @@ export class StoryPointSession {
   participants: Participant[] = [];
   sessionId: number;
   sessionName: string;
+  pointValues: string;
   pointsVisible: boolean;
 
   setName = (name: string) => {

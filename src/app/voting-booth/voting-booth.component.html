@@ -2,7 +2,7 @@
   <div>
     <mat-form-field>
       <mat-select (selectionChange)="voteHasChanged($event)">
-        <mat-option *ngFor="let option of pointSelection.options" [value]="option">
+        <mat-option *ngFor="let option of pointOptions" [value]="option">
           {{option}}
         </mat-option>
       </mat-select>
