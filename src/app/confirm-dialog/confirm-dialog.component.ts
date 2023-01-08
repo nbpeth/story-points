@@ -13,7 +13,6 @@ export class ConfirmDialogComponent {
   verifySessionName: string;
   sessionName: string;
   message: string;
-
   error: string;
 
   constructor(private dialogRef: MatDialogRef<ConfirmDialogComponent>,

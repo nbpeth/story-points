@@ -60,6 +60,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { ChangelogItemComponent } from './changelog-item/changelog-item.component';
 import { LocalStorageService } from './services/local-storage.service';
 import { SplitStringPipe } from './pipe/split-string.pipe';
+import { ChangePointSchemeComponent } from './change-point-scheme/change-point-scheme.component';
 // import {AuthClientConfig, AuthModule} from '@auth0/auth0-angular';
 // import {AbstractNavigator} from "@auth0/auth0-angular/lib/abstract-navigator";
 
@@ -97,6 +98,7 @@ import { SplitStringPipe } from './pipe/split-string.pipe';
     CreateSessionTileComponent,
     ChangelogDialogComponent,
     ChangelogItemComponent,
+    ChangePointSchemeComponent,
     // TestComponent,
   ],
   imports: [

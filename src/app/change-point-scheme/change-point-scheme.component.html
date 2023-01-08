@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>{{message}}</h2>
+
+<mat-dialog-content>
+  <mat-dialogue-title>
+    Change Point Scheme
+  </mat-dialogue-title>
+
+  <div class="point-scheme">
+    <div class="button">
+      <mat-card  style="height:100%;">
+        <mat-form-field>
+          <mat-select (selectionChange)="pointSchemeHasChanged($event)">
+            <mat-option *ngFor="let option of pointSchemeOptions" [value]="option">
+              {{option.display_name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-card>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <div style="display: flex; flex-direction: column">
+    <div>
+      <button class="mat-raised-button" (click)="close()">Cancel</button>
+      <button class="mat-raised-button mat-warn" [disabled]="false" (click)="submit($event)">Change</button>
+    </div>
+  </div>
+</mat-dialog-actions>

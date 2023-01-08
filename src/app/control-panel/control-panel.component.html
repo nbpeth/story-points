@@ -25,11 +25,21 @@
               <div>Audio</div>
             </div>
 
+            <div style="display: flex; cursor: pointer" class="sub-item" (click)="changePointScheme()">
+              <div *ngIf="audioEnabled">
+                <mat-icon>circle</mat-icon>
+              </div>
+              <div>Change Pointing Scheme</div>
+            </div>
+
             <div>
               <mat-checkbox class="item" (change)="setShowAdminConsole($event)" id="showAdminConsole"
                             [(ngModel)]="showAdminConsole">
                 Point Controls
               </mat-checkbox>
+            </div>
+            <div>
+
             </div>
             <div>
               <mat-checkbox class="item" (change)="setShowEventLog($event)" id="eventLog" [(ngModel)]="showEventLog">
@@ -83,20 +93,19 @@
         </voting-booth>
 
       </div>
-      <div class="point-scheme" *ngIf="showAdminConsole">
+      <!-- <div class="point-scheme" *ngIf="showAdminConsole">
         <div class="button">
           <mat-card  style="height:100%;">
             <mat-form-field>
-              <!-- point scheme options -->
               <mat-select (selectionChange)="pointSchemeHasChanged($event)">
-                <mat-option *ngFor="let option of pointSchemeOptions" [value]="option">
-                  {{option.display_name}}
+                <mat-option *ngFor="let option of pointSchemeOptions" [value]="option"> -->
+                  <!-- {{option.display_name}}
                 </mat-option>
               </mat-select>
             </mat-form-field>
           </mat-card>
         </div>
-      </div>
+      </div> -->
 
       <div *ngIf="showEventLog" class="event-log">
         <activity-log
