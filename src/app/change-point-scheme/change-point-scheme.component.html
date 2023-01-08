@@ -1,13 +1,13 @@
 <h2 mat-dialog-title>{{message}}</h2>
 
 <mat-dialog-content>
-  <mat-dialogue-title>
-    Change Point Scheme
-  </mat-dialogue-title>
 
   <div class="point-scheme">
     <div class="button">
       <mat-card  style="height:100%;">
+        <div>
+          Change Point Scheme
+        </div>
         <mat-form-field>
           <mat-select (selectionChange)="pointSchemeHasChanged($event)">
             <mat-option *ngFor="let option of pointSchemeOptions" [value]="option">
