@@ -3,6 +3,10 @@
     <a [routerLink]="['sessions', session.id]">
       {{session.sessionName}}
     </a>
+
+    <div style="width:100%">
+      <mat-progress-bar [color]="getSynergyColor()" mode="determinate" [value]="(session.calculatedSynergy * 100).toFixed(0)" style="width:100%"></mat-progress-bar>
+    </div>
   </mat-card-title>
 
   <mat-card-content>
@@ -16,10 +20,16 @@
   </mat-card-content>
 
   <mat-card-footer>
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
-      <div style="font-weight: bold; color: burlywood;">
-        <div>{{(session.calculatedSynergy * 100).toFixed(0)}}</div>
-      </div>
+    <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px;">
+      <!-- <div> -->
+        <!-- <div>{{(session.calculatedSynergy * 100).toFixed(0)}}</div> -->
+        <!-- <div style="width:100%">
+          <mat-progress-bar [color]="getSynergyColor()" mode="determinate" [value]="(session.calculatedSynergy * 100).toFixed(0)" style="width:100%"></mat-progress-bar>
+        </div> -->
+      <!-- </div> -->
+
+
+
       <div class="actions">
         <button (click)="closeSession()" mat-button *ngIf="userService.isLoggedIn() | async">
           <mat-icon>delete_forever</mat-icon>

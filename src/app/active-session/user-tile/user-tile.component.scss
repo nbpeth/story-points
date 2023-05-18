@@ -47,8 +47,8 @@
 
   // just navigating to a page sets off messages that trigger rerendering :((((
 
-  background-color: orange;
-  //animation-name: color-cycle;
+  // background-color: orange;
+  animation-name: color-cycle;
   //animation-duration: 2s;
   //animation-iteration-count: infinite;
 }
@@ -58,12 +58,16 @@
   animation: glowing 5000ms infinite;
 }
 
-.needToVote {
-  animation: card-spin 800ms 3
+.colorCycle {
+  animation: color-cycle 1000ms 10;
 }
 
+// .needToVote {
+//   animation: card-spin 800ms 3
+// }
+
 .flip {
-  animation: card-flip 1000ms 1
+  animation: card-flip 2000ms 3
 }
 
 @keyframes glowing {
@@ -74,23 +78,34 @@
   100% { box-shadow: 0 0 -10px #ffffff; }
 }
 
-@keyframes card-spin {
-  100% {transform: rotate(360deg);} // show points at end of flip?
-  // 20% {transform: rotate(50%);} // show points at end of flip?
-  // 40% {transform: rotate(100%);} // show points at end of flip?
-  // 60% {transform: rotate(50%);} // show points at end of flip?
-  // 80% {transform: rotate(0%);} // show points at end of flip?
-  // 100% {transform: trarotatenslateX(0%);} // show points at end of flip?
-}
+// @keyframes card-spin {
+//   100% {transform: rotate(360deg);} // show points at end of flip?
+//   // 20% {transform: rotate(50%);} // show points at end of flip?
+//   // 40% {transform: rotate(100%);} // show points at end of flip?
+//   // 60% {transform: rotate(50%);} // show points at end of flip?
+//   // 80% {transform: rotate(0%);} // show points at end of flip?
+//   // 100% {transform: trarotatenslateX(0%);} // show points at end of flip?
+// }
 
 @keyframes card-flip {
-  100% {transform: rotateY(360deg);} // show points at end of flip?
+  100% {transform: rotateZ(360deg);} // show points at end of flip?
 }
 
 @keyframes color-cycle {
-  0%   {background-color:gold; }
-  25%  {background-color:purple; }
-  50%  {background-color:silver; }
-  75%  {background-color:purple; }
-  100%  {background-color:gold;}
+  0%   {background-color:rgb(33, 28, 0); }
+  10%   {background-color:rgb(48, 41, 0); }
+  20%   {background-color:rgb(55, 47, 0); }
+  30%   {background-color:rgb(72, 62, 0); }
+  40%   {background-color:rgb(84, 72, 0); }
+  50%   {background-color:rgb(106, 90, 0) }
+  60%   {background-color:rgb(135, 115, 0) }
+  70%   {background-color:rgb(167, 142, 0) }
+  80%   {background-color:rgb(182, 155, 0) }
+  90%   {background-color:rgb(237, 201, 0) }
+  100%   {background-color:gold; }
+  // 0%   {background-color:gold; }
+  // 25%  {background-color:purple; }
+  // 50%  {background-color:silver; }
+  // 75%  {background-color:purple; }
+  // 100%  {background-color:gold;}
 }

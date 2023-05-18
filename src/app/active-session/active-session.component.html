@@ -1,11 +1,18 @@
-<div style=" display: flex; flex-direction: column; justify-content: space-between; height: 100%">
+<div [ngClass]="{container: true, colorCycle: false}">
   <div style="width:100%; display: flex; justify-content: center" class="mat-app-background">
     <div style="padding: 20px" *ngIf="session && session.sessionName">
       <h3>{{session.sessionName}}</h3>
     </div>
   </div>
   <div class="content">
-
+    <!-- <ng-container *ngIf="synergizing | async"> -->
+    <!-- <div class="synergyEvent">
+      <ng-container *ngIf="true">
+        <h1 [ngClass]="{moveText: true}">
+          Synergy Event
+        </h1>
+      </ng-container>
+    </div> -->
     <div class="tiles">
       <user-tiles>
         <user-tile cdkDrag *ngFor="let participant of session.participants | participantFilter"
@@ -15,12 +22,11 @@
                    [sessionId]="session.sessionId"
                    [pointsVisible]="session.pointsVisible"
                    [isDarkTheme]="isDarkTheme"
+                   [synergizing]="synergizing"
                    [myCard]="isMyCard(participant)">
         </user-tile>
       </user-tiles>
-
     </div>
-
   </div>
 
   <div class="toolbar mat-app-background" style="height:130px">

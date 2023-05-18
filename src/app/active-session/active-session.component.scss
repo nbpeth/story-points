@@ -1,3 +1,34 @@
+@keyframes color-cycle {
+  0%   {background-color:rgb(33, 28, 0); }
+  10%   {background-color:rgb(48, 41, 0); }
+  20%   {background-color:rgb(55, 47, 0); }
+  30%   {background-color:rgb(72, 62, 0); }
+  40%   {background-color:rgb(84, 72, 0); }
+  50%   {background-color:rgb(106, 90, 0) }
+  60%   {background-color:rgb(135, 115, 0) }
+  70%   {background-color:rgb(167, 142, 0) }
+  80%   {background-color:rgb(182, 155, 0) }
+  90%   {background-color:rgb(237, 201, 0) }
+  100%   {background-color:gold; }
+  // 0%   {background-color:gold; }
+  // 25%  {background-color:purple; }
+  // 50%  {background-color:silver; }
+  // 75%  {background-color:purple; }
+  // 100%  {background-color:gold;}
+}
+.colorCycle {
+  animation: color-cycle 1000ms 10;
+}
+
+
+.container {
+  display: flex;
+   flex-direction: column;
+    justify-content: space-between;
+     height: 100%;
+      width: 100%;
+}
+
 .content {
   width: 100%;
   height: 100%;
@@ -16,7 +47,43 @@
     justify-content: flex-end;
   }
 
+  .synergyEvent {
+    justify-content: center;
+    // display: flex;
+    position: absolute;
+  }
+
+  .moveText {
+    animation: x 2000ms infinite
+  }
+
+
+
+  @keyframes x {
+    0% { transform: translateY(10); opacity: 1; }
+    10% {  transform: translateY(15px); opacity: .9; }
+    15% {  transform: translateY(20px); opacity: .9; }
+    20% {  transform: translateY(25px); opacity: .8; }
+    25% {  transform: translateY(30px); opacity: .8; }
+    30% {  transform: translateY(35px); opacity: .7; }
+    35% {  transform: translateY(40px); opacity: .7; }
+    40% {  transform: translateY(45px); opacity: .6; }
+    45% {  transform: translateY(50px); opacity: .6; }
+    50% {  transform: translateY(55px); opacity: .5; }
+    55% {  transform: translateY(60px); opacity: .5; }
+    60% {  transform: translateY(65px); opacity: .4; }
+    65% {  transform: translateY(70px); opacity: .4; }
+    70% {  transform: translateY(75px); opacity: .3; }
+    75% {  transform: translateY(80px); opacity: .3; }
+    80% {  transform: translateY(85px); opacity: .2; }
+    85% {  transform: translateY(90px); opacity: .2; }
+    90% {  transform: translateY(95px); opacity: .1; }
+    95% {  transform: translateY(100px); opacity: .1; }
+    100% {  transform: translateY(105px); opacity: .05; }
+  }
+
   .tiles {
+    width: 100%;
     justify-content: center;
     display: flex;
     flex-wrap: wrap;
@@ -26,4 +93,5 @@
     height: 130px;
     width: 100%;
   }
+
 }

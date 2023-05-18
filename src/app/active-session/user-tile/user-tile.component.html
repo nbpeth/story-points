@@ -3,8 +3,9 @@
   <mat-card
     [ngClass]="{
       'voted': participant.hasVoted,
-      'voted-dark': participant.hasVoted && isDarkTheme,
+      'voted-dark': !synergizeEvent && participant.hasVoted && isDarkTheme,
       'vote-changer': participant.hasAlreadyVoted
+
     }">
     <mat-card-title>
       <span>{{!pointsVisible && !myCard ? "?" : participant.point}}</span>

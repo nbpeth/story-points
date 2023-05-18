@@ -8,6 +8,7 @@ import {ActiveSessionTileComponent} from './active-session/active-session-tiles/
 import {ActiveSessionTilesComponent} from './active-session/active-session-tiles/active-session-tiles.component';
 import {ActiveSessionComponent} from './active-session/active-session.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 import {UserTileComponent} from './active-session/user-tile/user-tile.component';
 import {UserTilesComponent} from './active-session/user-tiles/user-tiles.component';
@@ -95,6 +96,7 @@ import { LocalStorageService } from './services/local-storage.service';
     CreateSessionTileComponent,
     ChangelogDialogComponent,
     ChangelogItemComponent,
+
     // TestComponent,
   ],
   imports: [
@@ -122,6 +124,7 @@ import { LocalStorageService } from './services/local-storage.service';
     MatSliderModule,
     SocialLoginModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule
 
     // AuthModule.forRoot({
     //   domain: 'proud-recipe-3564.us.auth0.com',

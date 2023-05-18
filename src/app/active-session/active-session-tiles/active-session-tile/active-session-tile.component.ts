@@ -32,6 +32,17 @@ export class ActiveSessionTileComponent {
     public userService: UserService
   ) {}
 
+  getSynergyColor = () => {
+    const value = this.session.calculatedSynergy * 100;
+    if (value < 15) {
+      return "warn";
+    } else if (value < 50) {
+      return "accent";
+    }
+
+    return "primary";
+  }
+
   closeSession = () => {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = false;
