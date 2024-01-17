@@ -4,13 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start-server": "node server.js",
-    "start": "node server.js",
-    "build": "ng build --verbose=true --output-path=dist/story-points",
+    "start": "echo fire it up",
+    "build": "echo 'what build'",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "postinstall": "ng build --aot --configuration=$ENV",
-    "heroku-postbuild": "ng build --configuration=$ENV"
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
@@ -45,7 +43,7 @@
     "zone.js": "~0.10.3"
   },
   "engines": {
-    "node": "^12.16.3",
+    "node": "^21.4.0",
     "npm": "^6.14.4"
   },
   "devDependencies": {
